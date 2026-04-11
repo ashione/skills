@@ -1,3 +1,8 @@
+---
+name: frontend-ux-polish
+description: Improve UI readability, hierarchy, motion, and responsiveness without changing product intent.
+---
+
 # Frontend UX Polish
 
 ## Intent

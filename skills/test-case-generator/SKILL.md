@@ -1,3 +1,8 @@
+---
+name: test-case-generator
+description: Generate practical test cases with edge conditions and expected outcomes.
+---
+
 # Test Case Generator
 
 ## Intent

@@ -1,7 +1,7 @@
 {
   "id": "team-subagent-orchestrator",
   "title": "Team Subagent Orchestrator",
-  "description": "Enable a leader main agent to manage 3-5 subagents for long-running multi-iteration tasks. Leader focuses on thinking, planning, delegation, tracking, and course correction — not direct execution.",
+  "description": "Enable a leader main agent to manage a team of 3-5 subagents for completing long-running, multi-iteration tasks. The leader focuses on thinking, planning, delegation, progress tracking, and course correction rather than direct execution.",
   "version": "4.0.0",
   "tags": ["team", "subagent", "orchestration", "planning", "iteration", "leader", "collaboration", "todo", "retrospective", "lessons-learned", "persistence", "heartbeat", "probe", "dynamic-adjustment"],
   "input_schema": {

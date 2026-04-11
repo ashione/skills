@@ -1,3 +1,8 @@
+---
+name: refactor-planner
+description: Design a low-risk phased refactor plan with checkpoints and rollback strategy.
+---
+
 # Refactor Planner
 
 ## Intent

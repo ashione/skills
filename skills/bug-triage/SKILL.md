@@ -1,3 +1,8 @@
+---
+name: bug-triage
+description: Classify bugs by severity, impact, and reproducibility, then propose next actions.
+---
+
 # Bug Triage
 
 ## Intent

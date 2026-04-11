@@ -1,3 +1,8 @@
+---
+name: team-subagent-orchestrator
+description: Enable a leader main agent to manage a team of 3-5 subagents for completing long-running, multi-iteration tasks. The leader focuses on thinking, planning, delegation, progress tracking, and course correction rather than direct execution.
+---
+
 # Team Subagent Orchestrator
 
 ## Intent

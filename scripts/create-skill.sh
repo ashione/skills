@@ -28,6 +28,11 @@ mkdir -p "${TARGET}"
 
 # Generate SKILL.md
 cat > "${TARGET}/SKILL.md" <<EOF
+---
+name: ${SKILL_ID}
+description: TODO: one-line description.
+---
+
 # ${SKILL_ID}
 
 ## Intent

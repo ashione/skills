@@ -15,6 +15,7 @@ skills/
 
 - `SKILL.md` 是人类可读标准文档，必须存在。
 - `skill.json` 是机器可读结构化数据。
+- 若目标平台包含本地 Codex，`SKILL.md` 顶部还应包含 YAML frontmatter，至少提供 `name` 和 `description`。
 
 ## 必需字段
 
@@ -62,6 +63,15 @@ skills/
 
 ## SKILL.md 标准结构
 
+推荐在文档最顶部加入 frontmatter，便于 Codex 之类的平台发现：
+
+```md
+---
+name: <skill-id>
+description: <one-line description>
+---
+```
+
 每个 `SKILL.md` 至少包含以下标题：
 
 - `# <Skill Title>`
@@ -86,4 +96,3 @@ skills/
 - 普通 skill 不需要这些字段，只用必需字段即可。
 - 扩展字段必须在 SKILL.md 中有对应的人类可读说明。
 - `additionalProperties: true` — skill.json 允许任意额外字段。
-

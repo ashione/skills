@@ -1,3 +1,8 @@
+---
+name: incident-postmortem
+description: Create a clear, blameless postmortem with timeline, causes, and preventive actions.
+---
+
 # Incident Postmortem
 
 ## Intent

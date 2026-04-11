@@ -1,3 +1,8 @@
+---
+name: sql-query-optimizer
+description: Analyze SQL query performance and provide index and query rewrite recommendations.
+---
+
 # SQL Query Optimizer
 
 ## Intent

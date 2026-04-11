@@ -1,3 +1,8 @@
+---
+name: api-design-review
+description: Review an API interface for consistency, safety, and long-term maintainability.
+---
+
 # API Design Review
 
 ## Intent

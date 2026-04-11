@@ -1,3 +1,8 @@
+---
+name: commit-message-writer
+description: Generate clean, conventional commit messages from code changes.
+---
+
 # Commit Message Writer
 
 ## Intent

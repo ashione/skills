@@ -1,0 +1,24 @@
+{
+  "id": "api-design-review",
+  "title": "API Design Review",
+  "description": "Review an API interface for consistency, safety, and long-term maintainability.",
+  "version": "1.1.0",
+  "tags": ["api", "backend", "review", "rest", "graphql", "versioning", "error-handling"],
+  "input_schema": {
+    "api_spec": "string — API contract in any format: OpenAPI 3.x, GraphQL schema, or raw endpoint definitions with method/path/body/response",
+    "constraints": "string — compatibility requirements, latency SLA, auth model, governance rules (e.g. 'Must support v1 clients for 6 months, p99 < 200ms, OAuth 2.0 bearer')"
+  },
+  "instructions": [
+    "Identify endpoint naming, versioning, and resource model issues.",
+    "Validate status code and error model consistency.",
+    "Evaluate backward compatibility and migration risk with concrete timeline.",
+    "Check idempotency guarantees for mutating operations.",
+    "Propose specific changes with before/after examples."
+  ],
+  "examples": [
+    {
+      "input": "REST spec for user lifecycle: PUT /users/{id} replaces entire user object; errors return {message: string} on some endpoints and {error: {code, detail}} on others.",
+      "output": "Issue 1: PUT /users/{id} is non-idempotent because it silently drops unset fields. Fix: use PATCH for partial update, keep PUT for full replacement with required field validation.\nIssue 2: Inconsistent error schema. Fix: normalize to {error: {code: string, message: string, details?: object}} across all endpoints.\nIssue 3: No versioning strategy. Fix: add /v1/ prefix now; define deprecation header (Sunset) for future migration."
+    }
+  ]
+}

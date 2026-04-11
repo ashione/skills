@@ -1,0 +1,23 @@
+{
+  "id": "commit-message-writer",
+  "title": "Commit Message Writer",
+  "description": "Generate clean, conventional commit messages from code changes.",
+  "version": "1.0.0",
+  "tags": ["git", "commit", "workflow", "conventional-commits", "changelog"],
+  "input_schema": {
+    "change_summary": "string",
+    "files_touched": "string[]"
+  },
+  "instructions": [
+    "Infer commit type and scope using conventional commit style.",
+    "Write subject line under 72 characters.",
+    "Add body bullets only when needed for context.",
+    "Avoid vague verbs like update or fix stuff."
+  ],
+  "examples": [
+    {
+      "input": "Added null checks for workspace config loader and tests.",
+      "output": "fix(config): guard empty workspace metadata\n\nPrevent loader crash when workspace has no config file.\nAdd regression tests for empty metadata path."
+    }
+  ]
+}

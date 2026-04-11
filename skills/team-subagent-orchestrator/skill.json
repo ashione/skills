@@ -1,0 +1,160 @@
+{
+  "id": "team-subagent-orchestrator",
+  "title": "Team Subagent Orchestrator",
+  "description": "Enable a leader main agent to manage 3-5 subagents for long-running multi-iteration tasks. Leader focuses on thinking, planning, delegation, tracking, and course correction — not direct execution.",
+  "version": "4.0.0",
+  "tags": ["team", "subagent", "orchestration", "planning", "iteration", "leader", "collaboration", "todo", "retrospective", "lessons-learned", "persistence", "heartbeat", "probe", "dynamic-adjustment"],
+  "input_schema": {
+    "goal": "string — end-to-end objective and success criteria",
+    "constraints": "string — time budget, quality bar, scope boundaries, available tools",
+    "available_agents": "string[] — candidate agents with capability descriptions",
+    "milestones": "string[] — checkpoint definitions and expected deliverables per phase",
+    "iteration_budget": "number — maximum iterations before forced convergence"
+  },
+  "lifecycle": ["BOOTSTRAP", "ITERATE", "CONVERGE", "CLOSE"],
+  "iteration_loop": ["PLAN", "DELEGATE", "EXECUTE", "COLLECT", "INTEGRATE", "CORRECT", "RETRO", "PERSIST"],
+  "role_charter_template": {
+    "role": "string — role name",
+    "agent": "string — agent identifier",
+    "owns": "string — workstream description",
+    "delivers": "string — concrete output artifacts",
+    "depends_on": "string — other roles or external inputs",
+    "done_when": "string — measurable completion criteria",
+    "must_not": "string — out-of-scope actions to prevent overlap"
+  },
+  "heartbeat_template": {
+    "role": "string",
+    "cycle": "number",
+    "current_action": "string — what I am doing right now",
+    "sub_progress": "string — X of Y done or percentage",
+    "on_track": "yes | drifting | stuck",
+    "early_signal": "string | none"
+  },
+  "probe_template": {
+    "to": "string — role name",
+    "reason": "string",
+    "questions": "string[]",
+    "respond_within": "immediate | next-sub-step-boundary"
+  },
+  "adjustment_types": ["priority-shift", "scope-change", "task-reassign", "emergency-stop", "inject-task"],
+  "adjustment_template": {
+    "to": "string — role name",
+    "type": "string — one of adjustment_types",
+    "reason": "string",
+    "details": "string",
+    "expected_response": "acknowledge | confirm-new-plan | pause-and-wait"
+  },
+  "status_report_template": {
+    "role": "string",
+    "cycle": "number",
+    "progress": "string",
+    "confidence": "high | medium | low",
+    "blockers": "string[] | none",
+    "next": "string",
+    "risk": "string"
+  },
+  "task_board_statuses": ["not-started", "in-progress", "blocked", "in-review", "done"],
+  "agent_todo_template": {
+    "id": "string",
+    "task": "string",
+    "priority": "high | medium | low",
+    "status": "not-started | in-progress | done",
+    "added_cycle": "number",
+    "notes": "string"
+  },
+  "agent_finished_log_template": {
+    "id": "string",
+    "task": "string",
+    "completed_cycle": "number",
+    "outcome": "string",
+    "lesson": "string — optional, fill if task taught something reusable"
+  },
+  "retro_report_template": {
+    "role": "string",
+    "cycle": "number",
+    "went_well": "string[]",
+    "went_wrong": "string[]",
+    "lesson": "string",
+    "suggestion": "string"
+  },
+  "lessons_ledger_entry": {
+    "number": "number",
+    "cycle": "number",
+    "source": "string — role name",
+    "lesson": "string",
+    "action_taken": "string"
+  },
+  "persistence_rules": [
+    "Every agent writes state at end of each cycle.",
+    "Every agent reads persisted state at start of each cycle.",
+    "Leader verifies all agents restored state before dispatching.",
+    "On state loss, leader reconstructs from task board + finished logs + lessons ledger.",
+    "Use structured formats (tables, JSON) over prose for persisted state."
+  ],
+  "leader_decision_priority": [
+    "Unblock — resolve stuck subagents first.",
+    "Correct — intervene on drifting workstreams with specific guidance.",
+    "Rebalance — redistribute when idle/overloaded detected.",
+    "Advance — push next highest-priority work item.",
+    "Refine — improve plan quality only when all above are clear."
+  ],
+  "leader_anti_patterns": [
+    "Doing execution work directly instead of delegating.",
+    "Giving vague instructions like 'make it better'.",
+    "Changing subagent roles mid-iteration without re-charter.",
+    "Ignoring low-confidence status reports.",
+    "Moving to next iteration before milestone gate passes.",
+    "Skipping retrospective — lessons not recorded are lessons lost.",
+    "Not reading the lessons ledger before planning — repeating past mistakes.",
+    "Letting agents skip todo updates — invisible work creates invisible risk.",
+    "Allowing subagents to go silent during long execution — require heartbeats.",
+    "Issuing adjustments without concrete trigger — anxiety is not a reason.",
+    "Sending a stream of small adjustments — batch when possible."
+  ],
+  "failure_recovery": [
+    {"mode": "subagent stuck", "signal": "no progress for 2 cycles", "response": "clarify instructions or reassign task"},
+    {"mode": "quality below bar", "signal": "review fails quality gate", "response": "rework with specific feedback"},
+    {"mode": "scope creep", "signal": "subagent working outside charter", "response": "stop, re-scope, re-delegate"},
+    {"mode": "conflicting outputs", "signal": "integration finds contradictions", "response": "leader decides resolution"},
+    {"mode": "budget near limit", "signal": ">80% budget, <60% done", "response": "force convergence on critical path only"},
+    {"mode": "subagent silent", "signal": "no heartbeat for 2x expected interval", "response": "probe immediately; if no response, reassign task"},
+    {"mode": "mid-execution drift", "signal": "heartbeat shows diverging scope", "response": "issue scope-change adjustment"},
+    {"mode": "priority inversion", "signal": "low-priority work blocking high-priority", "response": "issue priority-shift or task-reassign adjustment"}
+  ],
+  "context_management": [
+    "Summarize completed work as compact artifacts, not raw conversation.",
+    "Pass only relevant context per dispatch — not entire history.",
+    "Use task board as single source of truth.",
+    "Archive completed workstreams, carry forward only residual items.",
+    "Persist lessons ledger separately — do not inline into dispatch messages."
+  ],
+  "instructions": [
+    "BOOTSTRAP: Decompose goal into 3-5 parallel workstreams with clear boundaries.",
+    "BOOTSTRAP: Assign one subagent per workstream using the role charter template.",
+    "BOOTSTRAP: Initialize shared task board, all agent todo/done logs, and empty lessons ledger.",
+    "ITERATE/PLAN: Leader reviews task board and assigns work units with scope, inputs, done criteria, and deadline signal.",
+    "ITERATE/DELEGATE: Dispatch instructions telling each subagent exactly what to do, what NOT to do, and when to report back.",
+    "ITERATE/EXECUTE: Subagents work within role boundary, send heartbeats at specified intervals, respond to probes, and accept dynamic adjustments.",
+    "ITERATE/COLLECT: Leader gathers status reports, reviews heartbeats, probes silent or drifting agents, and acts on low-confidence or blocked items immediately.",
+    "ITERATE/INTEGRATE: Leader merges outputs, resolves conflicts, updates task board.",
+    "ITERATE/CORRECT: Leader evaluates drift and decides: continue, rebalance, rework, re-scope, or issue dynamic adjustments to in-flight subagents.",
+    "ITERATE/RETRO: Collect per-cycle retro from each subagent, update lessons ledger, adjust next plan.",
+    "ITERATE/PERSIST: All agents write current todo, done log, and retro state to persistent storage.",
+    "CONVERGE: Run final quality checks, collect self-assessments, fix integration gaps. No new scope.",
+    "CLOSE: Produce integrated output, write project-level retrospective, document residual risks, write next-iteration backlog, archive all state (task board, agent logs, lessons ledger)."
+  ],
+  "examples": [
+    {
+      "input": "Migrate monolith to microservices across 6 iterations.",
+      "output": "Leader assigns 4 subagents: Architect (service boundaries, API contracts), Builder (migration per service), Tester (integration tests, benchmarks), Ops (pipeline, canary). Iteration 1: Architect defines contracts, Tester prepares harness, Ops sets up staging. Iteration 3 correction: Tester reports coverage gap on payment service → Leader pauses Builder's next module, redirects to payment tests first."
+    },
+    {
+      "input": "Rewrite all user-facing docs for product rebrand.",
+      "output": "Leader assigns 3 subagents: Writer (draft per section), Reviewer (accuracy & style), Asset Creator (diagrams, screenshots). Leader prioritizes top-traffic pages, gates each batch before publish, runs parallel draft + asset creation."
+    },
+    {
+      "input": "Diagnose and fix an intermittent production crash.",
+      "output": "Leader assigns 3 subagents: Log Analyst (pattern identification), Code Inspector (trace suspicious paths), Reproducer (build minimal repro). Leader manages hypothesis list, dispatches parallel evidence gathering, eliminates hypotheses per cycle, narrows until root cause confirmed."
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "id": "sql-query-optimizer",
+  "title": "SQL Query Optimizer",
+  "description": "Analyze SQL query performance and provide index and query rewrite recommendations.",
+  "version": "1.0.0",
+  "tags": ["sql", "database", "performance", "indexing", "query-plan", "optimization"],
+  "input_schema": {
+    "query": "string",
+    "schema": "string",
+    "explain_plan": "string"
+  },
+  "instructions": [
+    "Inspect scan types, join order, and filter selectivity.",
+    "Recommend indexes with expected impact.",
+    "Suggest query rewrites that preserve semantics.",
+    "Mention trade-offs such as write amplification."
+  ],
+  "examples": [
+    {
+      "input": "Query on orders table is slow with full table scan.",
+      "output": "Add composite index (customer_id, created_at), replace function-wrapped date filter with range predicate, and validate with before/after EXPLAIN ANALYZE."
+    }
+  ]
+}

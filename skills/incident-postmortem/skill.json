@@ -1,0 +1,23 @@
+{
+  "id": "incident-postmortem",
+  "title": "Incident Postmortem",
+  "description": "Create a clear, blameless postmortem with timeline, causes, and preventive actions.",
+  "version": "1.0.0",
+  "tags": ["incident", "sre", "ops", "postmortem", "recovery", "timeline"],
+  "input_schema": {
+    "incident_log": "string",
+    "impact": "string"
+  },
+  "instructions": [
+    "Build a timeline from detection to full recovery.",
+    "Separate trigger from root cause and contributing factors.",
+    "Define short-term mitigations and long-term fixes.",
+    "Assign measurable follow-up actions with owners."
+  ],
+  "examples": [
+    {
+      "input": "Database CPU spike caused 45-min API outage.",
+      "output": "Root cause: missing index on hot query path after release; actions include adding index, query budget checks in CI, and release canary guardrails."
+    }
+  ]
+}

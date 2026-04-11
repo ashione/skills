@@ -1,0 +1,23 @@
+{
+  "id": "test-case-generator",
+  "title": "Test Case Generator",
+  "description": "Generate practical test cases with edge conditions and expected outcomes.",
+  "version": "1.0.0",
+  "tags": ["testing", "qa", "automation", "edge-cases", "regression", "boundary"],
+  "input_schema": {
+    "feature_spec": "string",
+    "risk_notes": "string"
+  },
+  "instructions": [
+    "Create positive, negative, and boundary test scenarios.",
+    "State clear preconditions and expected results.",
+    "Prioritize by risk and user impact.",
+    "Include at least one regression test suggestion."
+  ],
+  "examples": [
+    {
+      "input": "Password reset token expires in 15 minutes.",
+      "output": "Add tests for valid token at 14m59s, expired token at 15m01s, reused token rejection, and timezone-neutral expiration checks."
+    }
+  ]
+}

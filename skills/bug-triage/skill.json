@@ -1,0 +1,23 @@
+{
+  "id": "bug-triage",
+  "title": "Bug Triage",
+  "description": "Classify bugs by severity, impact, and reproducibility, then propose next actions.",
+  "version": "1.0.0",
+  "tags": ["debugging", "triage", "quality", "incident", "severity", "root-cause"],
+  "input_schema": {
+    "bug_report": "string",
+    "system_context": "string"
+  },
+  "instructions": [
+    "Extract observed behavior, expected behavior, and scope.",
+    "Assign severity and confidence level.",
+    "List likely root-cause areas in priority order.",
+    "Provide a minimal reproducible test plan."
+  ],
+  "examples": [
+    {
+      "input": "App crashes when opening empty workspace.",
+      "output": "Severity: High; suspected null workspace metadata path; add guard for empty project index and regression test."
+    }
+  ]
+}

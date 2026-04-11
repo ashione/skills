@@ -1,0 +1,62 @@
+name: Validate Skills
+
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check skill directory structure
+        run: |
+          exit_code=0
+          for dir in skills/*/; do
+            name="$(basename "$dir")"
+            if [[ ! -f "${dir}SKILL.md" ]]; then
+              echo "ERROR: ${name}/ missing SKILL.md"
+              exit_code=1
+            fi
+            if [[ ! -f "${dir}skill.json" ]]; then
+              echo "ERROR: ${name}/ missing skill.json"
+              exit_code=1
+            fi
+          done
+          exit $exit_code
+
+      - name: Validate skill.json syntax and required fields
+        run: |
+          exit_code=0
+          for file in skills/*/skill.json; do
+            name="$(dirname "$file" | xargs basename)"
+            if ! jq empty "$file" 2>/dev/null; then
+              echo "ERROR: ${name}/skill.json is not valid JSON"
+              exit_code=1
+              continue
+            fi
+            for field in id title description version tags instructions examples; do
+              if [[ "$(jq -r "has(\"$field\")" "$file")" != "true" ]]; then
+                echo "ERROR: ${name}/skill.json missing required field: $field"
+                exit_code=1
+              fi
+            done
+            json_id="$(jq -r '.id' "$file")"
+            if [[ "$json_id" != "$name" ]]; then
+              echo "ERROR: ${name}/skill.json id '${json_id}' does not match directory name"
+              exit_code=1
+            fi
+          done
+          exit $exit_code
+
+      - name: Validate SKILL.md sections
+        run: |
+          exit_code=0
+          for file in skills/*/SKILL.md; do
+            name="$(dirname "$file" | xargs basename)"
+            for section in Intent Inputs Examples; do
+              if ! grep -q "^## ${section}" "$file"; then
+                echo "WARN: ${name}/SKILL.md missing section: ## ${section}"
+              fi
+            done
+          done
+          exit $exit_code

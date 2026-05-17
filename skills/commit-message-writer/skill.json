@@ -1,7 +1,7 @@
 {
   "id": "commit-message-writer",
   "title": "Commit Message Writer",
-  "description": "Generate clean, conventional commit messages from code changes.",
+  "description": "Use when writing a Git commit message from a local diff, change summary, staged files, changelog entry, or release-prep commit.",
   "version": "1.0.0",
   "tags": ["git", "commit", "workflow", "conventional-commits", "changelog"],
   "input_schema": {
@@ -9,10 +9,14 @@
     "files_touched": "string[]"
   },
   "instructions": [
-    "Infer commit type and scope using conventional commit style.",
-    "Write subject line under 72 characters.",
-    "Add body bullets only when needed for context.",
-    "Avoid vague verbs like update or fix stuff."
+    "Inspect the actual change, not just filenames, when a diff is available.",
+    "Choose a Conventional Commit type based on primary impact: feat, fix, refactor, test, docs, chore, perf, build, or ci.",
+    "Choose a narrow scope from the affected subsystem, package, route, component, or command; omit scope when it would be generic.",
+    "Write an imperative subject under 72 characters, lowercase after the type, with no trailing period.",
+    "Add a body only when it explains motivation, compatibility, migration, risk, or validation that the subject cannot carry.",
+    "Recommend splitting commits when multiple unrelated changes are present.",
+    "Default output is only the ready-to-use commit message; add Notes only when accuracy is uncertain.",
+    "Do not use vague subjects like update files, misc fixes, address comments, or wip, and do not claim tests ran without evidence."
   ],
   "examples": [
     {

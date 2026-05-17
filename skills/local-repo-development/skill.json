@@ -1,31 +1,73 @@
 {
   "id": "local-repo-development",
   "title": "Local Repo Development",
-  "description": "Follow a local repository development workflow with git worktree setup, pre-commit code review, and sensitive information scanning.",
+  "description": "Use when making local code, docs, config, or test changes that need repository topology discovery, agent instruction files, project specs/docs, git worktree or branch setup, validation, review, secret scanning, commits, PR/MR submission, or CI/CD follow-up.",
   "version": "1.0.0",
-  "tags": ["git", "worktree", "local-development", "code-review", "secret-scanning", "commit-workflow", "ci-cd"],
+  "tags": ["git", "worktree", "local-development", "monorepo", "multi-repo", "agent-instructions", "specs-docs", "code-review", "secret-scanning", "ci-cd"],
   "input_schema": {
     "feature_name": "string — short feature, fix, or task name used to identify the worktree and branch",
     "repo_path": "string — local repository path, usually the current working directory",
     "commit_intent": "string — optional summary of the changes that should be committed",
     "mr_url": "string — optional merge request or pull request URL created for the work"
   },
+  "repository_topologies": {
+    "Single repo": "One git root, no nested .git, and no workspace manifest covering sibling packages; use root instructions plus nearest package/module instructions.",
+    "Monorepo/workspace": "Workspace manifest such as pnpm-workspace.yaml, package.json workspaces, turbo.json, nx.json, lerna.json, rush.json, Cargo workspace, go.work, pyproject workspace, or Bazel files; identify affected packages and run package-scoped plus root gates.",
+    "Multi-repo task": "Request, docs, scripts, or config references sibling repos/services; treat each repo as separately owned with independent instructions, dirty state, branch/worktree decision, and validation.",
+    "Nested repo/submodule": "git submodule status, nested .git, or superproject working tree is present; report parent/submodule status separately and do not edit nested repo as parent content.",
+    "Generated/vendor subtree": "vendor/generated/cache paths or docs mark generated code; do not manually edit unless repo instructions allow it."
+  },
+  "instruction_files": [
+    "AGENTS.md",
+    "CLAUDE.md",
+    "GEMINI.md",
+    "GEMINI.MD",
+    ".cursorrules",
+    ".cursor/rules/*",
+    ".github/copilot-instructions.md",
+    "README.md",
+    "CONTRIBUTING.md",
+    "DEVELOPMENT.md"
+  ],
+  "spec_doc_artifacts": {
+    "Product/spec": "spec.md, SPECS.md, docs/spec*, requirements.md, prd.md, rfcs/*, adr/*",
+    "Architecture": "docs/architecture*, ARCHITECTURE.md, docs/design*, adr/*",
+    "Development workflow": "CONTRIBUTING.md, DEVELOPMENT.md, docs/development*, Makefile, task runner config",
+    "API/data contracts": "openapi*, schema.graphql, proto/*, db/migrations, docs/api*",
+    "Operational docs": "runbook*, docs/ops*, docs/release*, .github/workflows/*"
+  },
+  "knowledge_update_targets": [
+    "AGENTS.md or equivalent agent instruction files for durable agent workflow constraints",
+    "CONTRIBUTING.md or DEVELOPMENT.md for build/test/dev workflow changes",
+    "README.md for user-facing setup or high-level project behavior",
+    "docs/architecture*, adr/*, or docs/design* for durable architectural decisions",
+    "docs/spec*, requirements.md, or RFC/ADR files for accepted product/spec changes"
+  ],
   "instructions": [
     "Confirm the current directory is inside a git repository with git rev-parse --show-toplevel; if not, ask for the repository path.",
+    "Classify repository topology as single repo, monorepo/workspace, multi-repo task, nested repo/submodule, or generated/vendor subtree before editing.",
+    "For multi-repo or nested-repo work, build a per-repo plan before editing any repo.",
+    "Search from each repo root to target paths for instruction files such as AGENTS.md, CLAUDE.md, GEMINI.md, GEMINI.MD, .cursorrules, .cursor/rules/*, .github/copilot-instructions.md, README.md, CONTRIBUTING.md, and DEVELOPMENT.md.",
+    "Read applicable instruction files before choosing implementation or validation commands; nearest path-specific instructions override broader ones unless they conflict with the user's explicit request.",
+    "Discover relevant specs/docs/contracts/workflow files such as spec.md, docs/spec*, requirements, PRDs, RFCs, ADRs, architecture docs, development docs, API schemas, migrations, runbooks, release docs, and CI workflows.",
+    "If no relevant spec/docs exist for a risky change, state that and use repository code/tests as the source of truth.",
     "Before editing, inspect git worktree list --porcelain and git rev-parse --git-dir to determine whether the current checkout is already a suitable linked worktree for the task.",
     "If not in a suitable linked worktree, derive a kebab-case slug from the feature name and create a sibling worktree from origin/main, then origin/master, then local main/master, then HEAD.",
     "Create a branch such as feature/<slug> or fix/<slug> and use a non-destructive unique path if the preferred branch or path already exists.",
     "Never discard existing user changes; work around unrelated dirty files and ask only when they block the task.",
-    "Implement the requested change using the repository's existing build, style, and test conventions.",
+    "Implement the requested change using discovered repository instructions, specs/docs, build conventions, style rules, and test conventions; in multi-repo work, keep each repo's constraints and validation separate.",
+    "When the change creates or invalidates durable repo knowledge, update the appropriate agent instruction, development, README, architecture, ADR, spec, or requirements file; do not add transient notes, private reasoning, secrets, local paths, or duplicated facts.",
     "Before committing, perform a code review pass over git diff HEAD or the staged diff and fix material findings.",
     "Before committing, scan local repository changes for sensitive information with gitleaks, detect-secrets, or a focused fallback scan; never print secret values.",
-    "Stage only intentional files and commit only after code review and sensitive information scan pass, or explicitly state any gate that could not be run.",
-    "After submitting a merge request or pull request, asynchronously track CI/CD until it passes, fails, or is canceled; inspect failing job logs and fix in-scope failures."
+    "Stage only intentional files and commit only after code review and sensitive information scan pass; in multi-repo work, commit and report per repository unless the user explicitly asks otherwise.",
+    "After submitting a merge request or pull request, asynchronously track CI/CD until it passes, fails, or is canceled; inspect failing job logs and fix in-scope failures.",
+    "Report topology classification, affected repositories, applicable instruction files, relevant spec/docs files, selected repo root, branch, worktree status, changed files, validation commands, diff review result, sensitive information scan result, knowledge-file updates, commit hash when created, PR/MR URL when created, and CI/CD state when observed.",
+    "Do not claim a clean worktree, successful test, secret scan, commit, push, PR/MR, or passing CI/CD without observed evidence."
   ],
   "examples": [
     {
       "input": "Add a dashboard filter feature in /repo/app.",
-      "output": "Confirmed current checkout was not a linked worktree, created ../app-dashboard-filter from origin/main on branch feature/dashboard-filter, implemented the change, reviewed the diff, ran a secret scan, committed only the intended files, opened an MR, and asynchronously monitored CI/CD until the pipeline passed."
+      "output": "Classified /repo/app as a monorepo package change, read root AGENTS.md, package README.md, and docs/filters-spec.md, confirmed current checkout was not a linked worktree, created ../app-dashboard-filter from origin/main on branch feature/dashboard-filter, implemented the change under the package's test conventions, updated docs/filters-spec.md because the accepted filter behavior changed, reviewed the diff, ran validation and a secret scan, committed only the intended files, opened an MR, and asynchronously monitored CI/CD until the pipeline passed."
     }
   ]
 }

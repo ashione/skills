@@ -1,6 +1,6 @@
 ---
 name: mobius-harness
-description: Orchestrate end-to-end software delivery from requirements analysis through implementation, validation, PR or MR, CI/CD tracking, and delivery reporting.
+description: Use when a software delivery request spans requirements, planning, implementation, validation, PR/MR handling, CI/CD tracking, or delivery reporting.
 ---
 
 # Mobius Harness
@@ -8,6 +8,12 @@ description: Orchestrate end-to-end software delivery from requirements analysis
 ## Intent
 
 Orchestrate a single agent through the full software delivery loop: clarify requirements, plan the change, implement safely, validate locally, submit a PR or MR, track CI/CD, and produce a delivery report.
+
+## When to Use
+
+- Feature, bugfix, refactor, migration, release, or operational change requests that require more than a single local edit.
+- Work where requirements, implementation, validation, review, PR/MR, or CI/CD state must be tracked as one delivery loop.
+- Do not use for simple read-only questions, one-command lookups, or narrowly scoped edits where the final response can carry all state without loss.
 
 ## References
 
@@ -78,6 +84,14 @@ For every phase and subphase, maintain a status record with:
 - Checklist: objective exit checks for the phase or subphase.
 - Todo List: remaining actions, each with owner or status when useful.
 - Failure List: failed commands, blocked checks, rejected assumptions, CI/CD failures, or unresolved risks.
+
+## Completion Standard
+
+- A phase is complete only when every checklist item has evidence or an explicit unavailable reason.
+- A delivery is complete only when requirements, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, and follow-ups are all reported.
+- For Standard and Strict mode, persisted artifacts must be enough for another agent to resume without relying on conversation memory.
+- Do not collapse requirements, planning, implementation, and verification into a single vague status update.
+- Do not ask the user for decisions that can be answered by reading the repository or running safe local commands.
 - Change List: decisions made, files changed, scope changes, requirement changes, validation changes, or follow-up changes.
 
 When moving between phases, summarize the previous phase status record and carry forward unfinished Todo List and Failure List items.

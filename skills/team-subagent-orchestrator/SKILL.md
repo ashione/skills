@@ -1,6 +1,6 @@
 ---
 name: team-subagent-orchestrator
-description: Coordinate 2-5 specialized subagents for long-running work when the user explicitly asks for delegation or parallel agent execution. Prefer reusing agents with relevant context, keep ownership specialized, and keep the leader in orchestration mode except for minimal unblock work forced by platform constraints.
+description: Use when the user explicitly asks for 2-5 subagents, delegation, parallel agents, or team-style execution for bounded workstreams with distinct ownership.
 ---
 
 # Team Subagent Orchestrator
@@ -8,6 +8,12 @@ description: Coordinate 2-5 specialized subagents for long-running work when the
 ## Intent
 
 Coordinate 2-5 specialized subagents for long-running, multi-iteration tasks when delegation is explicitly requested. Prefer reusing agents that already own the relevant context. The leader stays in orchestration mode: plan, assign, monitor, integrate, and correct. The leader should not absorb specialist work except for the smallest possible unblock step when platform constraints make delegation impossible.
+
+## When to Use
+
+- The user explicitly asks for subagents, delegation, parallel agents, multiple workers, or team-style execution.
+- The work can be split into independent, bounded workstreams with separate owners.
+- Do not use because a task is merely large, complex, or urgent; explicit delegation authorization is required.
 
 ## Inputs
 
@@ -33,6 +39,14 @@ Use this skill in the following order:
 6. Run iteration review before advancing, then persist lessons and state.
 
 The detailed protocols below are the source of truth for each step.
+
+## Output Standard
+
+- Before delegation, publish the owner map, model choice per owner, write scope, read scope, dependencies, and done condition.
+- During execution, report state by workstream status, blockers, evidence, and next decision, not by raw message volume.
+- At convergence, integrate results into one final recommendation or patch set and identify any unresolved ownership conflicts.
+- Do not spawn agents without a bounded assignment and distinct ownership.
+- Do not let the leader take over specialist implementation while an assigned owner is active unless it is the smallest platform-required unblock step.
 
 ---
 

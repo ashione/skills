@@ -1,19 +1,41 @@
 {
   "id": "frontend-ux-polish",
   "title": "Frontend UX Polish",
-  "description": "Improve UI readability, hierarchy, motion, and responsiveness without changing product intent.",
+  "description": "Use when improving an existing UI's readability, hierarchy, accessibility, responsiveness, interaction feedback, or motion without changing product intent.",
   "version": "1.1.0",
   "tags": ["frontend", "ux", "css", "accessibility", "responsive", "design-system"],
   "input_schema": {
     "ui_description": "string — current layout, user pain points, responsive issues, hierarchy problems (e.g. 'Card-based dashboard; cards stack vertically on mobile but horizontal scroll on 768-1024px tablets; primary metrics buried among secondary cards')",
     "constraints": "string — WCAG level, brand palette, CSS framework, max animation duration, supported browsers (e.g. 'WCAG AA, Material 3 palette, Tailwind CSS, 200ms max animation, Chrome 90+, iOS 13+')"
   },
+  "surface_types": {
+    "Dashboard/ops tool": "Prioritize scan, compare, repeated action, density, filters, status states.",
+    "Form/settings": "Prioritize labels, grouping, validation, focus order, and error placement.",
+    "Editor/canvas/tool": "Prioritize toolbars, selection states, keyboard flow, and stable dimensions.",
+    "Commerce/content": "Prioritize media clarity, comparison, price/spec hierarchy, and trust signals.",
+    "Game/interactive": "Prioritize controls, hit targets, motion feedback, and responsive canvas.",
+    "Marketing/hero": "Prioritize first-viewport signal, media relevance, and conversion path."
+  },
+  "audit_dimensions": [
+    "Hierarchy",
+    "Layout",
+    "Typography",
+    "Color/contrast",
+    "Interaction",
+    "Responsiveness",
+    "Motion",
+    "Assets"
+  ],
   "instructions": [
-    "Audit typography, spacing rhythm, and visual hierarchy.",
-    "Suggest a coherent color and contrast strategy that meets the specified WCAG level.",
-    "Add meaningful motion only for state transitions — not decorative. Respect prefers-reduced-motion.",
-    "Ensure layout quality on both mobile and desktop breakpoints.",
-    "Verify contrast ratios meet target accessibility standard."
+    "Classify UI surface type and state the primary user task.",
+    "Identify the top three information priorities and preserve that order in the proposed layout.",
+    "Audit relevant dimensions: hierarchy, layout, typography, color/contrast, interaction, responsiveness, motion, and assets.",
+    "Define concrete layout rules including grid/flex behavior, min/max widths, touch targets, overflow handling, sticky/fixed behavior, and mobile/tablet/desktop breakpoints.",
+    "Define accessibility requirements including WCAG target, contrast ratios, visible focus, semantic labels, reduced motion, keyboard reachability, and error messaging.",
+    "Use motion only for state changes, feedback, or continuity; specify duration/easing and reduced-motion behavior.",
+    "Keep visual style consistent with the existing design system, or define a small palette and type scale with token names if no system exists.",
+    "Provide verification steps for viewport sizes, contrast checks, keyboard path, screen-reader labels when relevant, and regression risks.",
+    "Do not recommend vague cleanup; include measurable values for spacing, font sizes, breakpoints, contrast, animation duration, and hit targets."
   ],
   "examples": [
     {

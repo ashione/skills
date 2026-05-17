@@ -1,7 +1,7 @@
 {
   "id": "sql-query-optimizer",
   "title": "SQL Query Optimizer",
-  "description": "Analyze SQL query performance and provide index and query rewrite recommendations.",
+  "description": "Use when a SQL query, database endpoint, report, or job has slow runtime, high cost, poor plan shape, missing indexes, or needs safer query/index recommendations.",
   "version": "1.0.0",
   "tags": ["sql", "database", "performance", "indexing", "query-plan", "optimization"],
   "input_schema": {
@@ -9,16 +9,37 @@
     "schema": "string",
     "explain_plan": "string"
   },
+  "workload_classes": {
+    "Point lookup/API path": "High p95/p99 on selective lookup; prefer equality-first covering indexes and stable parameter plans.",
+    "Paginated list": "Slow or unstable pages; prefer keyset pagination and deterministic filter/sort/id indexes.",
+    "Reporting/aggregation": "Long scans or spills; prefer pre-aggregation, partition pruning, and group/filter-aware indexes.",
+    "Join-heavy query": "Bad join order or row explosion; prefer join key indexes, stats, and pre-filtering.",
+    "Write-heavy table": "Indexes slow writes; prefer partial/narrow indexes and query rewrites.",
+    "Multi-tenant workload": "Tenant hot spots or cross-tenant scans; prefer tenant-leading indexes or partitioning."
+  },
+  "bottleneck_types": {
+    "Missing/unused index": "Sequential scan on selective predicate or key lookup storm.",
+    "Non-sargable predicate": "Function, cast, or wildcard prevents index use.",
+    "Cardinality mismatch": "Estimated rows far from actual rows.",
+    "Join explosion": "Loops multiply rows unexpectedly.",
+    "Sort/hash spill": "Disk/temp files or memory spill.",
+    "Pagination cost": "Large OFFSET or unstable ordering."
+  },
   "instructions": [
-    "Inspect scan types, join order, and filter selectivity.",
-    "Recommend indexes with expected impact.",
-    "Suggest query rewrites that preserve semantics.",
-    "Mention trade-offs such as write amplification."
+    "Identify database engine/version when available; do not assume PostgreSQL, MySQL, SQLite, SQL Server, BigQuery, Snowflake, or other engine behavior without evidence.",
+    "Classify workload class and bottleneck type before recommending indexes.",
+    "Summarize query purpose, tables, joins, filters, grouping, ordering, limits, and expected row counts.",
+    "Inspect the plan for scan type, join order, row estimates vs actuals, sort/hash spill, temp files, key lookups, sequential scans, remote reads, partition pruning, and late filters.",
+    "Identify the dominant bottleneck with evidence such as estimated/actual rows, loops, timing, I/O, memory, cardinality mismatch, or missing statistics.",
+    "Compare index options when more than one is plausible, including column order, uniqueness/partial/covering choices, write cost, and which query clause each column serves.",
+    "Recommend rewrites only when they preserve semantics; call out NULL behavior, duplicates, time zone/date boundaries, collation, and aggregation changes.",
+    "Include trade-offs such as write amplification, lock/build strategy, storage, planner risk, stale stats, and migration/rollback plan.",
+    "Define validation with before/after EXPLAIN ANALYZE, representative parameters, cache caveats, runtime budget, and regression checks."
   ],
   "examples": [
     {
       "input": "Query on orders table is slow with full table scan.",
-      "output": "Add composite index (customer_id, created_at), replace function-wrapped date filter with range predicate, and validate with before/after EXPLAIN ANALYZE."
+      "output": "Likely Bottleneck: full scan on orders because the filter cannot use an index. Recommended Index: (customer_id, created_at) if equality on customer_id and range/order on created_at are the dominant predicates. Query Rewrite: replace function-wrapped date filter with a half-open range predicate to preserve index use. Trade-offs: extra write cost and storage on orders. Validation Plan: run before/after EXPLAIN ANALYZE with representative customer IDs and check that related write-heavy paths stay within budget."
     }
   ]
 }

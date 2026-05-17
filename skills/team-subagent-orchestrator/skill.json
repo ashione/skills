@@ -1,7 +1,7 @@
 {
   "id": "team-subagent-orchestrator",
   "title": "Team Subagent Orchestrator",
-  "description": "Coordinate 2-5 specialized subagents for long-running work when the user explicitly asks for delegation or parallel agent execution. Prefer reusing agents with relevant context, keep ownership specialized, and keep the leader in orchestration mode except for minimal unblock work forced by platform constraints.",
+  "description": "Use when the user explicitly asks for 2-5 subagents, delegation, parallel agents, or team-style execution for bounded workstreams with distinct ownership.",
   "version": "5.8.0",
   "tags": [
     "team",
@@ -34,6 +34,13 @@
     "Choose a model per subagent based on task difficulty, latency needs, and expected output type.",
     "Keep the leader focused on orchestration artifacts instead of taking specialist tasks away from active owners.",
     "If platform rules force local unblock work, keep it minimal and return ownership to the best specialist agent immediately."
+  ],
+  "output_standard": [
+    "Before delegation, publish the owner map, model choice per owner, write scope, read scope, dependencies, and done condition.",
+    "During execution, report state by workstream status, blockers, evidence, and next decision, not by raw message volume.",
+    "At convergence, integrate results into one final recommendation or patch set and identify unresolved ownership conflicts.",
+    "Do not spawn agents without a bounded assignment and distinct ownership.",
+    "Do not let the leader take over specialist implementation while an assigned owner is active unless it is the smallest platform-required unblock step."
   ],
   "model_selection_rules": [
     "Choose a model per subagent based on the work instead of defaulting the whole team to one model.",

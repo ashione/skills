@@ -1,23 +1,48 @@
 {
   "id": "test-case-generator",
   "title": "Test Case Generator",
-  "description": "Generate practical test cases with edge conditions and expected outcomes.",
+  "description": "Use when converting a feature spec, bug risk, acceptance criteria, or behavior change into executable test scenarios with preconditions, expected results, priorities, and regression coverage.",
   "version": "1.0.0",
   "tags": ["testing", "qa", "automation", "edge-cases", "regression", "boundary"],
   "input_schema": {
     "feature_spec": "string",
     "risk_notes": "string"
   },
+  "test_scopes": {
+    "Pure function": "Deterministic inputs/outputs; cover happy, boundary, invalid input, shape, and regression.",
+    "Component/UI": "Interaction and rendering; cover keyboard/mouse/touch, loading/empty/error, responsive, and accessibility labels.",
+    "API/contract": "Request/response behavior; cover auth, validation, idempotency, error schema, compatibility, and limits.",
+    "Workflow/E2E": "Multi-step user journey; cover critical path, recovery path, persistence, permissions, and integration failure.",
+    "Data migration/job": "Batch or state transformation; cover idempotency, partial failure, rollback, large data, and retry/resume.",
+    "Security/permission": "Access control or sensitive data; cover allowed/denied roles, tenant boundary, audit/logging, and leakage."
+  },
+  "case_families": [
+    "Happy path",
+    "Negative",
+    "Boundary",
+    "State transition",
+    "Permission",
+    "Idempotency/retry",
+    "Concurrency",
+    "Persistence",
+    "Compatibility",
+    "Accessibility/UI"
+  ],
   "instructions": [
-    "Create positive, negative, and boundary test scenarios.",
-    "State clear preconditions and expected results.",
-    "Prioritize by risk and user impact.",
-    "Include at least one regression test suggestion."
+    "Classify test scope and choose relevant case families before generating cases.",
+    "Extract testable rules from the spec: actors, inputs, outputs, state transitions, permissions, limits, timing, error handling, integrations, and persistence.",
+    "Identify ambiguity before inventing behavior and mark unclear cases as Open Question.",
+    "Generate cases across only the relevant families; include a reason when an obvious family is intentionally skipped.",
+    "For each case, state preconditions, steps or stimulus, expected result, priority, automation level, and why the case matters.",
+    "Prioritize by user impact and failure likelihood: P0 release blocker, P1 core behavior, P2 important edge, P3 low-risk coverage.",
+    "Include data setup and teardown needs when state matters.",
+    "Keep the set lean, preferring fewer high-signal tests over exhaustive permutations unless the user asks for a full matrix.",
+    "Do not write vague expected results like works correctly or test implementation details unless exposed as behavior."
   ],
   "examples": [
     {
       "input": "Password reset token expires in 15 minutes.",
-      "output": "Add tests for valid token at 14m59s, expired token at 15m01s, reused token rejection, and timezone-neutral expiration checks."
+      "output": "ID | Priority | Scenario | Preconditions | Steps/Input | Expected Result | Type | Automate?\nPR-1 | P1 | Token works before expiry | Token issued at T0 | Redeem at T0+14m59s | Password reset succeeds once | Boundary | Yes\nPR-2 | P1 | Token expires after limit | Token issued at T0 | Redeem at T0+15m01s | Reset is rejected with expired-token error | Boundary | Yes\nPR-3 | P1 | Token cannot be reused | Token already redeemed | Redeem same token again | Reset is rejected and password is unchanged | Regression | Yes\nPR-4 | P2 | Expiry is timezone-neutral | Server/user time zones differ | Redeem around DST/timezone boundary | Expiry uses server canonical time, not local display time | Timing | Yes"
     }
   ]
 }

@@ -1,23 +1,43 @@
 {
   "id": "bug-triage",
   "title": "Bug Triage",
-  "description": "Classify bugs by severity, impact, and reproducibility, then propose next actions.",
+  "description": "Use when a bug report, crash, regression, failed test, or production symptom needs severity, reproducibility assessment, impact scope, suspected cause areas, and next diagnostic actions.",
   "version": "1.0.0",
   "tags": ["debugging", "triage", "quality", "incident", "severity", "root-cause"],
   "input_schema": {
     "bug_report": "string",
     "system_context": "string"
   },
+  "bug_classes": {
+    "Crash/hang": "Needs stack trace, dump, watchdog, and reproduction path.",
+    "Regression": "Needs last known good version, changed commits, and failing workflow.",
+    "Data corruption/loss": "Needs before/after records, audit logs, and backups; stop writes if ongoing.",
+    "Security/privacy": "Needs access path, actor, exposed data, and audit logs; contain access quickly.",
+    "Performance": "Needs latency, throughput, CPU/memory/I/O, and profile or plan evidence.",
+    "Flaky/intermittent": "Needs repeated runs, timing, environment, and race/concurrency signals.",
+    "UI/UX defect": "Needs browser/device, viewport, interaction path, and screenshot.",
+    "Integration failure": "Needs dependency status, request/response, retry behavior, and error codes."
+  },
+  "reproduction_strategy": {
+    "Always": "Reduce to shortest deterministic path and add regression test target.",
+    "Intermittent": "Collect repeated attempts, timing, random seed, concurrency, logs, and environment deltas.",
+    "Environment-specific": "Capture OS/browser/device/version/config/tenant/region and compare against known-good environment.",
+    "Unknown": "Define minimum reproduction checklist before assigning root cause or fix."
+  },
   "instructions": [
-    "Extract observed behavior, expected behavior, and scope.",
-    "Assign severity and confidence level.",
-    "List likely root-cause areas in priority order.",
-    "Provide a minimal reproducible test plan."
+    "Classify bug class before severity and state why that class fits.",
+    "Extract observable facts: affected user/action, symptom, expected behavior, first known occurrence, frequency, environment, version/build, logs/errors, recent changes, and affected scope.",
+    "Separate evidence from inference and mark missing data explicitly.",
+    "Assign severity using impact and urgency: S0 for outage/data/security/no workaround, S1 for major blocked critical workflow, S2 for degraded important function with workaround or limited audience, S3 for minor or rare defects.",
+    "Assign confidence as High only with direct logs or repro steps, Medium with consistent symptoms, and Low with sparse or conflicting evidence.",
+    "Assess reproducibility as Always, Intermittent, Environment-specific, or Unknown, and apply the matching reproduction strategy.",
+    "List suspected cause areas in priority order with evidence for and against; do not present guesses as root cause.",
+    "Define next actions: data to collect, owner type, diagnostic test/log/query, mitigation for S0/S1, and escalation trigger."
   ],
   "examples": [
     {
       "input": "App crashes when opening empty workspace.",
-      "output": "Severity: High; suspected null workspace metadata path; add guard for empty project index and regression test."
+      "output": "Summary: opening an empty workspace crashes before project metadata loads. Severity: S1 if this blocks startup for all new workspaces; S2 if existing workspaces still work. Reproducibility: Unknown until tested with a freshly created empty workspace on the reported build. Evidence: crash symptom only; no stack trace yet. Suspected Areas: workspace metadata loader, empty project index handling, startup route guard. Next Actions: reproduce with a new empty workspace, capture stack trace, add regression test for empty metadata path, then guard the loader if confirmed."
     }
   ]
 }

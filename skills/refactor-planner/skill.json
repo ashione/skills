@@ -1,7 +1,7 @@
 {
   "id": "refactor-planner",
   "title": "Refactor Planner",
-  "description": "Design a low-risk phased refactor plan with checkpoints and rollback strategy.",
+  "description": "Use when planning a risky refactor, migration, decomposition, dependency untangling, architecture cleanup, codemod campaign, framework move, data migration, or public contract change that needs scope classification, pattern comparison, validation gates, and rollback criteria.",
   "version": "1.1.0",
   "tags": ["refactor", "architecture", "planning", "technical-debt", "migration", "engineering"],
   "input_schema": {
@@ -9,16 +9,22 @@
     "target_state": "string — desired structure, module boundaries, acceptance metrics (e.g. '@org/auth, @org/core, @org/storage with <10K LOC each, independent deploy')"
   },
   "instructions": [
-    "Identify seams for incremental extraction.",
-    "Define milestones with acceptance criteria and duration estimates.",
-    "Specify test coverage needed before each phase.",
-    "Include rollback and compatibility strategy per phase.",
-    "State validation method for each phase transition (e.g. dual-write, shadow traffic, canary)."
+    "Classify scope as Local, Module, Cross-module, Public contract, Data/runtime, or Platform/org; plan for the highest-risk scope when multiple apply.",
+    "Classify refactor type as local cleanup, boundary extraction, dependency inversion, subsystem decomposition, public contract migration, data/runtime migration, framework/platform migration, or mechanical codemod.",
+    "Compare at least two viable patterns such as characterize-then-change, extract interface, branch by abstraction, strangler fig, dual-read/write, shadow traffic, codemod campaign, compatibility shim, facade extraction, or vertical slice pilot.",
+    "Choose one pattern and reject weaker options with concrete risk reasons.",
+    "Define invariant behavior that must not change, including APIs, data contracts, persistence semantics, performance budgets, security boundaries, user workflows, observability, and compatibility promises.",
+    "Map dependencies and risk across callers, owners, transitive imports, side effects, persistence, caches, background jobs, deployments, feature flags, and release cadence.",
+    "Define phases with entry criteria, implementation scope, owned files/modules/services, exit criteria, validation commands or production signals, rollback path, and expected duration.",
+    "Specify required test coverage before each risky move, such as characterization, contract, migration, performance, data, compatibility, and smoke tests.",
+    "Include compatibility strategy for versioned interfaces, temporary shims, dual-write/read, shadow traffic, backfill, migration windows, and deprecation timing.",
+    "State stop conditions such as error budget burn, latency regression, data mismatch, test coverage gap, unclear owner, or compatibility break.",
+    "Do not recommend a rewrite without explaining why incremental migration is insufficient."
   ],
   "examples": [
     {
       "input": "Monolithic 50K LOC Node.js service with tightly coupled auth/business/storage. Target: modular packages with independent deploy.",
-      "output": "Phase 1 (Interface extraction, 1-2 weeks): Define AuthProvider interface contract. Acceptance: 80% test coverage on auth boundary. Rollback: legacy auth remains active.\nPhase 2 (Dual-write validation, 2-3 weeks): Run new storage in shadow mode. Acceptance: 0 discrepancies over 48h production traffic.\nPhase 3 (Adapter swap, 1 week): Switch to new storage. Acceptance: error rate <0.1% increase, p99 latency unchanged. Rollback: revert flag within 5 minutes."
+      "output": "Scope Classification: Cross-module decomposition with public-ish internal contracts. Highest risk is callers depending on auth/storage side effects.\nPattern Comparison: Extract interface fits because it stabilizes auth/storage boundaries before code moves; big-bang package split is rejected because caller and deploy regressions would be hard to isolate; strangler by use case is reserved for later storage routing.\nPhase 1 (Characterization and boundary inventory, 1 week): Map auth/business/storage callers and side effects. Add characterization tests for login, permission checks, token refresh, and storage writes. Exit: top 20 auth/storage call paths covered; no behavior changes. Rollback: revert tests/inventory only.\nPhase 2 (Interface extraction, 1-2 weeks): Define AuthProvider and StorageGateway contracts; adapt legacy implementation behind interfaces. Exit: contract tests pass against legacy implementation; package imports only depend on interfaces. Rollback: legacy concrete imports remain available behind a flag.\nPhase 3 (Dual-write validation, 2-3 weeks): Run new storage in shadow mode for selected write paths. Exit: 0 critical discrepancies and <0.1% non-critical mismatch over 48h representative traffic. Rollback: disable dual-write flag.\nPhase 4 (Adapter swap, 1 week): Route selected workflows to new storage. Exit: error rate <0.1% increase, p99 unchanged, rollback tested in staging. Rollback: revert routing flag within 5 minutes."
     }
   ]
 }

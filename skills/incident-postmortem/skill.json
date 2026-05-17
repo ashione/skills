@@ -1,23 +1,45 @@
 {
   "id": "incident-postmortem",
   "title": "Incident Postmortem",
-  "description": "Create a clear, blameless postmortem with timeline, causes, and preventive actions.",
+  "description": "Use when writing a blameless postmortem for an outage, degradation, data incident, security incident, missed SLA, or operational near miss.",
   "version": "1.0.0",
   "tags": ["incident", "sre", "ops", "postmortem", "recovery", "timeline"],
   "input_schema": {
     "incident_log": "string",
     "impact": "string"
   },
+  "incident_classes": {
+    "Availability outage": "Requires error rate, latency, saturation, and dependency status; prevention focuses on redundancy, load shedding, rollout guardrails, and alert timing.",
+    "Performance degradation": "Requires p95/p99, throughput, resource graphs, and slow traces; prevention focuses on capacity, budgets, backpressure, and autoscaling.",
+    "Data loss/corruption": "Requires affected records, write path, restore point, and audit log; prevention focuses on write controls, validation, backups, and repair tooling.",
+    "Security/privacy": "Requires exposed data, access path, actor, and containment time; prevention focuses on access control, detection, auditability, and disclosure workflow.",
+    "Failed release/change": "Requires change diff, rollout timeline, canary signal, and rollback path; prevention focuses on release gates, canary coverage, flags, and ownership.",
+    "Dependency/vendor": "Requires upstream status, retry/fallback behavior, and contracts; prevention focuses on circuit breakers, fallback modes, and dependency SLOs.",
+    "Near miss": "Requires what almost failed, detection source, and avoided impact; prevention focuses on earlier detection, safer defaults, and runbook gaps."
+  },
+  "cause_terms": {
+    "Trigger": "Immediate event that started the incident.",
+    "Root cause": "System condition that made the trigger harmful.",
+    "Contributing factor": "Condition that increased likelihood, duration, or impact.",
+    "Detection gap": "Why the team did not know sooner or with enough detail.",
+    "Response gap": "Why mitigation took longer or required ad hoc decisions.",
+    "Recovery factor": "What helped reduce duration or impact."
+  },
   "instructions": [
-    "Build a timeline from detection to full recovery.",
-    "Separate trigger from root cause and contributing factors.",
-    "Define short-term mitigations and long-term fixes.",
-    "Assign measurable follow-up actions with owners."
+    "Classify incident class and collect class-specific extra evidence before writing causes and actions.",
+    "Normalize incident facts: service, start/end time, detection source, severity, affected users/regions, customer/business impact, and data/security impact if any.",
+    "Build a chronological timeline from first signal through full recovery, marking uncertain timestamps as approximate.",
+    "Separate trigger, root cause, contributing factors, detection gaps, response gaps, and recovery factors using the defined cause terms; avoid person-blame language.",
+    "Analyze why existing controls did not prevent, detect, or limit the incident, including monitoring, tests, rollout controls, runbooks, ownership, dependency assumptions, and rollback capability.",
+    "Document what went well, what went poorly, and where responders lacked data or authority.",
+    "Define corrective actions with owner, due date, success metric, and verification method, separating immediate mitigations from durable prevention.",
+    "Include at least one action for prevention, one for detection/diagnosis, and one for response/recovery unless already covered with evidence.",
+    "Identify residual risks that remain after the proposed actions."
   ],
   "examples": [
     {
       "input": "Database CPU spike caused 45-min API outage.",
-      "output": "Root cause: missing index on hot query path after release; actions include adding index, query budget checks in CI, and release canary guardrails."
+      "output": "Summary: API requests failed for 45 minutes after a release increased database CPU saturation. Impact: affected API users during the incident window; quantify request failure rate and customer count if available. Root Cause: hot query path lacked an index required by the new access pattern. Contributing Factors: release canary did not include production-like query volume; alert fired after saturation. Actions: add the index, add query budget checks in CI, expand canary metrics to include DB CPU and slow-query rate, and verify with a replay or load test before closing."
     }
   ]
 }

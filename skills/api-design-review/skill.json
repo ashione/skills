@@ -1,24 +1,42 @@
 {
   "id": "api-design-review",
   "title": "API Design Review",
-  "description": "Review an API interface for consistency, safety, and long-term maintainability.",
+  "description": "Use when reviewing REST, GraphQL, RPC, or webhook API contracts for naming, versioning, error semantics, compatibility, auth, idempotency, pagination, or long-term client safety.",
   "version": "1.1.0",
   "tags": ["api", "backend", "review", "rest", "graphql", "versioning", "error-handling"],
   "input_schema": {
     "api_spec": "string — API contract in any format: OpenAPI 3.x, GraphQL schema, or raw endpoint definitions with method/path/body/response",
     "constraints": "string — compatibility requirements, latency SLA, auth model, governance rules (e.g. 'Must support v1 clients for 6 months, p99 < 200ms, OAuth 2.0 bearer')"
   },
+  "api_surface_types": {
+    "REST resource": "Review resource model, HTTP semantics, status codes, pagination, and idempotency.",
+    "GraphQL": "Review schema evolution, nullability, resolver cost, pagination, and deprecation.",
+    "RPC/action": "Review command names, request/response shape, retry semantics, and deadlines.",
+    "Webhook/event": "Review delivery guarantees, schema versioning, idempotency, ordering, and retries.",
+    "SDK/CLI/config": "Review naming, defaults, backwards compatibility, and error surfaces."
+  },
+  "change_risk_classes": {
+    "Additive": "New optional field, endpoint, enum value clients can ignore, or new event type.",
+    "Behavior-changing": "Same shape but different meaning, timing, sorting, default, authorization, or side effect.",
+    "Breaking": "Removal, rename, tightened validation, requiredness/nullability change, or changed error/status contract.",
+    "Operational": "Same contract but different rate limits, retryability, timeout, consistency, or ordering."
+  },
   "instructions": [
-    "Identify endpoint naming, versioning, and resource model issues.",
-    "Validate status code and error model consistency.",
-    "Evaluate backward compatibility and migration risk with concrete timeline.",
-    "Check idempotency guarantees for mutating operations.",
-    "Propose specific changes with before/after examples."
+    "Classify API surface type and change risk class before listing findings.",
+    "Build a contract inventory covering resources, operations, request and response shapes, auth context, pagination, filtering, sorting, async behavior, SDK/CLI surfaces, events/webhooks, and documented errors.",
+    "Review the surface-specific concerns for REST, GraphQL, RPC/action, webhook/event, or SDK/CLI/config; do not apply REST-only rules blindly.",
+    "Review naming and resource/action modeling against the existing API style; flag inconsistent pluralization, verbs in resource paths, hidden side effects, and unclear ownership boundaries.",
+    "Check method/action semantics and safety; safe reads must not mutate, mutating retries must document idempotency keys or replay behavior, and bulk operations must define partial failure handling.",
+    "Validate response and error consistency across status codes, envelopes, machine-readable error codes, retryability, validation details, correlation IDs, rate-limit headers, and empty/list responses.",
+    "Classify compatibility risk as additive, behavior-changing, breaking, or operational; state migration path, deprecation/versioning mechanism, and client notice period.",
+    "Review operational contract details including authz/authn boundary, tenant isolation, pagination stability, ordering guarantees, limits, timeouts, eventual consistency, webhook retries, and observability fields.",
+    "Order findings by severity and include affected contract element, surface type, risk class, client impact, fix, compatibility impact, and before/after examples when shapes change.",
+    "Do not recommend a breaking change without a migration or versioning plan."
   ],
   "examples": [
     {
       "input": "REST spec for user lifecycle: PUT /users/{id} replaces entire user object; errors return {message: string} on some endpoints and {error: {code, detail}} on others.",
-      "output": "Issue 1: PUT /users/{id} is non-idempotent because it silently drops unset fields. Fix: use PATCH for partial update, keep PUT for full replacement with required field validation.\nIssue 2: Inconsistent error schema. Fix: normalize to {error: {code: string, message: string, details?: object}} across all endpoints.\nIssue 3: No versioning strategy. Fix: add /v1/ prefix now; define deprecation header (Sunset) for future migration."
+      "output": "High: PUT /users/{id} currently behaves like partial update and silently drops omitted fields, so retries and SDK clients can lose data. Fix: use PATCH /users/{id} for partial updates; keep PUT only for full replacement with required-field validation. Compatibility: additive if PUT behavior is preserved during a deprecation window.\nMedium: Error schema alternates between {message} and {error}. Fix: normalize to {error: {code: string, message: string, details?: object}}; document stable machine codes.\nOpen Question: confirm whether existing clients already depend on unversioned paths before adding /v1."
     }
   ]
 }

@@ -35,6 +35,15 @@
 - 新增 npm、Python、Go、Rust 包、系统二进制、CI action、外部服务、MCP server、plugin 安装要求或平台专属能力，视为新增依赖；必须在计划中说明用途、替代方案、安装位置、版本约束、验证命令、CI/CD 影响和回滚方式。
 - 如果只是为了增强文档流程约束，优先用 Markdown gate、artifact template 或轻量脚本表达；只有当文档约束无法被审计或复现时，才考虑新增依赖。
 
+依赖判断应写成可审查记录，至少包含：
+
+- `Decision`：`no-new-dependency`、`existing-toolchain` 或 `new-dependency-required`。
+- `Reason`：为什么现有 Markdown、模板、脚本或平台能力足够或不足。
+- `Evidence`：相关 skill、脚本、命令、CI job、文档链接或失败记录。
+- `Fallback`：依赖或平台能力不可用时，agent 应该阻塞、降级、跳过还是记录 exception。
+
+本次引入 `superpowers:brainstorming` 和 `superpowers:writing-plans` 属于 `no-new-dependency`：它们是目标 agent 平台可选加载的流程能力，仓库不新增包、二进制、CI action 或运行时安装步骤。Mobius Harness 只要求在 G1/G2 gate 中记录是否使用、为何不适用或如何处理不可用状态。
+
 ## Skill 标准
 
 本仓库的 skill 不是泛用提示词集合，而是可复用的工作标准。新增或修改 skill 时必须满足：

@@ -22,6 +22,13 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 - [ ] Success criteria are verifiable.
 - [ ] Scope and non-goals are explicit.
 - [ ] High-impact unknowns are resolved or recorded.
+- [ ] `superpowers:brainstorming` is used or marked not applicable with evidence.
+
+### Gate Ledger
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -53,6 +60,10 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 ## Open Questions
 
 ## User Decisions
+
+## Superpowers Decisions
+
+- Brainstorming:
 ```
 
 ## plan.md template
@@ -76,6 +87,13 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 - [ ] Implementation steps are ordered.
 - [ ] Validation strategy covers success criteria.
 - [ ] Rollback or mitigation notes are recorded.
+- [ ] `superpowers:writing-plans` is used or marked not applicable with evidence.
+
+### Gate Ledger
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
+| G2 | plan | Repo findings, affected areas, specialist skills, Superpowers planning decision, implementation steps, validation commands, acceptance criteria, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -95,6 +113,11 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 ## Repo Findings
 
 ## Specialist Skills
+
+## Superpowers Decisions
+
+- Brainstorming:
+- Writing Plans:
 
 ## Implementation Steps
 
@@ -123,11 +146,23 @@ Evidence: <commands, diff, scanner output summary, PR/MR links, CI/CD links, or 
 
 ### Checklist
 
+- [ ] Worktree or branch and base ref are recorded.
+- [ ] Changed files are intentional and mapped to acceptance criteria.
 - [ ] Local validation commands are run or marked unavailable with reason.
 - [ ] Diff review is complete.
 - [ ] Sensitive information scan is complete.
 - [ ] PR/MR state is recorded or marked not applicable.
 - [ ] CI/CD terminal state is recorded or marked not applicable.
+
+### Gate Ledger
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
+| G3 | local-development | Worktree or branch, base ref, and dirty-state handling are recorded. | blocked | <evidence pointer> | <required if exception> |
+| G4 | implementation | Changed files are intentional and mapped to acceptance criteria. | blocked | <evidence pointer> | <required if exception> |
+| G5 | verification | Local commands, command results, diff review, sensitive information scan, and unresolved risks are recorded. | blocked | <evidence pointer> | <required if exception> |
+| G6 | pr-mr | PR/MR URL or not-applicable reason is recorded. | blocked | <evidence pointer> | <required if exception> |
+| G7 | ci-cd | Terminal CI/CD state or not-applicable reason is recorded. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -191,6 +226,12 @@ Evidence: <artifact links, commands, PR/MR links, CI/CD links, or reason unavail
 - [ ] Validation, review, and sensitive scan are summarized.
 - [ ] PR/MR and CI/CD state are summarized.
 - [ ] Risks and follow-ups are explicit.
+
+### Gate Ledger
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
+| G8 | report | Final delivery report includes requirements, implementation, changed files, validation, review, sensitive scan, PR/MR, CI/CD, risks, and follow-ups. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 

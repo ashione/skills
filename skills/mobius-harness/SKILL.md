@@ -35,14 +35,16 @@ Load references only when needed:
 
 1. Treat Mobius Harness as the primary entrypoint for end-to-end delivery work. Keep one agent accountable for the whole loop unless the user explicitly asks for delegation.
 2. Select `Lightweight`, `Standard`, or `Strict` mode at the start. Use persisted `.delivery/runs/<run-id>/` artifacts for Standard and Strict work.
-3. Follow the delivery process in order. Do not skip a phase unless the task is explicitly too small for persisted artifacts; even then, preserve the same information in the final response.
+3. Follow the delivery process in order. Treat each phase gate as a blocking gate, not as a reminder. Do not move to the next phase until the current gate is `pass`, `not-applicable`, or an explicitly recorded `exception`.
 4. Analyze requirements first:
    - Restate the goal, background, success criteria, scope, non-goals, risks, and open questions.
+   - Use `superpowers:brainstorming` before creative work, behavior design, feature shaping, or ambiguous requirement decisions; record whether it was used, not applicable, or blocked.
    - Ask the user only for high-impact intent or tradeoff decisions that cannot be discovered from the repo.
    - For long or risky tasks, create `.delivery/runs/<run-id>/requirements.md`.
 5. Build a delivery plan:
    - Inspect the repository before deciding the implementation path.
    - Identify specialist skills to apply, such as `refactor-planner`, `api-design-review`, `test-case-generator`, `frontend-ux-polish`, `sql-query-optimizer`, `bug-triage`, or `team-subagent-orchestrator` when explicitly authorized.
+   - Use `superpowers:writing-plans` when the delivery needs a multi-step executable plan, especially for Standard or Strict mode.
    - Define implementation steps, validation commands, acceptance criteria, and delivery checkpoints.
    - For long or risky tasks, create `.delivery/runs/<run-id>/plan.md`.
 6. Develop locally using `local-repo-development`:
@@ -66,33 +68,63 @@ Load references only when needed:
    - For long or risky tasks, write `.delivery/runs/<run-id>/delivery-report.md`.
    - For short tasks, the final response may be the only report, but it must still cover the same delivery facts.
 
+## Gate Contract
+
+Mobius Harness gates are enforcement points. A gate is satisfied only when its required evidence exists in a Gate Ledger row and the row has an allowed terminal status.
+
+Allowed gate statuses:
+
+- `pass`: required evidence exists and the phase may advance.
+- `not-applicable`: the gate does not apply, with evidence explaining why.
+- `exception`: the gate is not fully satisfied, but the user or repository policy accepted the risk; record the reason in Failure List and the approval or policy basis in Change List.
+- `blocked`: the gate is not satisfied and the agent must not advance.
+
+Every phase/subphase must maintain a Gate Ledger with:
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
+
+Before moving phases, answer the gate decision in the ledger:
+
+1. What exact evidence proves this gate is satisfied?
+2. If evidence is missing, is it unavailable, not applicable, or a true blocker?
+3. If using an exception, where is the accepted risk recorded?
+4. What unfinished Todo List or Failure List items carry forward?
+
+For `Standard` and `Strict` deliveries, run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` before marking the delivery complete when that script exists in the repository. If the script is unavailable, record that as a gate exception with reason.
+
 ## Process Standard
 
 Use these phase gates. Each phase may be split into smaller subphases when the work is large, risky, or blocked.
 
-1. Requirements gate: goal, success criteria, scope, non-goals, risks, and open questions are explicit.
-2. Plan gate: implementation path, affected areas, specialist skills, validation commands, and acceptance criteria are explicit.
-3. Development gate: worktree or branch choice is recorded and unrelated user changes are protected.
-4. Verification gate: local checks, diff review, and sensitive information scan are complete or explicitly marked unavailable with reason.
-5. PR/MR gate: PR/MR URL or reason for not creating one is recorded.
-6. CI/CD gate: terminal CI/CD state is recorded when remote checks exist.
-7. Report gate: final delivery report is complete.
+1. `G1 Requirements`: goal, success criteria, scope, non-goals, risks, open questions, and Superpowers brainstorming decision are explicit.
+2. `G2 Plan`: implementation path, affected areas, specialist skills, Superpowers planning decision, validation commands, and acceptance criteria are explicit.
+3. `G3 Local Development`: worktree or branch choice is recorded and unrelated user changes are protected.
+4. `G4 Implementation`: changed files are intentional and mapped to accepted requirements.
+5. `G5 Verification`: local checks, diff review, and sensitive information scan are complete or explicitly marked unavailable with reason.
+6. `G6 PR/MR`: PR/MR URL or reason for not creating one is recorded.
+7. `G7 CI/CD`: terminal CI/CD state is recorded when remote checks exist.
+8. `G8 Report`: final delivery report is complete and includes all unresolved risks or follow-ups.
 
 For every phase and subphase, maintain a status record with:
 
 - Goal: what this phase or subphase must achieve.
 - Checklist: objective exit checks for the phase or subphase.
+- Gate Ledger: phase gate decisions with status and evidence.
 - Todo List: remaining actions, each with owner or status when useful.
 - Failure List: failed commands, blocked checks, rejected assumptions, CI/CD failures, or unresolved risks.
+- Change List: decisions made, files changed, scope changes, requirement changes, validation changes, or follow-up changes.
 
 ## Completion Standard
 
 - A phase is complete only when every checklist item has evidence or an explicit unavailable reason.
+- A phase cannot be `complete` while its Gate Ledger has any `blocked` row.
+- Requirements and plan phases must record whether `superpowers:brainstorming` and `superpowers:writing-plans` were used, skipped as not applicable, or excepted with accepted risk.
 - A delivery is complete only when requirements, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, and follow-ups are all reported.
+- A delivery cannot be `complete` until gates `G1` through `G8` are `pass`, `not-applicable`, or `exception`.
 - For Standard and Strict mode, persisted artifacts must be enough for another agent to resume without relying on conversation memory.
 - Do not collapse requirements, planning, implementation, and verification into a single vague status update.
 - Do not ask the user for decisions that can be answered by reading the repository or running safe local commands.
-- Change List: decisions made, files changed, scope changes, requirement changes, validation changes, or follow-up changes.
 
 When moving between phases, summarize the previous phase status record and carry forward unfinished Todo List and Failure List items.
 
@@ -109,7 +141,7 @@ For long or risky work, maintain `.delivery/runs/<run-id>/` as a Delivery Episod
 - `verification.md`: Commands run, outcomes, local failures and fixes, diff review notes, sensitive information scan result, PR/MR URL, and CI/CD runs.
 - `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, and release notes.
 
-Each artifact must include status, timestamp or phase marker, evidence, and phase/subphase records using Goal, Checklist, Todo List, Failure List, and Change List. Use table records for Todo List, Failure List, and Change List so another agent can audit and resume the delivery.
+Each artifact must include status, timestamp or phase marker, evidence, and phase/subphase records using Goal, Checklist, Gate Ledger, Todo List, Failure List, and Change List. Use table records for Gate Ledger, Todo List, Failure List, and Change List so another agent can audit and resume the delivery.
 
 When resuming, read the Delivery Episode Package first, identify the earliest incomplete phase or subphase, review Todo List, Failure List, and Change List, confirm git state, and continue from the first unmet gate.
 

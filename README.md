@@ -15,6 +15,8 @@
 
 其他 skills 是 Mobius Harness 可按需调用的专业能力，例如：
 
+- `superpowers:brainstorming`：创意工作、功能塑形、需求意图不清或存在多个方案时，用于先形成可审查设计
+- `superpowers:writing-plans`：Standard / Strict 交付或多步骤实现中，用于生成可执行计划
 - `local-repo-development`：单仓/多仓拓扑识别、仓库级 agent 指令与 spec/docs 发现、worktree、提交前 review、敏感信息扫描、CI/CD 跟踪
 - `refactor-planner`：按重构范围和范式对比生成低风险阶段计划
 - `api-design-review`：按 API 形态和变更风险审查契约
@@ -23,6 +25,24 @@
 - `bug-triage`：按 bug class、复现策略、严重度和证据进行分级
 - `incident-postmortem`：按 incident class 和 cause analysis 生成复盘
 - `commit-message-writer`：提交信息生成
+
+## 依赖判断
+
+修改本仓库文档、skills 或 harness 流程时，必须先判断是否需要新增依赖，而不是默认引入工具或包：
+
+- 仅引用已经由目标 agent 平台提供的 skill、plugin 或本地能力，例如 `superpowers:brainstorming`、`superpowers:writing-plans`，不视为仓库运行时依赖；但必须在相关 gate 或计划中记录使用条件和不可用时的处理方式。
+- 使用已有仓库脚本、POSIX shell、Git、GitHub CLI、Python 标准库或 CI 已安装工具，视为现有开发工具链；若 README、docs 或脚本开始强制依赖它们，应写明验证命令和失败时的替代路径。
+- 新增 npm、Python、Go、Rust 包、系统二进制、CI action、外部服务、MCP server、plugin 安装要求或平台专属能力，视为新增依赖；必须在计划中说明用途、替代方案、安装位置、版本约束、验证命令、CI/CD 影响和回滚方式。
+- 如果只是为了增强文档流程约束，优先用 Markdown gate、artifact template 或轻量脚本表达；只有当文档约束无法被审计或复现时，才考虑新增依赖。
+
+依赖判断应写成可审查记录，至少包含：
+
+- `Decision`：`no-new-dependency`、`existing-toolchain` 或 `new-dependency-required`。
+- `Reason`：为什么现有 Markdown、模板、脚本或平台能力足够或不足。
+- `Evidence`：相关 skill、脚本、命令、CI job、文档链接或失败记录。
+- `Fallback`：依赖或平台能力不可用时，agent 应该阻塞、降级、跳过还是记录 exception。
+
+本次引入 `superpowers:brainstorming` 和 `superpowers:writing-plans` 属于 `no-new-dependency`：它们是目标 agent 平台可选加载的流程能力，仓库不新增包、二进制、CI action 或运行时安装步骤。Mobius Harness 只要求在 G1/G2 gate 中记录是否使用、为何不适用或如何处理不可用状态。
 
 ## Skill 标准
 
@@ -59,7 +79,13 @@
 
 `.delivery/runs/` 默认不提交到 git。
 
-交付过程必须遵循 Mobius Harness 的阶段门禁。任务开始时选择 `Lightweight`、`Standard` 或 `Strict` 模式；大任务可拆成子阶段。每个阶段和子阶段都必须记录 Goal、Checklist、Todo List、Failure List 和 Change List。任何 complete 状态都必须有 evidence。交付产物必须遵循 [docs/HARNESS.md](docs/HARNESS.md) 中的 artifact 标准。
+交付过程必须遵循 Mobius Harness 的阻塞式阶段门禁。任务开始时选择 `Lightweight`、`Standard` 或 `Strict` 模式；大任务可拆成子阶段。每个阶段和子阶段都必须记录 Goal、Checklist、Gate Ledger、Todo List、Failure List 和 Change List。任何 complete 状态都必须有 evidence，且不能存在 `blocked` gate。交付产物必须遵循 [docs/HARNESS.md](docs/HARNESS.md) 中的 artifact 标准。
+
+如果使用 `.delivery/runs/<run-id>/`，完成前运行：
+
+```bash
+bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>
+```
 
 如果交付被中断，后续 agent 应先读取 `.delivery/runs/<run-id>/`，找到最早未完成的阶段或子阶段，再基于 Todo List、Failure List、Change List 和当前 git 状态继续执行。
 

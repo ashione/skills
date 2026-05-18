@@ -8,6 +8,8 @@ Mobius Harness should actively consider specialist skills:
 
 | Situation | Skill |
 |---|---|
+| Creative work, feature shaping, behavior design, unclear product intent, competing solution paths | `superpowers:brainstorming` |
+| Multi-step implementation plan, Standard or Strict delivery, risky handoff to another agent | `superpowers:writing-plans` |
 | API contract, compatibility, status codes, auth, versioning | `api-design-review` |
 | Refactor, migration, module split, rollback planning | `refactor-planner` |
 | Bug, crash, regression, unclear reproduction | `bug-triage` |
@@ -23,11 +25,15 @@ Mobius Harness should actively consider specialist skills:
 Delivery is done only when:
 
 - success criteria are met or explicitly marked unmet,
+- Superpowers brainstorming and writing-plans decisions are recorded for requirements and plan gates,
+- Gate Ledger rows `G1` through `G8` are all `pass`, `not-applicable`, or `exception`,
+- no Gate Ledger row is `blocked`,
 - local validation is complete or unavailable with reason,
 - diff review is complete,
 - sensitive information scan is complete,
 - PR/MR state is recorded or not applicable with reason,
 - CI/CD terminal state is recorded or not applicable with reason,
+- `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` passes for Standard and Strict deliveries when the script exists, or its unavailability is recorded as an exception,
 - open failures are fixed, accepted, or deferred,
 - delivery report is complete.
 
@@ -37,6 +43,8 @@ Mobius Harness must not:
 
 - publish to production without explicit authorization,
 - bypass failing CI/CD without recording accepted risk,
+- advance past a blocked gate,
+- mark an exception without recording the accepted risk in Failure List and Change List,
 - delete or overwrite unrelated user changes,
 - commit secrets or print secret values,
 - run destructive operations without explicit authorization,
@@ -48,6 +56,7 @@ PR/MR body should include:
 
 - `Summary`
 - `Validation`
+- `Gate Ledger`
 - `Risk`
 - `Rollback`
 - `Delivery Episode`

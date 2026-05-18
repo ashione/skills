@@ -12,6 +12,8 @@ The loop is:
 requirements -> plan -> local development -> validation -> PR/MR + CI/CD -> delivery report
 ```
 
+Every transition is controlled by a gate. A gate is not satisfied by prose alone; it needs a Gate Ledger row with required evidence, status, evidence pointer, and any accepted exception.
+
 ## Delivery Episode Package
 
 For long or risky tasks, Mobius Harness records work as a Delivery Episode Package under:
@@ -42,10 +44,12 @@ Detailed standards live with the `mobius-harness` skill so agents can load only 
 Mobius Harness must:
 
 - select `Lightweight`, `Standard`, or `Strict` mode at the start,
-- follow ordered phase gates from requirements to final report,
+- follow ordered blocking gates from requirements to final report,
 - split large, risky, or blocked work into subphases,
-- maintain Goal, Checklist, Todo List, Failure List, and Change List for each phase or subphase,
+- maintain Goal, Checklist, Gate Ledger, Todo List, Failure List, and Change List for each phase or subphase,
 - require evidence before marking any phase or delivery complete,
+- stop at any `blocked` gate until evidence is added, the gate is marked `not-applicable`, or an explicit `exception` is recorded,
+- run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` before completing Standard or Strict deliveries when persisted artifacts exist,
 - follow `local-repo-development` for worktree, branch, commit, PR/MR, and CI/CD handling,
 - produce a delivery report that can be sent to the user or attached to a PR/MR.
 
@@ -61,7 +65,11 @@ Mobius Harness can apply other skills as needed:
 - `bug-triage` for severity, reproduction, and likely root cause.
 - `commit-message-writer` for conventional commit messages.
 - `team-subagent-orchestrator` only when the user explicitly authorizes delegation.
+- `superpowers:brainstorming` for creative work, feature shaping, unclear product intent, or competing solution paths.
+- `superpowers:writing-plans` for Standard or Strict deliveries that need a multi-step executable implementation plan.
 
 ## Completion Rule
 
 Mobius Harness should not consider a delivery complete until it has clarified high-impact ambiguity, inspected the repository, followed the local repository workflow, run relevant validation, reviewed the diff, scanned for sensitive information, recorded PR/MR and CI/CD state when applicable, and produced a delivery report.
+
+For Standard and Strict deliveries, the Delivery Episode Package must contain terminal Gate Ledger rows for `G1` through `G8`: `pass`, `not-applicable`, or `exception`. Any `blocked` gate means the delivery is not complete.

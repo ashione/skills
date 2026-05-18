@@ -26,9 +26,25 @@ Use Markdown for all persisted artifacts. Every artifact must include:
 - `Phase`: matching the current delivery phase.
 - `Updated`: timestamp or clear phase marker.
 - `Evidence`: links, commands, file paths, PR/MR URL, CI/CD URL, or explicit reason when evidence is unavailable.
-- Phase/subphase records using `Goal`, `Checklist`, `Todo List`, `Failure List`, and `Change List`.
+- Phase/subphase records using `Goal`, `Checklist`, `Gate Ledger`, `Todo List`, `Failure List`, and `Change List`.
 
 Evidence is mandatory. A completed phase, subphase, or final delivery without evidence is invalid.
+
+## Gate Ledger
+
+Every persisted phase/subphase record must include a Gate Ledger table:
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
+
+Gate rules:
+
+- Use gate ids `G1` through `G8` from `delivery-process.md`.
+- `Status` must be one of `pass`, `not-applicable`, `exception`, or `blocked`.
+- `Evidence` must point to commands, files, diffs, PR/MR URLs, CI/CD URLs, user decisions, or a reason evidence is unavailable.
+- `Exception` is required when `Status` is `exception`; record the same accepted risk in Failure List and Change List.
+- A `blocked` gate prevents phase completion and final delivery completion.
+- For Standard and Strict deliveries, the combined artifacts must contain a terminal row for every gate from `G1` through `G8`.
 
 Evidence format:
 
@@ -44,6 +60,8 @@ Evidence format:
 ### requirements.md
 
 - `Phase State`
+- `Gate Ledger`
+- `Superpowers Decisions`
 - `Goal`
 - `Background`
 - `Success Criteria`
@@ -56,8 +74,10 @@ Evidence format:
 ### plan.md
 
 - `Phase State`
+- `Gate Ledger`
 - `Repo Findings`
 - `Specialist Skills`
+- `Superpowers Decisions`
 - `Implementation Steps`
 - `Validation Strategy`
 - `Acceptance Criteria`
@@ -67,6 +87,7 @@ Evidence format:
 ### verification.md
 
 - `Phase State`
+- `Gate Ledger`
 - `Local Commands`
 - `Command Results`
 - `Diff Review`
@@ -82,6 +103,7 @@ Evidence format:
 ### delivery-report.md
 
 - `Phase State`
+- `Gate Ledger`
 - `Summary`
 - `Requirements Result`
 - `Implementation Summary`

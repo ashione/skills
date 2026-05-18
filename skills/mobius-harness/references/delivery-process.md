@@ -8,15 +8,52 @@ Use Mobius Harness when a user asks to implement, deliver, create a PR/MR, follo
 
 Choose one mode at the start:
 
-- `Lightweight`: small, low-risk changes. Persisted artifacts are optional, but the final response must include the same facts.
-- `Standard`: normal code delivery. Create `.delivery/runs/<run-id>/` and maintain the four core artifacts.
-- `Strict`: high-risk, release, security, migration, multi-module, or user-requested audit work. Persist every phase/subphase state transition and all gate exceptions.
+- `Lightweight`: small, low-risk changes. Persisted artifacts are optional, but the final response must include a compact Gate Ledger and the same delivery facts.
+- `Standard`: normal code delivery. Create `.delivery/runs/<run-id>/`, maintain the four core artifacts, and keep a Gate Ledger for every phase.
+- `Strict`: high-risk, release, security, migration, multi-module, or user-requested audit work. Persist every phase/subphase state transition, gate decision, and gate exception.
 
 Generate `run-id` from the task name in kebab-case, for example `add-user-auth`. If it already exists, append a date or short sequence such as `add-user-auth-20260517` or `add-user-auth-2`. Avoid spaces, random long hashes, and non-descriptive ids.
 
 ## Delivery Process Standard
 
 Mobius Harness follows these ordered phases. Each phase has an exit gate; do not move to the next phase until the gate is satisfied or the exception is explicitly recorded.
+
+### Superpowers Planning Hooks
+
+Mobius Harness may use Superpowers skills as phase-level quality gates, but the harness remains the accountable delivery loop.
+
+| Situation | Required Decision |
+|---|---|
+| Creative work, new behavior, unclear product intent, UX shaping, or competing solution paths | Use `superpowers:brainstorming`, or record why it is not applicable. |
+| Multi-step implementation, Standard mode, Strict mode, risky refactor, migration, or work that another agent may execute | Use `superpowers:writing-plans`, or record why it is not applicable. |
+| Already-approved external spec or plan | Record the source artifact and mark the Superpowers step `not-applicable` unless new ambiguity appears. |
+
+Record the decision in the relevant phase state:
+
+- Requirements phase: brainstorming used, not applicable, blocked, or excepted.
+- Plan phase: writing-plans used, not applicable, blocked, or excepted.
+- Gate Ledger evidence: skill name, artifact path, user decision, or reason not applicable.
+
+### Gate Enforcement Standard
+
+Gates are blocking controls. They are not prose summaries or optional checklist items.
+
+Allowed gate statuses:
+
+| Status | Meaning | May Advance |
+|---|---|---|
+| `pass` | Required evidence exists and satisfies the gate. | Yes |
+| `not-applicable` | Gate does not apply, and the reason is evidenced. | Yes |
+| `exception` | Gate is not fully satisfied, but the user or repository policy accepted the risk. Failure List and Change List must both record it. | Yes |
+| `blocked` | Required evidence is missing, failed, or unresolved. | No |
+
+Gate rules:
+
+- A phase or subphase cannot be marked `complete` while any related gate is `blocked`.
+- A phase transition must include a Gate Ledger row with gate id, required evidence, status, evidence pointer, and exception record when relevant.
+- A skipped command, missing artifact, unresolved question, failing CI job, or unavailable scanner is `blocked` until it is converted to `not-applicable` or `exception` with evidence.
+- An exception must identify who or what accepted the risk: a user decision, repository instruction, documented policy, or explicit out-of-scope rationale.
+- For `Standard` and `Strict` deliveries, run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` before the final report when the script exists. Record failure output in Failure List and do not complete the delivery until it passes or is explicitly excepted.
 
 Large, risky, or blocked phases must be split into subphases. A subphase uses the same status record format as a phase, but with a narrower goal and checklist.
 
@@ -34,15 +71,16 @@ Recommended subphase naming:
 - `delivery.pr`
 - `delivery.ci-followup`
 
-| Phase | Required work | Exit gate |
-|---|---|---|
-| Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, and user decisions. | Requirements are specific enough to implement and verify. |
-| Plan | Inspect the repo, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, and checkpoints. | Another agent could implement from the plan without choosing strategy. |
-| Local Development | Follow `local-repo-development`, including worktree or branch selection and preservation of unrelated changes. | Worktree or branch and base ref are recorded. |
-| Implementation | Make the scoped change and keep the diff coherent. | Changed files are intentional and mapped to acceptance criteria. |
-| Verification | Run local checks, review the diff, and scan for sensitive information. | Validation outcomes and unresolved risks are recorded. |
-| PR/MR + CI/CD | Commit, open PR/MR when applicable, and track CI/CD to pass, fail, or canceled. | PR/MR state and terminal CI/CD state are recorded or marked not applicable with reason. |
-| Report | Summarize what was delivered and what remains. | Delivery report is complete and can be sent to the user or attached to PR/MR. |
+| Gate | Phase | Required work | Exit gate |
+|---|---|---|---|
+| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, and the `superpowers:brainstorming` decision. | Requirements are specific enough to implement and verify. |
+| `G2` | Plan | Inspect the repo, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy. |
+| `G3` | Local Development | Follow `local-repo-development`, including worktree or branch selection and preservation of unrelated changes. | Worktree or branch, base ref, and dirty-state handling are recorded. |
+| `G4` | Implementation | Make the scoped change and keep the diff coherent. | Changed files are intentional and mapped to acceptance criteria. |
+| `G5` | Verification | Run local checks, review the diff, and scan for sensitive information. | Validation outcomes, diff review, sensitive scan, and unresolved risks are recorded. |
+| `G6` | PR/MR | Commit and open PR/MR when applicable. | PR/MR URL or not-applicable reason is recorded. |
+| `G7` | CI/CD | Track CI/CD to pass, fail, or canceled when remote checks exist. | Terminal CI/CD state is recorded or marked not applicable with reason. |
+| `G8` | Report | Summarize what was delivered and what remains. | Delivery report is complete and can be sent to the user or attached to PR/MR. |
 
 ## Phase State Standard
 
@@ -50,6 +88,7 @@ Every phase and subphase must record state with these sections:
 
 - `Goal`: the concrete outcome this phase or subphase must achieve.
 - `Checklist`: objective checks required to exit this phase or subphase.
+- `Gate Ledger`: gate id, required evidence, status, evidence pointer, and exception detail.
 - `Todo List`: unfinished actions, preferably with status such as `todo`, `doing`, `blocked`, or `done`.
 - `Failure List`: failed commands, blocked checks, rejected assumptions, CI/CD failures, defects found during review, or unresolved risks.
 - `Change List`: decisions made, files changed, requirement changes, scope changes, validation changes, or follow-up changes.
@@ -63,6 +102,7 @@ Use these status values:
 When transitioning phases:
 
 - mark checklist items as complete or explicitly deferred,
+- update the related Gate Ledger row to `pass`, `not-applicable`, `exception`, or `blocked`,
 - move unfinished Todo List items into the next phase,
 - carry unresolved Failure List items forward until resolved or accepted,
 - record scope or implementation changes in Change List,
@@ -84,6 +124,11 @@ Evidence: <commands, files, links, PR/MR, CI/CD, or reason unavailable>
 ### Checklist
 
 - [ ] ...
+
+### Gate Ledger
+
+| Gate | Phase | Required Evidence | Status | Evidence | Exception |
+|---|---|---|---|---|---|
 
 ### Todo List
 

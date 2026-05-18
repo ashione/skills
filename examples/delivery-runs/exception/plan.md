@@ -25,7 +25,21 @@ Show a complete plan gate for an exception fixture.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, rollback notes, and checkpoints are recorded. | pass | file:examples/delivery-runs/exception/plan.md | |
+| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | pass | file:examples/delivery-runs/exception/plan.md | |
+
+### Hook Ledger
+
+| Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
+|---|---|---|---|---|---|
+| before_plan | before G2 completion | Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/exception/plan.md | |
+
+### Review Ledger
+
+| Review | Role | Perspective | Challenge | Status | Resolution | Evidence |
+|---|---|---|---|---|---|---|
+| plan_architecture | Architecture | Boundaries and alternatives | Is the selected approach justified against alternatives? | pass | Declarative fixture is selected over irrelevant product implementation. | file:examples/delivery-runs/exception/plan.md |
+| plan_validation | Validation | Acceptance and tests | Does validation prove every acceptance criterion? | pass | Validator command maps to fixture acceptance criteria. | cmd:bash scripts/validate-delivery-run.sh examples/delivery-runs/exception |
+| plan_risk | Risk | Rollback and dependency impact | Are rollback, dependency, and migration risks explicit? | pass | No new dependency and rollback are recorded. | file:examples/delivery-runs/exception/plan.md |
 
 ### Todo List
 
@@ -56,6 +70,21 @@ Fixture uses committed example files.
 
 - Brainstorming: not-applicable, fixed fixture.
 - Writing Plans: not-applicable, fixed fixture.
+
+## Design Options
+
+| Option | Tradeoff | Decision | Evidence |
+|---|---|---|---|
+| Declarative delivery fixture | Exercises harness artifact validation without product code | selected | file:examples/delivery-runs/exception/plan.md |
+| Product implementation | Would add irrelevant behavior to a validator fixture | rejected | reason:no product behavior is in scope |
+
+## Design Readiness
+
+- Readiness: `ready-for-implementation`
+- Selected Approach: declarative fixture plus shell validator coverage
+- Rejected Alternatives: reason:product implementation is outside fixture scope
+- Acceptance Mapping: decision:G1-G8 and required hooks map to validator assertions
+- Start Gate: decision:requirements maturity and design readiness are satisfied for fixture
 
 ## Dependency Decision
 

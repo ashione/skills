@@ -29,7 +29,25 @@ Provide remaining gates so the negative fixture fails specifically on blocked G1
 | G4 | implementation | Changed files are intentional and mapped to acceptance criteria. | pass | file:examples/delivery-runs/blocked/verification.md | |
 | G5 | verification | Local commands, command results, diff review, sensitive information scan, and unresolved risks are recorded. | pass | cmd:bash scripts/validate-delivery-run.sh examples/delivery-runs/blocked | |
 | G6 | pr-mr | PR/MR URL or not-applicable reason is recorded. | not-applicable | reason:fixture is not a real PR delivery | |
-| G7 | ci-cd | Terminal CI/CD state or not-applicable reason is recorded. | not-applicable | reason:fixture is validated by repository CI when committed | |
+| G7 | ci-cd | Terminal CI/CD state, async observation state, or not-applicable reason is recorded. | not-applicable | reason:fixture is validated by repository CI when committed | |
+
+### Hook Ledger
+
+| Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
+|---|---|---|---|---|---|
+| before_edit | before editing files | Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | pass | reason:fixture has no live worktree state | |
+| after_edit | after editing files | Map changed files to acceptance criteria and check for unintended churn. | pass | file:examples/delivery-runs/blocked/verification.md | |
+| before_commit | before commit or PR/MR preparation | Run or record local validation, diff review, and sensitive information scan. | pass | cmd:bash scripts/validate-delivery-run.sh examples/delivery-runs/blocked | |
+| before_pr | before PR/MR creation or not-applicable decision | Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | not-applicable | reason:fixture is not a real PR delivery | |
+| after_pr | after PR/MR creation or not-applicable decision | Record PR/MR URL or not-applicable reason, CI/CD observation plan, terminal check state, and failure follow-up. | not-applicable | reason:fixture is validated by repository CI when committed | |
+
+### Review Ledger
+
+| Review | Role | Perspective | Challenge | Status | Resolution | Evidence |
+|---|---|---|---|---|---|---|
+| verification_implementation | Implementation | Diff and requirements fit | Do changed files map cleanly to accepted requirements? | pass | Fixture verification maps changed artifacts to G1-G8. | file:examples/delivery-runs/blocked/verification.md |
+| verification_security | Security | Secrets and unsafe behavior | Were sensitive data and unsafe operations checked? | pass | Sensitive information scan is recorded as no sensitive values. | file:examples/delivery-runs/blocked/verification.md |
+| verification_ci | CI/CD | Remote checks and async policy | Is CI/CD state recorded without unsupported pass claims? | pass | Fixture marks PR and CI/CD as not applicable with reason. | reason:fixture has no live PR |
 
 ### Todo List
 

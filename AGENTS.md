@@ -22,6 +22,7 @@ Before changing files, read the relevant constraints:
 - Output standards must define required sections, evidence requirements, and explicit anti-patterns.
 - Examples must show the expected output shape, not just a one-line conclusion.
 - Add reference files only when details are too large for `SKILL.md`; keep references one level below the skill directory and link them from `SKILL.md`.
+- Mobius Harness phases must include adversarial Review Ledger checks with multiple roles or perspectives before phase results are treated as final.
 
 ## Local Development Workflow
 
@@ -30,6 +31,7 @@ Before changing files, read the relevant constraints:
 - Look for relevant specs and docs before implementation: `docs/spec*`, requirements, PRDs, RFCs, ADRs, architecture docs, API schemas, migrations, runbooks, release docs, and CI workflows.
 - Preserve unrelated user changes. Do not reset, checkout, or discard files unless explicitly asked.
 - Update durable knowledge files when work changes lasting repository constraints. Use `AGENTS.md`, `README.md`, `docs/SKILL_SPEC.md`, skill docs, ADRs, or spec docs as appropriate.
+- For small PR/MR iterations, CI/CD waiting is asynchronous by default. Wait synchronously only when the user requests it, when merging or releasing, or when repository policy requires terminal checks.
 
 ## Validation
 

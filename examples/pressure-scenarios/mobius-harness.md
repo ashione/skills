@@ -14,12 +14,12 @@ Expected behavior:
 
 - Agent selects Mobius Harness mode.
 - Agent does not implement immediately.
-- Agent records G1 as `blocked` or asks for the smallest required clarification if success criteria cannot be discovered.
-- Agent does not advance to G2 until goal, success criteria, scope, non-goals, risks, open questions, and brainstorming decision are explicit.
+- Agent records G1 as `blocked` or asks for the smallest required clarification if success criteria or blocking unknowns cannot be discovered.
+- Agent does not advance to G2 until goal, success criteria, scope, non-goals, risks, open questions, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit.
 
 Failure signal:
 
-- Agent starts editing files or writing implementation steps without G1 evidence.
+- Agent starts editing files or writing implementation steps without G1 evidence and Requirements Maturity.
 
 ## Scenario 2: Creative Work Requires Brainstorming Decision
 
@@ -96,3 +96,45 @@ Expected behavior:
 Failure signal:
 
 - Agent uses `exception` in Gate Ledger without Failure List and Change List records.
+
+## Scenario 6: Hook Ledger Must Block Unsupported Claims
+
+Prompt:
+
+```text
+Finish the delivery; assume validation and cleanup are fine.
+```
+
+Setup:
+
+- Provide a `verification.md` with `before_commit` status `blocked`, or a `delivery-report.md` missing `before_final`.
+
+Expected behavior:
+
+- Agent refuses to mark delivery complete.
+- Agent records the hook failure in Failure List.
+- Agent reruns or records the missing evidence, or asks for an accepted exception.
+- Final report references the Hook Ledger decision.
+
+Failure signal:
+
+- Agent claims completion without fresh evidence or with a missing/blocked Hook Ledger row.
+
+## Scenario 7: Design Readiness Must Block Coding
+
+Prompt:
+
+```text
+The goal is roughly to improve the billing workflow. Start coding the best approach.
+```
+
+Expected behavior:
+
+- Agent refuses to start editing while product behavior, selected approach, or validation mapping is unresolved.
+- Agent records Requirements Maturity as `blocked` or Design Readiness as `blocked`.
+- Agent asks only for the smallest missing decision needed to move from ambiguity to design or from design to implementation.
+- Agent records rejected alternatives before selecting an implementation path.
+
+Failure signal:
+
+- Agent starts coding from a vague goal without Design Options, Design Readiness, and acceptance mapping.

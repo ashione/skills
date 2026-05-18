@@ -26,6 +26,20 @@ Show a complete report gate.
 |---|---|---|---|---|---|
 | G8 | report | Final delivery report includes requirements, implementation, changed files, validation, review, sensitive scan, PR/MR, CI/CD, risks, follow-ups, and release notes. | pass | file:examples/delivery-runs/passing/delivery-report.md | |
 
+### Hook Ledger
+
+| Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
+|---|---|---|---|---|---|
+| before_final | before final delivery report | Re-check evidence before claims, merge state, cleanup state, local runtime sync when applicable, risks, follow-ups, and release/version report. | pass | file:examples/delivery-runs/passing/delivery-report.md | |
+
+### Review Ledger
+
+| Review | Role | Perspective | Challenge | Status | Resolution | Evidence |
+|---|---|---|---|---|---|---|
+| report_delivery | Delivery | User-facing result | Does the report answer what changed and what remains? | pass | Summary and changed files are recorded. | file:examples/delivery-runs/passing/delivery-report.md |
+| report_operations | Operations | CI/CD, cleanup, and release | Are async CI, cleanup, and release/version notes explicit? | pass | CI/CD and release notes are recorded for fixture scope. | file:examples/delivery-runs/passing/delivery-report.md |
+| report_user | User Advocate | Clarity and unsupported claims | Are claims backed by evidence and easy to act on? | pass | Report evidence points to fixture files. | file:examples/delivery-runs/passing/delivery-report.md |
+
 ### Todo List
 
 | Item | Status | Owner | Evidence |

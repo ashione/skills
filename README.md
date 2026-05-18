@@ -79,7 +79,9 @@
 
 `.delivery/runs/` 默认不提交到 git。
 
-交付过程必须遵循 Mobius Harness 的阻塞式阶段门禁。任务开始时选择 `Lightweight`、`Standard` 或 `Strict` 模式；大任务可拆成子阶段。每个阶段和子阶段都必须记录 Goal、Checklist、Gate Ledger、Todo List、Failure List 和 Change List。任何 complete 状态都必须有 evidence，且不能存在 `blocked` gate。交付产物必须遵循 [docs/HARNESS.md](docs/HARNESS.md) 中的 artifact 标准。
+交付过程必须遵循 Mobius Harness 的阻塞式阶段门禁。任务开始时选择 `Lightweight`、`Standard` 或 `Strict` 模式；大任务可拆成子阶段。每个阶段和子阶段都必须记录 Goal、Checklist、Gate Ledger、Hook Ledger、Review Ledger、Todo List、Failure List 和 Change List。需求阶段必须记录 Requirements Maturity，方案阶段必须记录 Design Readiness；不确定性未收敛时不得进入编码。每个阶段的最终结果产出或进入下一执行阶段前，必须完成多角色、多视角的 Review Ledger 对抗验证。任何 complete 状态都必须有 evidence，且不能存在 `blocked` gate、hook 或 review。交付产物必须遵循 [docs/HARNESS.md](docs/HARNESS.md) 中的 artifact 标准。
+
+PR/MR 小步快速迭代时，CI/CD 跟踪默认异步：记录 head SHA、检查链接和下一次观察点后即可把控制权交还用户。只有用户明确要求完整等待、即将 merge、即将 release、仓库策略要求终态检查，或已观察到失败且用户选择等待下一轮时，才同步等待 CI/CD 终态。不得在当前 head SHA 的检查未终态成功前宣称 CI/CD 已通过。
 
 如果使用 `.delivery/runs/<run-id>/`，完成前运行：
 
@@ -95,7 +97,7 @@ bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>
 
 CI 会同时验证正例通过和负例失败。
 
-`scripts/test-delivery-run-validator.sh` 还会生成临时负例，覆盖缺少 Superpowers decision、缺少 Dependency Decision、跨文件重复 gate、缺少版本/发布报告等回归场景。
+`scripts/test-delivery-run-validator.sh` 还会生成临时负例，覆盖缺少 Superpowers decision、缺少 Requirements Maturity、缺少 Design Readiness、缺少 Dependency Decision、跨文件重复 gate、缺少版本/发布报告、缺少 Hook Ledger、blocked hook、错位 hook、重复 hook、缺少 Review Ledger、blocked review、错位 review、重复 review 等回归场景。
 
 `examples/pressure-scenarios/mobius-harness.md` 提供人工或 agent-to-agent 行为压测场景，用来检查 agent 是否真的会在缺少需求、缺少计划、blocked gate 或未记录 exception 时停止推进。
 
@@ -123,6 +125,7 @@ CI 会同时验证正例通过和负例失败。
 │   │       ├── delivery-process.md
 │   │       ├── artifact-interface.md
 │   │       ├── artifact-templates.md
+│   │       ├── hook-policy.md
 │   │       └── governance-and-reporting.md
 │   ├── local-repo-development/
 │   │   ├── SKILL.md

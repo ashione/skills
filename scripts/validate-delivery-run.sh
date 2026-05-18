@@ -99,7 +99,16 @@ gate_status() {
       return value
     }
 
-    /^\|[ \t]*G[0-9]+[ \t]*\|/ {
+    /^### Gate Ledger/ {
+      ledger = "gate"
+      next
+    }
+
+    /^### / {
+      ledger = ""
+    }
+
+    ledger == "gate" && /^\|[ \t]*G[0-9]+[ \t]*\|/ {
       if (trim($2) == target_gate) {
         print trim($5)
         exit
@@ -367,17 +376,26 @@ for file in "${required_files[@]}"; do
       return value
     }
 
+    /^### Gate Ledger/ {
+      ledger = "gate"
+      section = ""
+      next
+    }
+
     /^### Failure List/ {
+      ledger = ""
       section = "failure"
       next
     }
 
     /^### Change List/ {
+      ledger = ""
       section = "change"
       next
     }
 
     /^### / {
+      ledger = ""
       section = ""
     }
 
@@ -397,7 +415,7 @@ for file in "${required_files[@]}"; do
       }
     }
 
-    /^\|[ \t]*G[0-9]+[ \t]*\|/ {
+    ledger == "gate" && /^\|[ \t]*G[0-9]+[ \t]*\|/ {
       gate = trim($2)
       status_value = trim($5)
       evidence = trim($6)
@@ -462,17 +480,26 @@ for file in "${required_files[@]}"; do
       return value
     }
 
+    /^### Review Ledger/ {
+      ledger = "review"
+      section = ""
+      next
+    }
+
     /^### Failure List/ {
+      ledger = ""
       section = "failure"
       next
     }
 
     /^### Change List/ {
+      ledger = ""
       section = "change"
       next
     }
 
     /^### / {
+      ledger = ""
       section = ""
     }
 
@@ -492,7 +519,7 @@ for file in "${required_files[@]}"; do
       }
     }
 
-    /^\|[ \t]*(requirements|plan|verification|report)_[a-z_]+[ \t]*\|/ {
+    ledger == "review" && /^\|[ \t]*(requirements|plan|verification|report)_[a-z_]+[ \t]*\|/ {
       review = trim($2)
       status_value = trim($6)
       resolution = trim($7)
@@ -557,17 +584,26 @@ for file in "${required_files[@]}"; do
       return value
     }
 
+    /^### Hook Ledger/ {
+      ledger = "hook"
+      section = ""
+      next
+    }
+
     /^### Failure List/ {
+      ledger = ""
       section = "failure"
       next
     }
 
     /^### Change List/ {
+      ledger = ""
       section = "change"
       next
     }
 
     /^### / {
+      ledger = ""
       section = ""
     }
 
@@ -587,7 +623,7 @@ for file in "${required_files[@]}"; do
       }
     }
 
-    /^\|[ \t]*(before|after)_[a-z_]+[ \t]*\|/ {
+    ledger == "hook" && /^\|[ \t]*(before|after)_[a-z_]+[ \t]*\|/ {
       hook = trim($2)
       status_value = trim($5)
       evidence = trim($6)
@@ -674,7 +710,16 @@ for file in "${required_files[@]}"; do
       return value
     }
 
-    /^\|[ \t]*G[0-9]+[ \t]*\|/ {
+    /^### Gate Ledger/ {
+      ledger = "gate"
+      next
+    }
+
+    /^### / {
+      ledger = ""
+    }
+
+    ledger == "gate" && /^\|[ \t]*G[0-9]+[ \t]*\|/ {
       print trim($2) "\t" trim($6)
     }
   ' "${path}")
@@ -710,7 +755,16 @@ for file in "${required_files[@]}"; do
       return value
     }
 
-    /^\|[ \t]*(before|after)_[a-z_]+[ \t]*\|/ {
+    /^### Hook Ledger/ {
+      ledger = "hook"
+      next
+    }
+
+    /^### / {
+      ledger = ""
+    }
+
+    ledger == "hook" && /^\|[ \t]*(before|after)_[a-z_]+[ \t]*\|/ {
       print trim($2) "\t" trim($6)
     }
   ' "${path}")
@@ -746,7 +800,16 @@ for file in "${required_files[@]}"; do
       return value
     }
 
-    /^\|[ \t]*(requirements|plan|verification|report)_[a-z_]+[ \t]*\|/ {
+    /^### Review Ledger/ {
+      ledger = "review"
+      next
+    }
+
+    /^### / {
+      ledger = ""
+    }
+
+    ledger == "review" && /^\|[ \t]*(requirements|plan|verification|report)_[a-z_]+[ \t]*\|/ {
       print trim($2) "\t" trim($8)
     }
   ' "${path}")

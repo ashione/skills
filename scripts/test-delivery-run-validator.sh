@@ -61,9 +61,8 @@ perl -0pi -e 's/\n## Dependency Decision\n\n- Decision:.*?\n\n## Implementation 
 expect_failure "${missing_dependency}" "plan.md missing marker: ## Dependency Decision"
 
 duplicate_gate="$(copy_passing_fixture duplicate-gate)"
-cat >> "${duplicate_gate}/requirements.md" <<'DUPLICATE_GATE'
-| G2 | plan | Duplicate row used to prove package-level uniqueness. | pass | decision:duplicate | |
-DUPLICATE_GATE
+awk '1; /^\|---\|---\|---\|---\|---\|---\|$/ && section=="gate" {print "| G2 | plan | Duplicate row used to prove package-level uniqueness. | pass | decision:duplicate | |"} /^### Gate Ledger$/ {section="gate"} /^### / && $0 !~ /^### Gate Ledger$/ {section=""}' "${duplicate_gate}/requirements.md" > "${duplicate_gate}/requirements.tmp"
+mv "${duplicate_gate}/requirements.tmp" "${duplicate_gate}/requirements.md"
 expect_failure "${duplicate_gate}" "Gate Ledger row for G2 appears more than once in delivery run"
 
 missing_release_report="$(copy_passing_fixture missing-release-report)"
@@ -96,15 +95,13 @@ expect_failure "${blocked_hook}" "verification.md hook before_commit is blocked"
 
 misplaced_hook="$(copy_passing_fixture misplaced-hook)"
 perl -0pi -e 's/\n\| before_plan \|[^\n]*\n//' "${misplaced_hook}/plan.md"
-cat >> "${misplaced_hook}/requirements.md" <<'MISPLACED_HOOK'
-| before_plan | before G2 completion | Misplaced hook row used to prove artifact ownership. | pass | decision:misplaced | |
-MISPLACED_HOOK
+awk '1; /^\|---\|---\|---\|---\|---\|---\|$/ && section=="hook" {print "| before_plan | before G2 completion | Misplaced hook row used to prove artifact ownership. | pass | decision:misplaced | |"} /^### Hook Ledger$/ {section="hook"} /^### / && $0 !~ /^### Hook Ledger$/ {section=""}' "${misplaced_hook}/requirements.md" > "${misplaced_hook}/requirements.tmp"
+mv "${misplaced_hook}/requirements.tmp" "${misplaced_hook}/requirements.md"
 expect_failure "${misplaced_hook}" "requirements.md has misplaced hook id: before_plan"
 
 duplicate_hook="$(copy_passing_fixture duplicate-hook)"
-cat >> "${duplicate_hook}/plan.md" <<'DUPLICATE_HOOK'
-| before_plan | before G2 completion | Duplicate hook row used to prove package-level uniqueness. | pass | decision:duplicate | |
-DUPLICATE_HOOK
+awk '1; /^\|---\|---\|---\|---\|---\|---\|$/ && section=="hook" {print "| before_plan | before G2 completion | Duplicate hook row used to prove package-level uniqueness. | pass | decision:duplicate | |"} /^### Hook Ledger$/ {section="hook"} /^### / && $0 !~ /^### Hook Ledger$/ {section=""}' "${duplicate_hook}/plan.md" > "${duplicate_hook}/plan.tmp"
+mv "${duplicate_hook}/plan.tmp" "${duplicate_hook}/plan.md"
 expect_failure "${duplicate_hook}" "plan.md hook before_plan appears more than once"
 
 missing_review_ledger="$(copy_passing_fixture missing-review-ledger)"
@@ -117,15 +114,21 @@ expect_failure "${blocked_review}" "verification.md review verification_ci is bl
 
 misplaced_review="$(copy_passing_fixture misplaced-review)"
 perl -0pi -e 's/\n\| plan_architecture \|[^\n]*\n//' "${misplaced_review}/plan.md"
-cat >> "${misplaced_review}/requirements.md" <<'MISPLACED_REVIEW'
-| plan_architecture | Architecture | Misplaced review used to prove artifact ownership. | Does ownership validation reject this row? | pass | Ownership validation should fail before delivery completes. | decision:misplaced |
-MISPLACED_REVIEW
+awk '1; /^\|---\|---\|---\|---\|---\|---\|---\|$/ && section=="review" {print "| plan_architecture | Architecture | Misplaced review used to prove artifact ownership. | Does ownership validation reject this row? | pass | Ownership validation should fail before delivery completes. | decision:misplaced |"} /^### Review Ledger$/ {section="review"} /^### / && $0 !~ /^### Review Ledger$/ {section=""}' "${misplaced_review}/requirements.md" > "${misplaced_review}/requirements.tmp"
+mv "${misplaced_review}/requirements.tmp" "${misplaced_review}/requirements.md"
 expect_failure "${misplaced_review}" "requirements.md has misplaced review id: plan_architecture"
 
 duplicate_review="$(copy_passing_fixture duplicate-review)"
-cat >> "${duplicate_review}/plan.md" <<'DUPLICATE_REVIEW'
-| plan_architecture | Architecture | Duplicate review used to prove uniqueness. | Does package-level uniqueness reject this row? | pass | Duplicate review should fail validation. | decision:duplicate |
-DUPLICATE_REVIEW
+awk '1; /^\|---\|---\|---\|---\|---\|---\|---\|$/ && section=="review" {print "| plan_architecture | Architecture | Duplicate review used to prove uniqueness. | Does package-level uniqueness reject this row? | pass | Duplicate review should fail validation. | decision:duplicate |"} /^### Review Ledger$/ {section="review"} /^### / && $0 !~ /^### Review Ledger$/ {section=""}' "${duplicate_review}/plan.md" > "${duplicate_review}/plan.tmp"
+mv "${duplicate_review}/plan.tmp" "${duplicate_review}/plan.md"
 expect_failure "${duplicate_review}" "plan.md review plan_architecture appears more than once"
+
+mirrored_review_exception="$(copy_passing_fixture mirrored-review-exception)"
+perl -0pi -e 's/\| requirements_risk \| Risk \| Ambiguity and failure modes \| Are blocking unknowns resolved or explicitly accepted\? \| pass \| No blocking fixture unknowns remain\. \| decision:fixture \|/| requirements_risk | Risk | Ambiguity and failure modes | Are blocking unknowns resolved or explicitly accepted? | exception | Accepted fixture risk for review exception test. | decision:fixture |/' "${mirrored_review_exception}/requirements.md"
+awk '1; /^\|---\|---\|---\|---\|---\|$/ && section=="failure" {print "| requirements_risk | Demonstrates review exception handling | Fixture review exception | Accepted for validator regression | accepted |"} /^### Failure List$/ {section="failure"} /^### / && $0 !~ /^### Failure List$/ {section=""}' "${mirrored_review_exception}/requirements.md" > "${mirrored_review_exception}/requirements.tmp"
+mv "${mirrored_review_exception}/requirements.tmp" "${mirrored_review_exception}/requirements.md"
+awk '1; /^\|---\|---\|---\|---\|$/ && section=="change" {print "| requirements_risk | Exercise review exception path | file:examples/delivery-runs/passing/requirements.md | decision:fixture |"} /^### Change List$/ {section="change"} /^### / && $0 !~ /^### Change List$/ {section=""}' "${mirrored_review_exception}/requirements.md" > "${mirrored_review_exception}/requirements.tmp"
+mv "${mirrored_review_exception}/requirements.tmp" "${mirrored_review_exception}/requirements.md"
+bash scripts/validate-delivery-run.sh "${mirrored_review_exception}" >/dev/null
 
 echo "Delivery run validator regression tests passed."

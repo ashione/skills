@@ -50,6 +50,7 @@ Mobius Harness must:
 - maintain Goal, Checklist, Gate Ledger, Todo List, Failure List, and Change List for each phase or subphase,
 - maintain a Hook Ledger for Standard and Strict deliveries so Codex-specific controls are evidenced before risky transitions,
 - record Superpowers spec/plan artifacts or fallback decisions when those skills are used or unavailable,
+- record Requirements Maturity before design and Design Readiness before implementation,
 - record a Dependency Decision before implementation,
 - require evidence before marking any phase or delivery complete,
 - stop at any `blocked` gate until evidence is added, the gate is marked `not-applicable`, or an explicit `exception` is recorded,

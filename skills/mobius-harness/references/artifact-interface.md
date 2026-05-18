@@ -87,6 +87,8 @@ Evidence format:
 - `Risks`
 - `Open Questions`
 - `User Decisions`
+- `Uncertainty Register`
+- `Requirements Maturity`
 
 ### plan.md
 
@@ -96,6 +98,8 @@ Evidence format:
 - `Repo Findings`
 - `Specialist Skills`
 - `Superpowers Decisions`
+- `Design Options`
+- `Design Readiness`
 - `Dependency Decision`
 - `Implementation Steps`
 - `Validation Strategy`

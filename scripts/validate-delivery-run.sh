@@ -74,6 +74,25 @@ field_value() {
   sed -n "s/^[[:space:]]*-[[:space:]]*${field}:[[:space:]]*//p" "${path}" | head -n 1
 }
 
+gate_status() {
+  local path="$1"
+  local gate="$2"
+
+  awk -F'|' -v target_gate="${gate}" '
+    function trim(value) {
+      gsub(/^[ \t]+|[ \t]+$/, "", value)
+      return value
+    }
+
+    /^\|[ \t]*G[0-9]+[ \t]*\|/ {
+      if (trim($2) == target_gate) {
+        print trim($5)
+        exit
+      }
+    }
+  ' "${path}"
+}
+
 require_field_value() {
   local path="$1"
   local file="$2"
@@ -102,6 +121,8 @@ require_artifact_sections() {
         "Risks"
         "Open Questions"
         "User Decisions"
+        "Uncertainty Register"
+        "Requirements Maturity"
         "Superpowers Decisions"
       )
       ;;
@@ -110,6 +131,8 @@ require_artifact_sections() {
         "Repo Findings"
         "Specialist Skills"
         "Superpowers Decisions"
+        "Design Options"
+        "Design Readiness"
         "Dependency Decision"
         "Implementation Steps"
         "Validation Strategy"
@@ -161,16 +184,54 @@ require_decision_content() {
   local file="$2"
   local decision
   local evidence_value
+  local maturity
+  local readiness
+  local maturity_evidence
+  local start_gate
 
   case "${file}" in
     requirements.md)
       require_field_value "${path}" "${file}" "Brainstorming"
+      require_field_value "${path}" "${file}" "Blocking Unknowns"
+      require_field_value "${path}" "${file}" "Maturity Evidence"
+
+      maturity="$(field_value "${path}" "Maturity")"
+      maturity="${maturity//\`/}"
+      if [[ "${maturity}" != "ready-for-design" && "${maturity}" != "accepted-risk" ]]; then
+        record_error "${file} has invalid Requirements Maturity: ${maturity:-<missing>}"
+      elif [[ "${maturity}" == "accepted-risk" && "$(gate_status "${path}" "G1")" != "exception" ]]; then
+        record_error "${file} Requirements Maturity accepted-risk requires G1 exception"
+      fi
+
+      maturity_evidence="$(field_value "${path}" "Maturity Evidence")"
+      case "${maturity_evidence}" in
+        cmd:* | file:* | url:* | decision:* | reason:*) ;;
+        *) record_error "${file} Requirements Maturity evidence must start with cmd:, file:, url:, decision:, or reason:" ;;
+      esac
       ;;
     plan.md)
       require_field_value "${path}" "${file}" "Writing Plans"
+      require_field_value "${path}" "${file}" "Selected Approach"
+      require_field_value "${path}" "${file}" "Rejected Alternatives"
+      require_field_value "${path}" "${file}" "Acceptance Mapping"
+      require_field_value "${path}" "${file}" "Start Gate"
       require_field_value "${path}" "${file}" "Reason"
       require_field_value "${path}" "${file}" "Evidence"
       require_field_value "${path}" "${file}" "Fallback"
+
+      readiness="$(field_value "${path}" "Readiness")"
+      readiness="${readiness//\`/}"
+      if [[ "${readiness}" != "ready-for-implementation" && "${readiness}" != "accepted-risk" ]]; then
+        record_error "${file} has invalid Design Readiness: ${readiness:-<missing>}"
+      elif [[ "${readiness}" == "accepted-risk" && "$(gate_status "${path}" "G2")" != "exception" ]]; then
+        record_error "${file} Design Readiness accepted-risk requires G2 exception"
+      fi
+
+      start_gate="$(field_value "${path}" "Start Gate")"
+      case "${start_gate}" in
+        cmd:* | file:* | url:* | decision:* | reason:*) ;;
+        *) record_error "${file} Design Readiness Start Gate must start with cmd:, file:, url:, decision:, or reason:" ;;
+      esac
 
       decision="$(field_value "${path}" "Decision")"
       decision="${decision//\`/}"

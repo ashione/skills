@@ -23,13 +23,13 @@ Show a blocked requirements gate that the validator must reject.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, and brainstorming decision are explicit. | blocked | decision:fixture intentionally blocks G1 | |
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | decision:fixture intentionally blocks G1 | |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_requirements | before G1 completion | Read user goal, repo instructions, relevant specs/docs, and record brainstorming decision. | pass | decision:fixed fixture requirements reviewed | |
+| before_requirements | before G1 completion | Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision. | pass | decision:fixed fixture requirements reviewed | |
 
 ### Todo List
 
@@ -80,6 +80,18 @@ None.
 ## User Decisions
 
 Fixture uses `superpowers:brainstorming` as not applicable.
+
+## Uncertainty Register
+
+| Unknown | Impact | Disposition | Evidence |
+|---|---|---|---|
+| Fixture ambiguity | None for committed validator fixture | not-applicable | decision:fixed fixture |
+
+## Requirements Maturity
+
+- Maturity: `ready-for-design`
+- Blocking Unknowns: none
+- Maturity Evidence: decision:fixture requirements are fully specified
 
 ## Superpowers Decisions
 

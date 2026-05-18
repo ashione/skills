@@ -70,6 +70,22 @@ missing_release_report="$(copy_passing_fixture missing-release-report)"
 perl -0pi -e 's/\n## Version or Release Report\n\nreason:fixture has no versioned release\.\n//' "${missing_release_report}/delivery-report.md"
 expect_failure "${missing_release_report}" "delivery-report.md missing marker: ## Version or Release Report"
 
+missing_requirements_maturity="$(copy_passing_fixture missing-requirements-maturity)"
+perl -0pi -e 's/\n## Requirements Maturity\n\n- Maturity: `ready-for-design`\n- Blocking Unknowns: none\n- Maturity Evidence: decision:fixture requirements are fully specified\n//' "${missing_requirements_maturity}/requirements.md"
+expect_failure "${missing_requirements_maturity}" "requirements.md missing marker: ## Requirements Maturity"
+
+blocked_design_readiness="$(copy_passing_fixture blocked-design-readiness)"
+perl -0pi -e 's/- Readiness: `ready-for-implementation`/- Readiness: `blocked`/' "${blocked_design_readiness}/plan.md"
+expect_failure "${blocked_design_readiness}" "plan.md has invalid Design Readiness: blocked"
+
+unaccepted_maturity_risk="$(copy_passing_fixture unaccepted-maturity-risk)"
+perl -0pi -e 's/- Maturity: `ready-for-design`/- Maturity: `accepted-risk`/' "${unaccepted_maturity_risk}/requirements.md"
+expect_failure "${unaccepted_maturity_risk}" "requirements.md Requirements Maturity accepted-risk requires G1 exception"
+
+unaccepted_design_risk="$(copy_passing_fixture unaccepted-design-risk)"
+perl -0pi -e 's/- Readiness: `ready-for-implementation`/- Readiness: `accepted-risk`/' "${unaccepted_design_risk}/plan.md"
+expect_failure "${unaccepted_design_risk}" "plan.md Design Readiness accepted-risk requires G2 exception"
+
 missing_hook_ledger="$(copy_passing_fixture missing-hook-ledger)"
 perl -0pi -e 's/\n### Hook Ledger\n\n\| Hook \| Trigger \| Required Action \| Status \| Evidence \| Failure Handling \|\n\|---\|---\|---\|---\|---\|---\|\n\| before_plan \|[^\n]*\n//' "${missing_hook_ledger}/plan.md"
 expect_failure "${missing_hook_ledger}" "plan.md missing marker: ### Hook Ledger"

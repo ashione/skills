@@ -35,7 +35,7 @@ Show that an accepted exception must be recorded in Failure List and Change List
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_edit | before editing files | Confirm repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | pass | reason:fixture has no live worktree state | |
+| before_edit | before editing files | Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | pass | reason:fixture has no live worktree state | |
 | after_edit | after editing files | Map changed files to acceptance criteria and check for unintended churn. | pass | file:examples/delivery-runs/exception/verification.md | |
 | before_commit | before commit or PR/MR preparation | Run or record local validation, diff review, and sensitive information scan. | pass | cmd:bash scripts/validate-delivery-run.sh examples/delivery-runs/exception | |
 | before_pr | before PR/MR creation or not-applicable decision | Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | pass | reason:G6 exception records PR absence | |

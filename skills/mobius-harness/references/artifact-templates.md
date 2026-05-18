@@ -22,19 +22,21 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 - [ ] Success criteria are verifiable.
 - [ ] Scope and non-goals are explicit.
 - [ ] High-impact unknowns are resolved or recorded.
+- [ ] Blocking unknowns are resolved or explicitly accepted.
+- [ ] Requirements Maturity is `ready-for-design` or explicitly excepted.
 - [ ] `superpowers:brainstorming` is used or marked not applicable with evidence.
 
 ### Gate Ledger
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_requirements | before G1 completion | Read user goal, repo instructions, relevant specs/docs, and record brainstorming decision. | blocked | <evidence pointer> | <required if exception> |
+| before_requirements | before G1 completion | Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -67,6 +69,17 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 
 ## User Decisions
 
+## Uncertainty Register
+
+| Unknown | Impact | Disposition | Evidence |
+|---|---|---|---|
+
+## Requirements Maturity
+
+- Maturity: `ready-for-design` | `accepted-risk`
+- Blocking Unknowns:
+- Maturity Evidence:
+
 ## Superpowers Decisions
 
 - Brainstorming:
@@ -91,6 +104,8 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 - [ ] Affected areas are identified.
 - [ ] Specialist skills are selected or rejected with reason.
 - [ ] Implementation steps are ordered.
+- [ ] Design options and rejected alternatives are recorded.
+- [ ] Design Readiness is `ready-for-implementation` or explicitly excepted.
 - [ ] Validation strategy covers success criteria.
 - [ ] Rollback or mitigation notes are recorded.
 - [ ] Dependency Decision is recorded.
@@ -100,13 +115,13 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
+| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | Record skill activation, tool reality, Dependency Decision, implementation path, validation strategy, and writing-plans decision. | blocked | <evidence pointer> | <required if exception> |
+| before_plan | before G2 completion | Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -131,6 +146,19 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 - Brainstorming:
 - Writing Plans:
+
+## Design Options
+
+| Option | Tradeoff | Decision | Evidence |
+|---|---|---|---|
+
+## Design Readiness
+
+- Readiness: `ready-for-implementation` | `accepted-risk`
+- Selected Approach:
+- Rejected Alternatives:
+- Acceptance Mapping:
+- Start Gate:
 
 ## Dependency Decision
 
@@ -188,7 +216,7 @@ Evidence: <commands, diff, scanner output summary, PR/MR links, CI/CD links, or 
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_edit | before editing files | Confirm repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | blocked | <evidence pointer> | <required if exception> |
+| before_edit | before editing files | Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | blocked | <evidence pointer> | <required if exception> |
 | after_edit | after editing files | Map changed files to acceptance criteria and check for unintended churn. | blocked | <evidence pointer> | <required if exception> |
 | before_commit | before commit or PR/MR preparation | Run or record local validation, diff review, and sensitive information scan. | blocked | <evidence pointer> | <required if exception> |
 | before_pr | before PR/MR creation or not-applicable decision | Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | blocked | <evidence pointer> | <required if exception> |

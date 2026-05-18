@@ -26,9 +26,9 @@ For Standard and Strict deliveries, the combined artifacts must contain exactly 
 
 | Hook | Trigger | Required Action | Owning Artifact |
 |---|---|---|---|
-| `before_requirements` | before G1 completion | Read the user goal, applicable repo instructions, relevant specs/docs, and record whether `superpowers:brainstorming` is used, not applicable, unavailable, or excepted. | `requirements.md` |
-| `before_plan` | before G2 completion | Record skill activation, tool reality, Dependency Decision, implementation path, validation strategy, and `superpowers:writing-plans` decision. | `plan.md` |
-| `before_edit` | before editing files | Confirm repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated user changes. | `verification.md` |
+| `before_requirements` | before G1 completion | Read the user goal, applicable repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and whether `superpowers:brainstorming` is used, not applicable, unavailable, or excepted. | `requirements.md` |
+| `before_plan` | before G2 completion | Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and `superpowers:writing-plans` decision. | `plan.md` |
+| `before_edit` | before editing files | Confirm Requirements Maturity and Design Readiness are satisfied, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated user changes. | `verification.md` |
 | `after_edit` | after editing files | Map changed files to acceptance criteria and check for unintended churn before validation or commit. | `verification.md` |
 | `before_commit` | before commit or PR/MR preparation | Run or record local validation, diff review, and sensitive information scan. | `verification.md` |
 | `before_pr` | before PR/MR creation or not-applicable decision | Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | `verification.md` |

@@ -40,6 +40,30 @@ When Superpowers is available and used:
 - Record `superpowers:writing-plans` output as a plan path or plan section that maps to `.delivery/runs/<run-id>/plan.md`.
 - If the platform does not expose Superpowers, mark the decision `not-applicable` only when an equivalent repo spec or plan exists; otherwise use `blocked` or `exception`.
 
+## Requirements and Design Maturity Standard
+
+The agent must not start coding from vague intent. Requirements and design maturity are explicit phase controls, not writing style preferences.
+
+Requirements phase must record:
+
+- success criteria that can be verified,
+- scope and non-goals,
+- constraints and compatibility expectations,
+- open questions and user decisions,
+- uncertainty disposition: `blocking`, `accepted`, `deferred`, or `not-applicable`,
+- `Requirements Maturity`: `ready-for-design` only when no blocking unknown remains.
+
+Plan phase must record:
+
+- at least one selected approach and the reason it was chosen,
+- rejected alternatives with tradeoffs,
+- affected areas and interfaces,
+- acceptance criteria mapped to implementation and validation steps,
+- validation strategy and rollback notes,
+- `Design Readiness`: `ready-for-implementation` only when another agent can implement without inventing product behavior or architecture.
+
+If requirements maturity or design readiness is not satisfied, keep the related gate or hook `blocked`. Ask the user only for the smallest decision needed to unblock.
+
 ## Dependency Decision Standard
 
 Plan phase must classify dependency impact before implementation:
@@ -102,8 +126,8 @@ Recommended subphase naming:
 
 | Gate | Phase | Required work | Exit gate |
 |---|---|---|---|
-| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, and the `superpowers:brainstorming` decision. | Requirements are specific enough to implement and verify. |
-| `G2` | Plan | Inspect the repo, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, Dependency Decision, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy or dependency policy. |
+| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, uncertainty disposition, Requirements Maturity, and the `superpowers:brainstorming` decision. | Requirements are specific enough to design, implement, and verify without unresolved blocking unknowns. |
+| `G2` | Plan | Inspect the repo, compare design options, select an approach, record rejected alternatives, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, Dependency Decision, Design Readiness, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy, product behavior, architecture, or dependency policy. |
 | `G3` | Local Development | Follow `local-repo-development`, including worktree or branch selection and preservation of unrelated changes. | Worktree or branch, base ref, and dirty-state handling are recorded. |
 | `G4` | Implementation | Make the scoped change and keep the diff coherent. | Changed files are intentional and mapped to acceptance criteria. |
 | `G5` | Verification | Run local checks, review the diff, and scan for sensitive information. | Validation outcomes, diff review, sensitive scan, and unresolved risks are recorded. |

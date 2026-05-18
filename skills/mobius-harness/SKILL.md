@@ -41,6 +41,8 @@ Load references only when needed:
    - Treat `blocked` hooks like `blocked` gates; do not advance until they pass, become not applicable, or are explicitly excepted.
 4. Analyze requirements first:
    - Restate the goal, background, success criteria, scope, non-goals, risks, and open questions.
+   - Classify uncertainties as blocking, accepted, deferred, or not applicable; do not design or implement while blocking unknowns remain.
+   - Record Requirements Maturity as `ready-for-design` only when success criteria, scope, non-goals, constraints, risks, open questions, and user decisions are specific enough to choose an implementation approach.
    - Use `superpowers:brainstorming` before creative work, behavior design, feature shaping, or ambiguous requirement decisions; record whether it was used, not applicable, or blocked.
    - Ask the user only for high-impact intent or tradeoff decisions that cannot be discovered from the repo.
    - For long or risky tasks, create `.delivery/runs/<run-id>/requirements.md`.
@@ -49,6 +51,8 @@ Load references only when needed:
    - Identify specialist skills to apply, such as `refactor-planner`, `api-design-review`, `test-case-generator`, `frontend-ux-polish`, `sql-query-optimizer`, `bug-triage`, or `team-subagent-orchestrator` when explicitly authorized.
    - When `superpowers:brainstorming` or `superpowers:writing-plans` is used, record the resulting spec or plan artifact path; when unavailable, record fallback handling as `blocked`, `not-applicable`, or `exception`.
    - Use `superpowers:writing-plans` when the delivery needs a multi-step executable plan, especially for Standard or Strict mode.
+   - Compare credible design options before selecting an approach; record rejected alternatives and why they were rejected.
+   - Record Design Readiness as `ready-for-implementation` only when selected approach, affected areas, acceptance mapping, validation strategy, rollback notes, and start gate are explicit.
    - Record a Dependency Decision: `no-new-dependency`, `existing-toolchain`, or `new-dependency-required`, with reason, evidence, and fallback.
    - Define implementation steps, validation commands, acceptance criteria, and delivery checkpoints.
    - For long or risky tasks, create `.delivery/runs/<run-id>/plan.md`.
@@ -108,8 +112,8 @@ For `Standard` and `Strict` deliveries, run `bash scripts/validate-delivery-run.
 
 Use these phase gates. Each phase may be split into smaller subphases when the work is large, risky, or blocked.
 
-1. `G1 Requirements`: goal, success criteria, scope, non-goals, risks, open questions, and Superpowers brainstorming decision are explicit.
-2. `G2 Plan`: implementation path, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, validation commands, and acceptance criteria are explicit.
+1. `G1 Requirements`: goal, success criteria, scope, non-goals, risks, open questions, uncertainty disposition, Requirements Maturity, and Superpowers brainstorming decision are explicit.
+2. `G2 Plan`: design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, validation commands, acceptance criteria, and Design Readiness are explicit.
 3. `G3 Local Development`: worktree or branch choice is recorded and unrelated user changes are protected.
 4. `G4 Implementation`: changed files are intentional and mapped to accepted requirements.
 5. `G5 Verification`: local checks, diff review, and sensitive information scan are complete or explicitly marked unavailable with reason.
@@ -133,6 +137,8 @@ For every phase and subphase, maintain a status record with:
 - A phase cannot be `complete` while its Gate Ledger has any `blocked` row.
 - A Standard or Strict phase cannot be `complete` while any required Hook Ledger row is `blocked` or missing.
 - Requirements and plan phases must record whether `superpowers:brainstorming` and `superpowers:writing-plans` were used, skipped as not applicable, unavailable, or excepted with accepted risk.
+- Requirements phases must record Requirements Maturity and cannot advance to design while blocking unknowns remain.
+- Plan phases must record Design Readiness and cannot advance to implementation while the selected approach, acceptance mapping, or validation strategy is unresolved.
 - Plan phases must record Dependency Decision, including evidence and fallback for unavailable tooling or platform skills.
 - A delivery is complete only when requirements, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, and follow-ups are all reported.
 - A delivery cannot be `complete` until gates `G1` through `G8` are `pass`, `not-applicable`, or `exception`.

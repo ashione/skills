@@ -25,6 +25,8 @@ Mobius Harness should actively consider specialist skills:
 Delivery is done only when:
 
 - success criteria are met or explicitly marked unmet,
+- Requirements Maturity is `ready-for-design` or explicitly excepted with accepted risk,
+- Design Readiness is `ready-for-implementation` or explicitly excepted with accepted risk,
 - Superpowers brainstorming and writing-plans decisions are recorded for requirements and plan gates,
 - Dependency Decision is recorded for the plan gate, including evidence and fallback,
 - Gate Ledger rows `G1` through `G8` are all `pass`, `not-applicable`, or `exception`,
@@ -48,6 +50,7 @@ Mobius Harness must not:
 - bypass failing CI/CD without recording accepted risk,
 - advance past a blocked gate,
 - advance past a blocked hook,
+- start coding while requirements maturity or design readiness is blocked,
 - mark an exception without recording the accepted risk in Failure List and Change List,
 - delete or overwrite unrelated user changes,
 - commit secrets or print secret values,

@@ -26,6 +26,15 @@
 - `incident-postmortem`：按 incident class 和 cause analysis 生成复盘
 - `commit-message-writer`：提交信息生成
 
+## 依赖判断
+
+修改本仓库文档、skills 或 harness 流程时，必须先判断是否需要新增依赖，而不是默认引入工具或包：
+
+- 仅引用已经由目标 agent 平台提供的 skill、plugin 或本地能力，例如 `superpowers:brainstorming`、`superpowers:writing-plans`，不视为仓库运行时依赖；但必须在相关 gate 或计划中记录使用条件和不可用时的处理方式。
+- 使用已有仓库脚本、POSIX shell、Git、GitHub CLI、Python 标准库或 CI 已安装工具，视为现有开发工具链；若 README、docs 或脚本开始强制依赖它们，应写明验证命令和失败时的替代路径。
+- 新增 npm、Python、Go、Rust 包、系统二进制、CI action、外部服务、MCP server、plugin 安装要求或平台专属能力，视为新增依赖；必须在计划中说明用途、替代方案、安装位置、版本约束、验证命令、CI/CD 影响和回滚方式。
+- 如果只是为了增强文档流程约束，优先用 Markdown gate、artifact template 或轻量脚本表达；只有当文档约束无法被审计或复现时，才考虑新增依赖。
+
 ## Skill 标准
 
 本仓库的 skill 不是泛用提示词集合，而是可复用的工作标准。新增或修改 skill 时必须满足：

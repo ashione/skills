@@ -34,6 +34,24 @@ Record the decision in the relevant phase state:
 - Plan phase: writing-plans used, not applicable, blocked, or excepted.
 - Gate Ledger evidence: skill name, artifact path, user decision, or reason not applicable.
 
+When Superpowers is available and used:
+
+- Record `superpowers:brainstorming` output as a spec path, user approval decision, or final-response design section.
+- Record `superpowers:writing-plans` output as a plan path or plan section that maps to `.delivery/runs/<run-id>/plan.md`.
+- If the platform does not expose Superpowers, mark the decision `not-applicable` only when an equivalent repo spec or plan exists; otherwise use `blocked` or `exception`.
+
+## Dependency Decision Standard
+
+Plan phase must classify dependency impact before implementation:
+
+| Decision | Meaning | Required Evidence |
+|---|---|---|
+| `no-new-dependency` | Uses existing Markdown, templates, scripts, or platform-provided skills/plugins. | Existing file, skill, plugin, or command reference. |
+| `existing-toolchain` | Uses tools already required by the repo or CI. | Command, workflow, or README reference plus fallback. |
+| `new-dependency-required` | Adds package, binary, CI action, external service, MCP server, plugin install requirement, or platform-specific runtime capability. | Purpose, alternatives, install location, version constraint, validation command, CI/CD impact, and rollback notes. |
+
+Record the Dependency Decision in `plan.md` and the `G2` Gate Ledger evidence. If the dependency cannot be installed or observed, keep G2 `blocked` unless the user or repository policy accepts an exception.
+
 ### Gate Enforcement Standard
 
 Gates are blocking controls. They are not prose summaries or optional checklist items.
@@ -74,7 +92,7 @@ Recommended subphase naming:
 | Gate | Phase | Required work | Exit gate |
 |---|---|---|---|
 | `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, and the `superpowers:brainstorming` decision. | Requirements are specific enough to implement and verify. |
-| `G2` | Plan | Inspect the repo, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy. |
+| `G2` | Plan | Inspect the repo, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, Dependency Decision, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy or dependency policy. |
 | `G3` | Local Development | Follow `local-repo-development`, including worktree or branch selection and preservation of unrelated changes. | Worktree or branch, base ref, and dirty-state handling are recorded. |
 | `G4` | Implementation | Make the scoped change and keep the diff coherent. | Changed files are intentional and mapped to acceptance criteria. |
 | `G5` | Verification | Run local checks, review the diff, and scan for sensitive information. | Validation outcomes, diff review, sensitive scan, and unresolved risks are recorded. |
@@ -161,6 +179,7 @@ Record a Change List item for any:
 - scope change,
 - acceptance criteria change,
 - validation strategy change,
+- dependency decision change,
 - branch or worktree change,
 - skipped gate or gate exception,
 - accepted failing check,

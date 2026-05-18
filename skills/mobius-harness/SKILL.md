@@ -44,7 +44,9 @@ Load references only when needed:
 5. Build a delivery plan:
    - Inspect the repository before deciding the implementation path.
    - Identify specialist skills to apply, such as `refactor-planner`, `api-design-review`, `test-case-generator`, `frontend-ux-polish`, `sql-query-optimizer`, `bug-triage`, or `team-subagent-orchestrator` when explicitly authorized.
+   - When `superpowers:brainstorming` or `superpowers:writing-plans` is used, record the resulting spec or plan artifact path; when unavailable, record fallback handling as `blocked`, `not-applicable`, or `exception`.
    - Use `superpowers:writing-plans` when the delivery needs a multi-step executable plan, especially for Standard or Strict mode.
+   - Record a Dependency Decision: `no-new-dependency`, `existing-toolchain`, or `new-dependency-required`, with reason, evidence, and fallback.
    - Define implementation steps, validation commands, acceptance criteria, and delivery checkpoints.
    - For long or risky tasks, create `.delivery/runs/<run-id>/plan.md`.
 6. Develop locally using `local-repo-development`:
@@ -98,7 +100,7 @@ For `Standard` and `Strict` deliveries, run `bash scripts/validate-delivery-run.
 Use these phase gates. Each phase may be split into smaller subphases when the work is large, risky, or blocked.
 
 1. `G1 Requirements`: goal, success criteria, scope, non-goals, risks, open questions, and Superpowers brainstorming decision are explicit.
-2. `G2 Plan`: implementation path, affected areas, specialist skills, Superpowers planning decision, validation commands, and acceptance criteria are explicit.
+2. `G2 Plan`: implementation path, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, validation commands, and acceptance criteria are explicit.
 3. `G3 Local Development`: worktree or branch choice is recorded and unrelated user changes are protected.
 4. `G4 Implementation`: changed files are intentional and mapped to accepted requirements.
 5. `G5 Verification`: local checks, diff review, and sensitive information scan are complete or explicitly marked unavailable with reason.
@@ -119,7 +121,8 @@ For every phase and subphase, maintain a status record with:
 
 - A phase is complete only when every checklist item has evidence or an explicit unavailable reason.
 - A phase cannot be `complete` while its Gate Ledger has any `blocked` row.
-- Requirements and plan phases must record whether `superpowers:brainstorming` and `superpowers:writing-plans` were used, skipped as not applicable, or excepted with accepted risk.
+- Requirements and plan phases must record whether `superpowers:brainstorming` and `superpowers:writing-plans` were used, skipped as not applicable, unavailable, or excepted with accepted risk.
+- Plan phases must record Dependency Decision, including evidence and fallback for unavailable tooling or platform skills.
 - A delivery is complete only when requirements, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, and follow-ups are all reported.
 - A delivery cannot be `complete` until gates `G1` through `G8` are `pass`, `not-applicable`, or `exception`.
 - For Standard and Strict mode, persisted artifacts must be enough for another agent to resume without relying on conversation memory.
@@ -137,9 +140,9 @@ Use `draft`, `active`, `blocked`, `complete`, and `deferred` for phase status. I
 For long or risky work, maintain `.delivery/runs/<run-id>/` as a Delivery Episode Package with:
 
 - `requirements.md`: Goal, background, success criteria, scope, non-goals, risks, open questions, and user decisions.
-- `plan.md`: Repo findings, selected specialist skills, implementation steps, validation strategy, acceptance criteria, rollback notes, and checkpoints.
+- `plan.md`: Repo findings, selected specialist skills, Superpowers artifact paths or fallback, Dependency Decision, implementation steps, validation strategy, acceptance criteria, rollback notes, and checkpoints.
 - `verification.md`: Commands run, outcomes, local failures and fixes, diff review notes, sensitive information scan result, PR/MR URL, and CI/CD runs.
-- `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, and release notes.
+- `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, release notes, and version or release report notes when applicable.
 
 Each artifact must include status, timestamp or phase marker, evidence, and phase/subphase records using Goal, Checklist, Gate Ledger, Todo List, Failure List, and Change List. Use table records for Gate Ledger, Todo List, Failure List, and Change List so another agent can audit and resume the delivery.
 

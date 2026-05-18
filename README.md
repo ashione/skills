@@ -87,6 +87,16 @@
 bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>
 ```
 
+仓库包含 `examples/delivery-runs/` 作为可执行样例：
+
+- `passing`：完整通过的 Delivery Episode Package。
+- `exception`：包含已接受 exception，并在 Failure List / Change List 中同步记录。
+- `blocked`：包含 blocked gate 的负例，validator 必须失败。
+
+CI 会同时验证正例通过和负例失败。
+
+`examples/pressure-scenarios/mobius-harness.md` 提供人工或 agent-to-agent 行为压测场景，用来检查 agent 是否真的会在缺少需求、缺少计划、blocked gate 或未记录 exception 时停止推进。
+
 如果交付被中断，后续 agent 应先读取 `.delivery/runs/<run-id>/`，找到最早未完成的阶段或子阶段，再基于 Todo List、Failure List、Change List 和当前 git 状态继续执行。
 
 ## 仓库结构

@@ -60,3 +60,13 @@ jobs:
             done
           done
           exit $exit_code
+
+      - name: Validate delivery run fixtures
+        run: |
+          bash scripts/validate-delivery-run.sh examples/delivery-runs/passing
+          bash scripts/validate-delivery-run.sh examples/delivery-runs/exception
+
+          if bash scripts/validate-delivery-run.sh examples/delivery-runs/blocked; then
+            echo "ERROR: blocked delivery run fixture unexpectedly passed"
+            exit 1
+          fi

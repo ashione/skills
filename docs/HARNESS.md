@@ -47,6 +47,8 @@ Mobius Harness must:
 - follow ordered blocking gates from requirements to final report,
 - split large, risky, or blocked work into subphases,
 - maintain Goal, Checklist, Gate Ledger, Todo List, Failure List, and Change List for each phase or subphase,
+- record Superpowers spec/plan artifacts or fallback decisions when those skills are used or unavailable,
+- record a Dependency Decision before implementation,
 - require evidence before marking any phase or delivery complete,
 - stop at any `blocked` gate until evidence is added, the gate is marked `not-applicable`, or an explicit `exception` is recorded,
 - run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` before completing Standard or Strict deliveries when persisted artifacts exist,
@@ -73,3 +75,7 @@ Mobius Harness can apply other skills as needed:
 Mobius Harness should not consider a delivery complete until it has clarified high-impact ambiguity, inspected the repository, followed the local repository workflow, run relevant validation, reviewed the diff, scanned for sensitive information, recorded PR/MR and CI/CD state when applicable, and produced a delivery report.
 
 For Standard and Strict deliveries, the Delivery Episode Package must contain terminal Gate Ledger rows for `G1` through `G8`: `pass`, `not-applicable`, or `exception`. Any `blocked` gate means the delivery is not complete.
+
+Committed fixtures under `examples/delivery-runs/` demonstrate passing, accepted-exception, and blocked delivery packages. CI runs the validator against those fixtures so gate behavior remains executable.
+
+Behavior pressure scenarios live in `examples/pressure-scenarios/mobius-harness.md`. Use them to check whether an agent actually stops at missing requirements, missing plans, blocked gates, and unmirrored exceptions.

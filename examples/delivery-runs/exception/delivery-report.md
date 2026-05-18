@@ -74,3 +74,7 @@ None.
 ## Release Notes
 
 No release.
+
+## Version or Release Report
+
+reason:fixture has no versioned release.

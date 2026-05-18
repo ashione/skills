@@ -95,6 +95,8 @@ bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>
 
 CI 会同时验证正例通过和负例失败。
 
+`scripts/test-delivery-run-validator.sh` 还会生成临时负例，覆盖缺少 Superpowers decision、缺少 Dependency Decision、跨文件重复 gate、缺少版本/发布报告等回归场景。
+
 `examples/pressure-scenarios/mobius-harness.md` 提供人工或 agent-to-agent 行为压测场景，用来检查 agent 是否真的会在缺少需求、缺少计划、blocked gate 或未记录 exception 时停止推进。
 
 如果交付被中断，后续 agent 应先读取 `.delivery/runs/<run-id>/`，找到最早未完成的阶段或子阶段，再基于 Todo List、Failure List、Change List 和当前 git 状态继续执行。
@@ -110,6 +112,8 @@ CI 会同时验证正例通过和负例失败。
 ├── scripts/
 │   ├── create-skill.sh
 │   ├── link_skills.sh
+│   ├── validate-delivery-run.sh
+│   ├── test-delivery-run-validator.sh
 │   └── validate-skills.sh
 ├── skills/
 │   ├── mobius-harness/
@@ -179,9 +183,13 @@ bash scripts/create-skill.sh my-new-skill
 - skill.json 语法正确且包含全部必需字段。
 - skill.json 的 id 与目录名一致。
 - `SKILL.md` frontmatter 中的 `name` / `description` 与 skill 元数据一致。
+- PR 或 push diff 没有 whitespace error。
+- Delivery run validator 的正例、exception、blocked 负例和生成式负例回归测试通过。
 
 本地也可以先跑：
 
 ```bash
 bash scripts/validate-skills.sh
+bash scripts/test-delivery-run-validator.sh
+git diff --check
 ```

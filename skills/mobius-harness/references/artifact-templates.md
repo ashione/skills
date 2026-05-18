@@ -240,7 +240,7 @@ Evidence: <artifact links, commands, PR/MR links, CI/CD links, or reason unavail
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G8 | report | Final delivery report includes requirements, implementation, changed files, validation, review, sensitive scan, PR/MR, CI/CD, risks, and follow-ups. | blocked | <evidence pointer> | <required if exception> |
+| G8 | report | Final delivery report includes requirements, implementation, changed files, validation, review, sensitive scan, PR/MR, CI/CD, risks, follow-ups, and version or release report notes. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 

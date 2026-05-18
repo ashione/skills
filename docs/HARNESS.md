@@ -76,6 +76,6 @@ Mobius Harness should not consider a delivery complete until it has clarified hi
 
 For Standard and Strict deliveries, the Delivery Episode Package must contain terminal Gate Ledger rows for `G1` through `G8`: `pass`, `not-applicable`, or `exception`. Any `blocked` gate means the delivery is not complete.
 
-Committed fixtures under `examples/delivery-runs/` demonstrate passing, accepted-exception, and blocked delivery packages. CI runs the validator against those fixtures so gate behavior remains executable.
+Committed fixtures under `examples/delivery-runs/` demonstrate passing, accepted-exception, and blocked delivery packages. CI runs the validator regression script against those fixtures and generated negative cases so gate behavior remains executable.
 
 Behavior pressure scenarios live in `examples/pressure-scenarios/mobius-harness.md`. Use them to check whether an agent actually stops at missing requirements, missing plans, blocked gates, and unmirrored exceptions.

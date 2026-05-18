@@ -44,7 +44,7 @@ Gate rules:
 - `Evidence` must point to commands, files, diffs, PR/MR URLs, CI/CD URLs, user decisions, or a reason evidence is unavailable.
 - `Exception` is required when `Status` is `exception`; record the same accepted risk in Failure List and Change List.
 - A `blocked` gate prevents phase completion and final delivery completion.
-- For Standard and Strict deliveries, the combined artifacts must contain a terminal row for every gate from `G1` through `G8`.
+- For Standard and Strict deliveries, the combined artifacts must contain exactly one terminal row for every gate from `G1` through `G8`.
 
 Evidence format:
 

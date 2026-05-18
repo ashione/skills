@@ -87,13 +87,14 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 - [ ] Implementation steps are ordered.
 - [ ] Validation strategy covers success criteria.
 - [ ] Rollback or mitigation notes are recorded.
+- [ ] Dependency Decision is recorded.
 - [ ] `superpowers:writing-plans` is used or marked not applicable with evidence.
 
 ### Gate Ledger
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, affected areas, specialist skills, Superpowers planning decision, implementation steps, validation commands, acceptance criteria, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
+| G2 | plan | Repo findings, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -118,6 +119,13 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 - Brainstorming:
 - Writing Plans:
+
+## Dependency Decision
+
+- Decision: `no-new-dependency` | `existing-toolchain` | `new-dependency-required`
+- Reason:
+- Evidence:
+- Fallback:
 
 ## Implementation Steps
 
@@ -226,12 +234,13 @@ Evidence: <artifact links, commands, PR/MR links, CI/CD links, or reason unavail
 - [ ] Validation, review, and sensitive scan are summarized.
 - [ ] PR/MR and CI/CD state are summarized.
 - [ ] Risks and follow-ups are explicit.
+- [ ] Version or release report notes are recorded when applicable.
 
 ### Gate Ledger
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G8 | report | Final delivery report includes requirements, implementation, changed files, validation, review, sensitive scan, PR/MR, CI/CD, risks, and follow-ups. | blocked | <evidence pointer> | <required if exception> |
+| G8 | report | Final delivery report includes requirements, implementation, changed files, validation, review, sensitive scan, PR/MR, CI/CD, risks, follow-ups, and version or release report notes. | blocked | <evidence pointer> | <required if exception> |
 
 ### Todo List
 
@@ -263,4 +272,6 @@ Evidence: <artifact links, commands, PR/MR links, CI/CD links, or reason unavail
 ## Risks and Follow-ups
 
 ## Release Notes
+
+## Version or Release Report
 ```

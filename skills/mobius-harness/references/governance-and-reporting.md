@@ -26,6 +26,7 @@ Delivery is done only when:
 
 - success criteria are met or explicitly marked unmet,
 - Superpowers brainstorming and writing-plans decisions are recorded for requirements and plan gates,
+- Dependency Decision is recorded for the plan gate, including evidence and fallback,
 - Gate Ledger rows `G1` through `G8` are all `pass`, `not-applicable`, or `exception`,
 - no Gate Ledger row is `blocked`,
 - local validation is complete or unavailable with reason,
@@ -60,6 +61,7 @@ PR/MR body should include:
 - `Risk`
 - `Rollback`
 - `Delivery Episode`
+- `Dependency Decision`
 - `CI/CD Follow-up`
 
 Version or release report should include:
@@ -71,6 +73,8 @@ Version or release report should include:
 - migration notes,
 - rollback notes,
 - post-release checks.
+
+If there is no release, record `not applicable` with reason. Do not leave the release report section blank.
 
 ## Resume Protocol
 

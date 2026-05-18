@@ -7,6 +7,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check whitespace
+        run: |
+          if [[ "${GITHUB_EVENT_NAME}" == "pull_request" ]]; then
+            git fetch --no-tags origin "${GITHUB_BASE_REF}"
+            git diff --check "origin/${GITHUB_BASE_REF}...HEAD"
+          else
+            git diff-tree --check --no-commit-id -r HEAD
+          fi
 
       - name: Check skill directory structure
         run: |
@@ -60,3 +71,6 @@ jobs:
             done
           done
           exit $exit_code
+
+      - name: Validate delivery run fixtures
+        run: bash scripts/test-delivery-run-validator.sh

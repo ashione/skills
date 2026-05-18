@@ -44,15 +44,15 @@ Gate rules:
 - `Evidence` must point to commands, files, diffs, PR/MR URLs, CI/CD URLs, user decisions, or a reason evidence is unavailable.
 - `Exception` is required when `Status` is `exception`; record the same accepted risk in Failure List and Change List.
 - A `blocked` gate prevents phase completion and final delivery completion.
-- For Standard and Strict deliveries, the combined artifacts must contain a terminal row for every gate from `G1` through `G8`.
+- For Standard and Strict deliveries, the combined artifacts must contain exactly one terminal row for every gate from `G1` through `G8`.
 
 Evidence format:
 
-- Commands: command, result, short output summary, and failure log path or excerpt when relevant.
-- Files: repo-relative paths.
-- PR/MR: URL, branch, status.
-- CI/CD: run URL, job name, terminal state.
-- User decisions: quoted or summarized decision and when it was made.
+- Commands: `cmd:<command>` plus result, short output summary, and failure log path or excerpt when relevant.
+- Files: `file:<repo-relative-path>`.
+- PR/MR or CI/CD URLs: `url:<https-url>`, plus branch, status, job name, or terminal state.
+- User decisions: `decision:<quoted or summarized decision>`.
+- Reasons or not-applicable cases: `reason:<explicit reason>`.
 - Sensitive data: record key names or file paths only; never record secret values.
 
 ## Required Sections
@@ -78,6 +78,7 @@ Evidence format:
 - `Repo Findings`
 - `Specialist Skills`
 - `Superpowers Decisions`
+- `Dependency Decision`
 - `Implementation Steps`
 - `Validation Strategy`
 - `Acceptance Criteria`
@@ -112,7 +113,16 @@ Evidence format:
 - `PR/MR and CI/CD`
 - `Risks and Follow-ups`
 - `Release Notes`
+- `Version or Release Report`
 
 ## Templates
 
 Use `artifact-templates.md` when creating new persisted Delivery Episode Package files or when a phase needs a canonical table layout.
+
+## Example Fixtures
+
+Committed examples live under `examples/delivery-runs/`:
+
+- `passing`: complete Delivery Episode Package that must pass validation.
+- `exception`: complete package with an accepted exception mirrored in Failure List and Change List.
+- `blocked`: negative fixture that must fail validation because G1 is blocked.

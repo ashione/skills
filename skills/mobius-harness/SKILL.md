@@ -48,6 +48,7 @@ Load references only when needed:
 4. Analyze requirements first:
    - Restate the goal, background, success criteria, scope, non-goals, risks, and open questions.
    - Classify uncertainties as blocking, accepted, deferred, or not applicable; do not design or implement while blocking unknowns remain.
+   - Record Minimum Skill Dependencies for `mobius-harness`, `local-repo-development`, `superpowers:brainstorming`, and `superpowers:writing-plans`; mark Superpowers dependencies used, not applicable, unavailable, blocked, or excepted before implementation starts.
    - Record Requirements Maturity as `ready-for-design` only when success criteria, scope, non-goals, constraints, risks, open questions, and user decisions are specific enough to choose an implementation approach.
    - Use `superpowers:brainstorming` before creative work, behavior design, feature shaping, or ambiguous requirement decisions; record whether it was used, not applicable, or blocked.
    - Ask the user only for high-impact intent or tradeoff decisions that cannot be discovered from the repo.
@@ -55,6 +56,7 @@ Load references only when needed:
 5. Build a delivery plan:
    - Inspect the repository before deciding the implementation path.
    - Identify specialist skills to apply, such as `refactor-planner`, `api-design-review`, `test-case-generator`, `frontend-ux-polish`, `sql-query-optimizer`, `bug-triage`, or `team-subagent-orchestrator` when explicitly authorized.
+   - Carry forward Minimum Skill Dependencies from requirements and update evidence or fallback handling when a required skill is unavailable.
    - When `superpowers:brainstorming` or `superpowers:writing-plans` is used, record the resulting spec or plan artifact path; when unavailable, record fallback handling as `blocked`, `not-applicable`, or `exception`.
    - Use `superpowers:writing-plans` when the delivery needs a multi-step executable plan, especially for Standard or Strict mode.
    - Compare credible design options before selecting an approach; record rejected alternatives and why they were rejected.
@@ -127,8 +129,8 @@ For `Standard` and `Strict` deliveries, run `bash scripts/validate-delivery-run.
 
 Use these phase gates. Each phase may be split into smaller subphases when the work is large, risky, or blocked.
 
-1. `G1 Requirements`: goal, success criteria, scope, non-goals, risks, open questions, uncertainty disposition, Requirements Maturity, and Superpowers brainstorming decision are explicit.
-2. `G2 Plan`: design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, validation commands, acceptance criteria, and Design Readiness are explicit.
+1. `G1 Requirements`: goal, success criteria, scope, non-goals, risks, open questions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and Superpowers brainstorming decision are explicit.
+2. `G2 Plan`: design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, validation commands, acceptance criteria, and Design Readiness are explicit.
 3. `G3 Local Development`: worktree or branch choice is recorded and unrelated user changes are protected.
 4. `G4 Implementation`: changed files are intentional and mapped to accepted requirements.
 5. `G5 Verification`: local checks, diff review, and sensitive information scan are complete or explicitly marked unavailable with reason.
@@ -154,6 +156,7 @@ For every phase and subphase, maintain a status record with:
 - A Standard or Strict phase cannot be `complete` while any required Hook Ledger row is `blocked` or missing.
 - A phase cannot be `complete` while any required Review Ledger row is `blocked` or missing.
 - Requirements and plan phases must record whether `superpowers:brainstorming` and `superpowers:writing-plans` were used, skipped as not applicable, unavailable, or excepted with accepted risk.
+- Requirements and plan phases must record Minimum Skill Dependencies, including Superpowers dependency handling and fallback.
 - Requirements phases must record Requirements Maturity and cannot advance to design while blocking unknowns remain.
 - Plan phases must record Design Readiness and cannot advance to implementation while the selected approach, acceptance mapping, or validation strategy is unresolved.
 - Plan phases must record Dependency Decision, including evidence and fallback for unavailable tooling or platform skills.
@@ -176,7 +179,7 @@ Use `draft`, `active`, `blocked`, `complete`, and `deferred` for phase status. I
 For long or risky work, maintain `.delivery/runs/<run-id>/` as a Delivery Episode Package with:
 
 - `requirements.md`: Goal, background, success criteria, scope, non-goals, risks, open questions, and user decisions.
-- `plan.md`: Repo findings, selected specialist skills, Superpowers artifact paths or fallback, Dependency Decision, implementation steps, validation strategy, acceptance criteria, rollback notes, and checkpoints.
+- `plan.md`: Repo findings, selected specialist skills, Minimum Skill Dependencies, Superpowers artifact paths or fallback, Dependency Decision, implementation steps, validation strategy, acceptance criteria, rollback notes, and checkpoints.
 - `verification.md`: Commands run, outcomes, local failures and fixes, diff review notes, sensitive information scan result, PR/MR URL, and CI/CD runs.
 - `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, release notes, and version or release report notes when applicable.
 

@@ -112,3 +112,5 @@ description: <one-line description>
 ```
 
 详见 [HARNESS.md](HARNESS.md)。
+
+Mobius Harness 的 requirements 和 plan artifact 必须包含 `Minimum Skill Dependencies`，记录 `mobius-harness`、`local-repo-development`、`superpowers:brainstorming`、`superpowers:writing-plans` 的使用条件、依赖分类、证据和 fallback。

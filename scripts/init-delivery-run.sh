@@ -164,8 +164,8 @@ hook_action() {
   esac
 }
 
-before_requirements_action="$(hook_action "Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision.")"
-before_plan_action="$(hook_action "Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision.")"
+before_requirements_action="$(hook_action "Read user goal, repo instructions, relevant specs/docs, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision.")"
+before_plan_action="$(hook_action "Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision.")"
 before_edit_action="$(hook_action "Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes.")"
 after_edit_action="$(hook_action "Map changed files to acceptance criteria and check for unintended churn.")"
 before_commit_action="$(hook_action "Run or record local validation, diff review, and sensitive information scan.")"
@@ -195,6 +195,7 @@ Capture requirements before planning or editing.
 - [ ] Scope and non-goals are explicit.
 - [ ] High-impact unknowns are resolved or recorded.
 - [ ] Blocking unknowns are resolved or explicitly accepted.
+- [ ] Minimum Skill Dependencies are checked, including required Superpowers decisions.
 - [ ] Requirements Maturity is \`ready-for-design\` or explicitly excepted.
 - [ ] \`superpowers:brainstorming\` is used or marked not applicable with evidence.
 
@@ -202,7 +203,7 @@ Capture requirements before planning or editing.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | decision:${request_cell} | |
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | decision:${request_cell} | |
 
 ### Hook Ledger
 
@@ -267,6 +268,15 @@ TBD
 
 ${request_cell}
 
+## Minimum Skill Dependencies
+
+| Skill | Minimum Requirement | Dependency Class | Evidence | Fallback |
+|---|---|---|---|---|
+| mobius-harness | Primary delivery loop and artifact contract. | no-new-dependency | file:skills/mobius-harness/SKILL.md | blocked until available |
+| local-repo-development | Repo topology, instruction discovery, validation, commit, and PR workflow. | no-new-dependency | file:skills/local-repo-development/SKILL.md | record equivalent local workflow or exception |
+| superpowers:brainstorming | Required for creative work, behavior shaping, unclear intent, or competing solution paths. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only with fixed requirements; otherwise blocked or exception |
+| superpowers:writing-plans | Required for Standard or Strict delivery, multi-step work, risky changes, or handoff plans. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only for trivial plans; otherwise blocked or exception |
+
 ## Uncertainty Register
 
 | Unknown | Impact | Disposition | Evidence |
@@ -303,6 +313,7 @@ Define the implementation plan after G1 is resolved.
 
 - [ ] Affected areas are identified.
 - [ ] Specialist skills are selected or rejected with reason.
+- [ ] Minimum Skill Dependencies are checked and carried forward from requirements.
 - [ ] Implementation steps are ordered.
 - [ ] Design options and rejected alternatives are recorded.
 - [ ] Design Readiness is \`ready-for-implementation\` or explicitly excepted.
@@ -315,7 +326,7 @@ Define the implementation plan after G1 is resolved.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | file:.delivery/runs/${run_id}/requirements.md | |
+| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | file:.delivery/runs/${run_id}/requirements.md | |
 
 ### Hook Ledger
 
@@ -355,6 +366,15 @@ TBD
 ## Specialist Skills
 
 TBD
+
+## Minimum Skill Dependencies
+
+| Skill | Minimum Requirement | Dependency Class | Evidence | Fallback |
+|---|---|---|---|---|
+| mobius-harness | Primary delivery loop and artifact contract. | no-new-dependency | file:skills/mobius-harness/SKILL.md | blocked until available |
+| local-repo-development | Repo topology, instruction discovery, validation, commit, and PR workflow. | no-new-dependency | file:skills/local-repo-development/SKILL.md | record equivalent local workflow or exception |
+| superpowers:brainstorming | Requirements-phase design support when applicable. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only with fixed requirements; otherwise blocked or exception |
+| superpowers:writing-plans | Plan-phase support for Standard or Strict delivery and multi-step work. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only for trivial plans; otherwise blocked or exception |
 
 ## Superpowers Decisions
 

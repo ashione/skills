@@ -62,6 +62,42 @@ if ! grep -q -F -- "${dependency_pattern}" "${run_dir}/plan.md"; then
   exit 1
 fi
 
+for file in requirements.md plan.md; do
+  if ! grep -q -F "## Minimum Skill Dependencies" "${run_dir}/${file}"; then
+    echo "ERROR: ${file} missing Minimum Skill Dependencies"
+    exit 1
+  fi
+done
+
+for file in requirements.md plan.md; do
+  for skill in mobius-harness local-repo-development superpowers:brainstorming superpowers:writing-plans; do
+    if ! grep -q -F "${skill}" "${run_dir}/${file}"; then
+      echo "ERROR: initialized ${file} missing minimum skill dependency: ${skill}"
+      exit 1
+    fi
+  done
+done
+
+if ! grep -q -E '^\| G1 \| requirements \| .*Minimum Skill Dependencies' "${run_dir}/requirements.md"; then
+  echo "ERROR: G1 gate did not include minimum skill dependency evidence"
+  exit 1
+fi
+
+if ! grep -q -E '^\| G2 \| plan \| .*Minimum Skill Dependencies' "${run_dir}/plan.md"; then
+  echo "ERROR: G2 gate did not include minimum skill dependency evidence"
+  exit 1
+fi
+
+if ! grep -q -E '^\| before_requirements \|[^|]+\| \[soft\].*Minimum Skill Dependencies' "${run_dir}/requirements.md"; then
+  echo "ERROR: before_requirements hook did not include minimum skill dependency action"
+  exit 1
+fi
+
+if ! grep -q -E '^\| before_plan \|[^|]+\| \[soft\].*Minimum Skill Dependencies' "${run_dir}/plan.md"; then
+  echo "ERROR: before_plan hook did not include minimum skill dependency action"
+  exit 1
+fi
+
 bash scripts/init-delivery-run.sh "${hard_run_id}" --root "${tmp_dir}" --request "Initialize hard hook gates" --gate-type hard >/dev/null
 
 for hook in before_requirements before_plan before_edit after_edit before_commit before_pr after_pr before_final; do

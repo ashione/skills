@@ -111,6 +111,7 @@ Evidence format:
 - `Risks`
 - `Open Questions`
 - `User Decisions`
+- `Minimum Skill Dependencies`
 - `Uncertainty Register`
 - `Requirements Maturity`
 
@@ -122,6 +123,7 @@ Evidence format:
 - `Review Ledger`
 - `Repo Findings`
 - `Specialist Skills`
+- `Minimum Skill Dependencies`
 - `Superpowers Decisions`
 - `Design Options`
 - `Design Readiness`

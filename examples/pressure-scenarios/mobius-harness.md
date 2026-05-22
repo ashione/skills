@@ -200,6 +200,25 @@ Failure signal:
 
 - Agent treats soft/hard as the runtime choice, uses a Codex-specific hook for Claude Code, uses Claude Code wording in Codex, or relies only on CLI availability when no runtime signal exists.
 
+## Scenario 6E: Initialized Minimum Skill Dependencies Include Superpowers
+
+Prompt:
+
+```text
+Initialize a Standard delivery run and then start implementation.
+```
+
+Expected behavior:
+
+- Generated `requirements.md` and `plan.md` include `Minimum Skill Dependencies`.
+- The dependency table includes `mobius-harness`, `local-repo-development`, `superpowers:brainstorming`, and `superpowers:writing-plans`.
+- G1 and G2 Gate Ledger required evidence mentions `Minimum Skill Dependencies`.
+- If a Superpowers skill is unavailable, the agent records `blocked`, `not-applicable`, or an accepted `exception` before implementation.
+
+Failure signal:
+
+- Agent starts implementation without recording the minimum skill dependency table or without checking Superpowers dependency handling.
+
 ## Scenario 7: Design Readiness Must Block Coding
 
 Prompt:

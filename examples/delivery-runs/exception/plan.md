@@ -15,6 +15,7 @@ Show a complete plan gate for an exception fixture.
 
 - [x] Affected areas are identified.
 - [x] Specialist skills are selected or rejected with reason.
+- [x] Minimum Skill Dependencies are checked and carried forward from requirements.
 - [x] Implementation steps are ordered.
 - [x] Validation strategy covers success criteria.
 - [x] Rollback or mitigation notes are recorded.
@@ -25,13 +26,13 @@ Show a complete plan gate for an exception fixture.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | pass | file:examples/delivery-runs/exception/plan.md | |
+| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | pass | file:examples/delivery-runs/exception/plan.md | |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | [hard] Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/exception/plan.md | |
+| before_plan | before G2 completion | [hard] Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/exception/plan.md | |
 
 ### Review Ledger
 
@@ -65,6 +66,15 @@ Fixture uses committed example files.
 ## Specialist Skills
 
 - `mobius-harness`: primary delivery loop.
+
+## Minimum Skill Dependencies
+
+| Skill | Minimum Requirement | Dependency Class | Evidence | Fallback |
+|---|---|---|---|---|
+| mobius-harness | Primary delivery loop and artifact contract. | no-new-dependency | file:skills/mobius-harness/SKILL.md | blocked until available |
+| local-repo-development | Repo topology, instruction discovery, validation, commit, and PR workflow. | no-new-dependency | file:skills/local-repo-development/SKILL.md | record equivalent local workflow or exception |
+| superpowers:brainstorming | Requirements-phase design support when applicable. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only with fixed requirements; otherwise blocked or exception |
+| superpowers:writing-plans | Plan-phase support for Standard or Strict delivery and multi-step work. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only for trivial plans; otherwise blocked or exception |
 
 ## Superpowers Decisions
 

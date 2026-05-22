@@ -64,6 +64,12 @@ required_reviews=(
   report_operations
   report_user
 )
+required_minimum_skill_dependencies=(
+  mobius-harness
+  local-repo-development
+  superpowers:brainstorming
+  superpowers:writing-plans
+)
 valid_statuses=" draft active blocked complete deferred "
 
 status=0
@@ -154,6 +160,7 @@ require_artifact_sections() {
         "Risks"
         "Open Questions"
         "User Decisions"
+        "Minimum Skill Dependencies"
         "Uncertainty Register"
         "Requirements Maturity"
         "Superpowers Decisions"
@@ -163,6 +170,7 @@ require_artifact_sections() {
       sections=(
         "Repo Findings"
         "Specialist Skills"
+        "Minimum Skill Dependencies"
         "Superpowers Decisions"
         "Design Options"
         "Design Readiness"
@@ -210,6 +218,45 @@ require_artifact_sections() {
     require_marker "${path}" "${file}" "### Test Adequacy"
     require_marker "${path}" "${file}" "### Security and Sensitive Information"
   fi
+}
+
+require_minimum_skill_dependencies() {
+  local path="$1"
+  local file="$2"
+  local skill
+
+  case "${file}" in
+    requirements.md | plan.md) ;;
+    *) return 0 ;;
+  esac
+
+  for skill in "${required_minimum_skill_dependencies[@]}"; do
+    if ! awk -F'|' -v skill="${skill}" '
+      function trim(value) {
+        gsub(/^[ \t]+|[ \t]+$/, "", value)
+        return value
+      }
+
+      /^## Minimum Skill Dependencies/ {
+        section = 1
+        next
+      }
+
+      /^## / {
+        section = 0
+      }
+
+      section && /^\|/ && trim($2) == skill {
+        found = 1
+      }
+
+      END {
+        exit found ? 0 : 1
+      }
+    ' "${path}"; then
+      record_error "${file} missing minimum skill dependency: ${skill}"
+    fi
+  done
 }
 
 require_decision_content() {
@@ -360,6 +407,7 @@ for file in "${required_files[@]}"; do
   done
 
   require_artifact_sections "${path}" "${file}"
+  require_minimum_skill_dependencies "${path}" "${file}"
   require_decision_content "${path}" "${file}"
 
   artifact_status="$(sed -n 's/^Status:[[:space:]]*//p' "${path}" | head -n 1)"

@@ -69,8 +69,8 @@ For Standard and Strict deliveries, the combined artifacts must contain exactly 
 
 | Hook | Trigger | Required Action | Owning Artifact |
 |---|---|---|---|
-| `before_requirements` | before G1 completion | `[soft]` Read the user goal, applicable repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and whether `superpowers:brainstorming` is used, not applicable, unavailable, or excepted. | `requirements.md` |
-| `before_plan` | before G2 completion | `[soft]` Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and `superpowers:writing-plans` decision. | `plan.md` |
+| `before_requirements` | before G1 completion | `[soft]` Read the user goal, applicable repo instructions, relevant specs/docs, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and whether `superpowers:brainstorming` is used, not applicable, unavailable, or excepted. | `requirements.md` |
+| `before_plan` | before G2 completion | `[soft]` Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and `superpowers:writing-plans` decision. | `plan.md` |
 | `before_edit` | before editing files | `[soft]` Confirm Requirements Maturity and Design Readiness are satisfied, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated user changes. | `verification.md` |
 | `after_edit` | after editing files | `[soft]` Map changed files to acceptance criteria and check for unintended churn before validation or commit. | `verification.md` |
 | `before_commit` | before commit or PR/MR preparation | `[soft]` Run or record local validation, diff review, and sensitive information scan. | `verification.md` |

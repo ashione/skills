@@ -76,6 +76,19 @@ Plan phase must classify dependency impact before implementation:
 
 Record the Dependency Decision in `plan.md` and the `G2` Gate Ledger evidence. If the dependency cannot be installed or observed, keep G2 `blocked` unless the user or repository policy accepts an exception.
 
+### Minimum Skill Dependencies
+
+Requirements and plan phases must include `Minimum Skill Dependencies` so the agent records the smallest skill set needed before implementation. The default Mobius Harness set is:
+
+| Skill | Minimum Requirement | Dependency Class | Fallback |
+|---|---|---|---|
+| `mobius-harness` | Primary delivery loop and artifact contract. | `no-new-dependency` | Block until available. |
+| `local-repo-development` | Repo topology, instruction discovery, validation, commit, and PR workflow. | `no-new-dependency` | Record an equivalent local workflow or accepted exception. |
+| `superpowers:brainstorming` | Required for creative work, behavior shaping, unclear intent, or competing solution paths. | `no-new-dependency` | Mark not applicable only with fixed requirements; otherwise block or record an accepted exception. |
+| `superpowers:writing-plans` | Required for Standard or Strict delivery, multi-step work, risky changes, or handoff plans. | `no-new-dependency` | Mark not applicable only for trivial plans; otherwise block or record an accepted exception. |
+
+Superpowers entries are platform-provided skill dependencies, not repository runtime dependencies. They must still be checked at initialization and tied to the G1/G2 gate evidence so unavailable skills are recorded before implementation starts.
+
 ### Gate Enforcement Standard
 
 Gates are blocking controls. They are not prose summaries or optional checklist items.
@@ -161,8 +174,8 @@ Recommended subphase naming:
 
 | Gate | Phase | Required work | Exit gate |
 |---|---|---|---|
-| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, uncertainty disposition, Requirements Maturity, and the `superpowers:brainstorming` decision. | Requirements are specific enough to design, implement, and verify without unresolved blocking unknowns. |
-| `G2` | Plan | Inspect the repo, compare design options, select an approach, record rejected alternatives, select specialist skills, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, Dependency Decision, Design Readiness, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy, product behavior, architecture, or dependency policy. |
+| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and the `superpowers:brainstorming` decision. | Requirements are specific enough to design, implement, and verify without unresolved blocking unknowns. |
+| `G2` | Plan | Inspect the repo, compare design options, select an approach, record rejected alternatives, select specialist skills, carry forward Minimum Skill Dependencies, define implementation steps, validation commands, acceptance criteria, rollback notes, checkpoints, Dependency Decision, Design Readiness, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy, product behavior, architecture, or dependency policy. |
 | `G3` | Local Development | Follow `local-repo-development`, including worktree or branch selection and preservation of unrelated changes. | Worktree or branch, base ref, and dirty-state handling are recorded. |
 | `G4` | Implementation | Make the scoped change and keep the diff coherent. | Changed files are intentional and mapped to acceptance criteria. |
 | `G5` | Verification | Run local checks, review the diff, and scan for sensitive information. | Validation outcomes, diff review, sensitive scan, and unresolved risks are recorded. |

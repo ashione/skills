@@ -64,6 +64,14 @@ missing_writing_plans="$(copy_passing_fixture missing-writing-plans)"
 perl -0pi -e 's/^- Writing Plans:.*\n//m' "${missing_writing_plans}/plan.md"
 expect_failure "${missing_writing_plans}" "plan.md missing Writing Plans decision value"
 
+missing_minimum_dependencies="$(copy_passing_fixture missing-minimum-dependencies)"
+perl -0pi -e 's/\n## Minimum Skill Dependencies\n\n\| Skill \| Minimum Requirement \| Dependency Class \| Evidence \| Fallback \|\n\|---\|---\|---\|---\|---\|\n(?:\|[^\n]*\n)+//' "${missing_minimum_dependencies}/requirements.md"
+expect_failure "${missing_minimum_dependencies}" "requirements.md missing marker: ## Minimum Skill Dependencies"
+
+missing_minimum_dependency_row="$(copy_passing_fixture missing-minimum-dependency-row)"
+perl -0pi -e 's/^\| superpowers:writing-plans \|.*\n//m' "${missing_minimum_dependency_row}/plan.md"
+expect_failure "${missing_minimum_dependency_row}" "plan.md missing minimum skill dependency: superpowers:writing-plans"
+
 missing_dependency="$(copy_passing_fixture missing-dependency)"
 perl -0pi -e 's/\n## Dependency Decision\n\n- Decision:.*?\n\n## Implementation Steps/\n## Implementation Steps/s' "${missing_dependency}/plan.md"
 expect_failure "${missing_dependency}" "plan.md missing marker: ## Dependency Decision"

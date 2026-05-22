@@ -24,6 +24,7 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 - [ ] Scope and non-goals are explicit.
 - [ ] High-impact unknowns are resolved or recorded.
 - [ ] Blocking unknowns are resolved or explicitly accepted.
+- [ ] Minimum Skill Dependencies are checked, including required Superpowers decisions.
 - [ ] Requirements Maturity is `ready-for-design` or explicitly excepted.
 - [ ] `superpowers:brainstorming` is used or marked not applicable with evidence.
 
@@ -31,13 +32,13 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_requirements | before G1 completion | [soft] <runtime> hook: Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| before_requirements | before G1 completion | [soft] <runtime> hook: Read user goal, repo instructions, relevant specs/docs, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 
@@ -78,6 +79,15 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 
 ## User Decisions
 
+## Minimum Skill Dependencies
+
+| Skill | Minimum Requirement | Dependency Class | Evidence | Fallback |
+|---|---|---|---|---|
+| mobius-harness | Primary delivery loop and artifact contract. | no-new-dependency | file:skills/mobius-harness/SKILL.md | blocked until available |
+| local-repo-development | Repo topology, instruction discovery, validation, commit, and PR workflow. | no-new-dependency | file:skills/local-repo-development/SKILL.md | record equivalent local workflow or exception |
+| superpowers:brainstorming | Requirements-phase design support when applicable. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only with fixed requirements; otherwise blocked or exception |
+| superpowers:writing-plans | Plan-phase support for Standard or Strict delivery and multi-step work. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only for trivial plans; otherwise blocked or exception |
+
 ## Uncertainty Register
 
 | Unknown | Impact | Disposition | Evidence |
@@ -113,6 +123,7 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 - [ ] Affected areas are identified.
 - [ ] Specialist skills are selected or rejected with reason.
+- [ ] Minimum Skill Dependencies are checked and carried forward from requirements.
 - [ ] Implementation steps are ordered.
 - [ ] Design options and rejected alternatives are recorded.
 - [ ] Design Readiness is `ready-for-implementation` or explicitly excepted.
@@ -125,13 +136,13 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
+| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | [soft] <runtime> hook: Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| before_plan | before G2 completion | [soft] <runtime> hook: Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 
@@ -159,6 +170,15 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 ## Repo Findings
 
 ## Specialist Skills
+
+## Minimum Skill Dependencies
+
+| Skill | Minimum Requirement | Dependency Class | Evidence | Fallback |
+|---|---|---|---|---|
+| mobius-harness | Primary delivery loop and artifact contract. | no-new-dependency | file:skills/mobius-harness/SKILL.md | blocked until available |
+| local-repo-development | Repo topology, instruction discovery, validation, commit, and PR workflow. | no-new-dependency | file:skills/local-repo-development/SKILL.md | record equivalent local workflow or exception |
+| superpowers:brainstorming | Requirements-phase design support when applicable. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only with fixed requirements; otherwise blocked or exception |
+| superpowers:writing-plans | Plan-phase support for Standard or Strict delivery and multi-step work. | no-new-dependency | reason:platform-provided skill dependency checked at runtime | not-applicable only for trivial plans; otherwise blocked or exception |
 
 ## Superpowers Decisions
 

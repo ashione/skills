@@ -36,9 +36,9 @@ Load references only when needed:
 
 1. Treat Mobius Harness as the primary entrypoint for end-to-end delivery work. Keep one agent accountable for the whole loop unless the user explicitly asks for delegation.
 2. Select `Lightweight`, `Standard`, or `Strict` mode at the start. Use persisted `.delivery/runs/<run-id>/` artifacts for Standard and Strict work.
-   - For Standard and Strict deliveries, initialize missing persisted artifacts with `bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]` when that script exists.
+   - For Standard and Strict deliveries, initialize missing persisted artifacts with `bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]` when that script exists.
    - Use the initialization default `[soft]` unless the user, repository policy, release risk, security risk, or merge gate requires `[hard]`.
-   - Keep gate strength separate from runtime-specific hook wording: use `--runtime auto` by default, or pin `codex`, `claude-code`, or `generic` when the executor must be explicit.
+   - Keep gate strength separate from runtime-specific hook wording: use `--runtime auto` by default, or pin `codex`, `claude-code`, `claude`, or `generic` when the executor must be explicit; `claude` normalizes to `claude-code` in generated artifacts.
    - Treat initialized artifacts as a starting state with blocked gate, hook, and review rows; do not treat initialization as final validation.
 3. Follow the delivery process in order. Treat each phase gate as a blocking gate, not as a reminder. Do not move to the next phase until the current gate is `pass`, `not-applicable`, or an explicitly recorded `exception`.
    - For Standard and Strict deliveries, maintain a Hook Ledger for required hook controls from `references/hook-policy.md`.

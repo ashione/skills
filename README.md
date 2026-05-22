@@ -82,10 +82,10 @@
 可以用本仓库脚本初始化交付产物和 Hook 门禁骨架：
 
 ```bash
-bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]
+bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]
 ```
 
-脚本会创建 `.delivery/runs/<run-id>/` 下的四个 artifact，并预置 `G1`-`G8`、Hook Ledger 和 Review Ledger 行。初始化时必须能看出门禁类型和 agent runtime：`--gate-type` 控制软/硬门禁，默认生成 `[soft]` 软门禁；`--runtime` 控制专有 hook 文案，默认 `auto`，会根据当前运行时环境识别 Codex 或 Claude Code，无法确认时回退 `generic`。需要阻塞式门禁时显式传 `--gate-type hard`；需要指定平台语义时显式传 `--runtime codex`、`--runtime claude-code` 或 `--runtime generic`。初始化产物是 active/draft 状态，默认包含 blocked gate/hook/review；它用于开始交付，不代表验证完成。完成 Standard / Strict 交付前仍需运行 `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>`。
+脚本会创建 `.delivery/runs/<run-id>/` 下的四个 artifact，并预置 `G1`-`G8`、Hook Ledger 和 Review Ledger 行。初始化时必须能看出门禁类型和 agent runtime：`--gate-type` 控制软/硬门禁，默认生成 `[soft]` 软门禁；`--runtime` 控制专有 hook 文案，默认 `auto`，会根据当前运行时环境识别 Codex 或 Claude Code，无法确认时回退 `generic`。需要阻塞式门禁时显式传 `--gate-type hard`；需要指定平台语义时显式传 `--runtime codex`、`--runtime claude-code` 或 `--runtime generic`。`--runtime claude` 是 `--runtime claude-code` 的输入别名，生成 artifact 时仍规范化为 `Runtime: claude-code`。初始化产物是 active/draft 状态，默认包含 blocked gate/hook/review；它用于开始交付，不代表验证完成。完成 Standard / Strict 交付前仍需运行 `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>`。
 
 交付过程必须遵循 Mobius Harness 的阻塞式阶段门禁。任务开始时选择 `Lightweight`、`Standard` 或 `Strict` 模式；大任务可拆成子阶段。每个阶段和子阶段都必须记录 Goal、Checklist、Gate Ledger、Hook Ledger、Review Ledger、Todo List、Failure List 和 Change List。需求阶段必须记录 Requirements Maturity，方案阶段必须记录 Design Readiness；不确定性未收敛时不得进入编码。Hook Ledger 支持 Claude Code / Codex 运行时门禁，Required Action 必须同时体现两个维度：以 `[hard]` 或 `[soft]` 标注阻断语义，并用 Codex hook、Claude Code hook 或 Generic agent hook 标注运行时证据口径。硬门禁不能降级为 `warn`，软门禁可以 `warn` 但必须在 Failure List 和 Change List 留审计记录。每个阶段的最终结果产出或进入下一执行阶段前，必须完成多角色、多视角的 Review Ledger 对抗验证。任何 complete 状态都必须有 evidence，且不能存在 `blocked` gate、hook 或 review。交付产物必须遵循 [docs/HARNESS.md](docs/HARNESS.md) 中的 artifact 标准。
 

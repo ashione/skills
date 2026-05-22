@@ -19,6 +19,8 @@ codex_run_id="agent-gate-init-codex"
 codex_run_dir="${tmp_dir}/.delivery/runs/${codex_run_id}"
 claude_run_id="agent-gate-init-claude"
 claude_run_dir="${tmp_dir}/.delivery/runs/${claude_run_id}"
+claude_alias_run_id="agent-gate-init-claude-alias"
+claude_alias_run_dir="${tmp_dir}/.delivery/runs/${claude_alias_run_id}"
 generic_run_id="agent-gate-init-generic"
 generic_run_dir="${tmp_dir}/.delivery/runs/${generic_run_id}"
 auto_codex_run_id="agent-gate-init-auto-codex"
@@ -91,6 +93,18 @@ if ! grep -R -q "^Runtime: claude-code$" "${claude_run_dir}"; then
   exit 1
 fi
 
+bash scripts/init-delivery-run.sh "${claude_alias_run_id}" --root "${tmp_dir}" --request "Initialize Claude alias hooks" --runtime claude >/dev/null
+
+if ! grep -R -q "Claude Code hook" "${claude_alias_run_dir}"; then
+  echo "ERROR: --runtime claude did not generate Claude Code-specific hook actions"
+  exit 1
+fi
+
+if ! grep -R -q "^Runtime: claude-code$" "${claude_alias_run_dir}"; then
+  echo "ERROR: --runtime claude did not normalize to claude-code"
+  exit 1
+fi
+
 bash scripts/init-delivery-run.sh "${generic_run_id}" --root "${tmp_dir}" --request "Initialize generic hooks" --runtime generic >/dev/null
 
 if ! grep -R -q "Generic agent hook" "${generic_run_dir}"; then
@@ -131,7 +145,7 @@ if [[ "${invalid_runtime_code}" -eq 0 ]]; then
   exit 1
 fi
 
-if [[ "${invalid_runtime_output}" != *"runtime must be auto, codex, claude-code, or generic"* ]]; then
+if [[ "${invalid_runtime_output}" != *"runtime must be auto, codex, claude-code, claude, or generic"* ]]; then
   echo "ERROR: invalid runtime failure used the wrong diagnostic"
   echo "${invalid_runtime_output}"
   exit 1

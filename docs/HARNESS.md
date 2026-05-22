@@ -31,10 +31,10 @@ These files are execution artifacts and `.delivery/runs/` is ignored by git by d
 Initialize a package with the repository script:
 
 ```bash
-bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]
+bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]
 ```
 
-The script creates the four artifacts with Gate Ledger, Hook Ledger, and Review Ledger rows already present. Generated hooks include the agent gate mode prefix from `hook-policy.md`; initialization defaults to `[soft]` and can be made blocking with `--gate-type hard`. Generated hook actions are runtime-specific; `--runtime auto` detects Codex or Claude Code from agent-runtime environment signals and falls back to `generic`, while explicit `--runtime codex`, `--runtime claude-code`, or `--runtime generic` pins the wording and evidence expectations. Initialized artifacts intentionally start as active/draft with blocked rows; use them as the starting state, then run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` only when the delivery is ready for final Standard or Strict validation.
+The script creates the four artifacts with Gate Ledger, Hook Ledger, and Review Ledger rows already present. Generated hooks include the agent gate mode prefix from `hook-policy.md`; initialization defaults to `[soft]` and can be made blocking with `--gate-type hard`. Generated hook actions are runtime-specific; `--runtime auto` detects Codex or Claude Code from agent-runtime environment signals and falls back to `generic`, while explicit `--runtime codex`, `--runtime claude-code`, or `--runtime generic` pins the wording and evidence expectations. `--runtime claude` is accepted as an input alias for `--runtime claude-code` and still records `Runtime: claude-code`. Initialized artifacts intentionally start as active/draft with blocked rows; use them as the starting state, then run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` only when the delivery is ready for final Standard or Strict validation.
 
 For short tasks, the final response may replace persisted artifacts, but it still needs to include the same facts: requirements, implementation summary, validation, review, sensitive information scan, PR or MR URL when present, CI/CD state, risks, and follow-ups.
 

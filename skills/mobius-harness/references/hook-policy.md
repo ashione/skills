@@ -47,7 +47,7 @@ Record the runtime under the phase evidence or Hook Ledger evidence when it affe
 When the repository provides `scripts/init-delivery-run.sh`, initialize Standard or Strict artifacts with:
 
 ```bash
-bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]
+bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]
 ```
 
 Use `--runtime auto` by default. Auto-detection should rely on current agent-runtime environment signals, not merely whether both CLIs are installed on the machine. Codex signals include `CODEX_SHELL`, `CODEX_CI`, `CODEX_THREAD_ID`, or a Codex bundle identifier. Claude Code signals include `CLAUDECODE`, `CLAUDE_CODE`, `CLAUDE_SESSION_ID`, `CLAUDECODE_SESSION_ID`, or a Claude bundle identifier. If no dedicated runtime is evident, initialize generic hook actions.
@@ -58,6 +58,7 @@ Pin the runtime explicitly when the artifact is being prepared for a different e
 |---|---|---|
 | `--runtime codex` | `Codex hook` | Skill file loads, tool calls, sandbox/approval state, connector or plugin availability, command output, and explicit unavailable reasons. |
 | `--runtime claude-code` | `Claude Code hook` | Skill invocation, tool output, Todo state, repo instruction reads, command output, and explicit unavailable reasons. |
+| `--runtime claude` | `Claude Code hook` | Input alias for `--runtime claude-code`; generated artifacts still record `Runtime: claude-code`. |
 | `--runtime generic` | `Generic agent hook` | Runtime capability statement, supported tool output, command output, and explicit unavailable reasons. |
 
 The runtime flag must not silently change the gate type. Use `--gate-type hard` only for blocking semantics and `--gate-type soft` for advisory semantics.

@@ -3,7 +3,7 @@ set -euo pipefail
 
 usage() {
   cat <<'EOF'
-usage: bash scripts/init-delivery-run.sh <run-id> [--root <repo-root>] [--request <text>] [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]
+usage: bash scripts/init-delivery-run.sh <run-id> [--root <repo-root>] [--request <text>] [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]
 
 Initializes a Mobius Harness Delivery Episode Package with Gate, Hook, and
 Review Ledger rows under .delivery/runs/<run-id>/.
@@ -59,7 +59,7 @@ while [[ "$#" -gt 0 ]]; do
       ;;
     --runtime)
       if [[ "$#" -lt 2 ]]; then
-        echo "ERROR: --runtime requires auto, codex, claude-code, or generic"
+        echo "ERROR: --runtime requires auto, codex, claude-code, claude, or generic"
         exit 2
       fi
       runtime="$2"
@@ -87,8 +87,12 @@ if [[ "${gate_type}" != "soft" && "${gate_type}" != "hard" ]]; then
   exit 2
 fi
 
+if [[ "${runtime}" == "claude" ]]; then
+  runtime="claude-code"
+fi
+
 if [[ "${runtime}" != "auto" && "${runtime}" != "codex" && "${runtime}" != "claude-code" && "${runtime}" != "generic" ]]; then
-  echo "ERROR: runtime must be auto, codex, claude-code, or generic"
+  echo "ERROR: runtime must be auto, codex, claude-code, claude, or generic"
   exit 2
 fi
 
@@ -154,7 +158,7 @@ hook_action() {
       printf '[%s] Generic agent hook: %s Record runtime:generic capability evidence, supported tool output, command output, and explicit unavailable reasons.' "${gate_type}" "${requirement}"
       ;;
     *)
-      echo "ERROR: runtime must be auto, codex, claude-code, or generic" >&2
+      echo "ERROR: runtime must be auto, codex, claude-code, claude, or generic" >&2
       exit 2
       ;;
   esac

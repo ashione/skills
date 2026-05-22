@@ -74,3 +74,6 @@ jobs:
 
       - name: Validate delivery run fixtures
         run: bash scripts/test-delivery-run-validator.sh
+
+      - name: Validate delivery run initialization
+        run: bash scripts/test-init-delivery-run.sh

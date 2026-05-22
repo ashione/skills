@@ -30,6 +30,8 @@ Use Markdown for all persisted artifacts. Every artifact must include:
 
 Evidence is mandatory. A completed phase, subphase, or final delivery without evidence is invalid.
 
+When Hook Ledger actions use runtime-specific wording, record `Runtime: codex`, `Runtime: claude-code`, or `Runtime: generic` near the artifact header or in the Hook Ledger evidence. The runtime label names the evidence model; it does not decide whether the hook is a soft or hard gate.
+
 ## Gate Ledger
 
 Every persisted phase/subphase record must include a Gate Ledger table:
@@ -56,9 +58,13 @@ Every persisted phase/subphase record must include a Hook Ledger table:
 Hook rules:
 
 - Use hook ids from `hook-policy.md`.
-- `Status` must be one of `pass`, `not-applicable`, `exception`, or `blocked`.
+- `Required Action` must start with `[hard]` or `[soft]`.
+- `Required Action` should also name the runtime-specific hook wording when it matters, such as `Codex hook`, `Claude Code hook`, or `Generic agent hook`.
+- `Status` must be one of `pass`, `warn`, `not-applicable`, `exception`, or `blocked`.
+- `warn` is valid only for `[soft]` hooks; it must record evidence, failure handling, and matching Failure List and Change List rows.
 - `Evidence` must use the same evidence prefixes as Gate Ledger evidence.
 - `Failure Handling` is required when `Status` is `exception`; record the same accepted risk in Failure List and Change List.
+- `Failure Handling` is required when `Status` is `warn`; record the same warning in Failure List and Change List.
 - A `blocked` hook prevents phase completion and final delivery completion.
 - For Standard and Strict deliveries, the combined artifacts must contain exactly one terminal row for every required hook from `hook-policy.md`.
 

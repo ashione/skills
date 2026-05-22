@@ -21,7 +21,7 @@ Load references only when needed:
 
 - `references/delivery-process.md`: read when choosing mode, managing phases/subphases, status records, blockers, or change control.
 - `references/artifact-interface.md`: read when defining `.delivery/runs/<run-id>/` files, required sections, or evidence records.
-- `references/hook-policy.md`: read when applying Codex-specific hook controls around skills, tools, worktrees, review, CI/CD, cleanup, or local runtime sync.
+- `references/hook-policy.md`: read when applying Claude Code/Codex hook controls, soft gates, hard gates, skills, tools, worktrees, review, CI/CD, cleanup, or local runtime sync.
 - `references/artifact-templates.md`: read only when a persisted artifact needs a canonical Markdown template.
 - `references/governance-and-reporting.md`: read when selecting specialist skills, deciding completion, writing PR/MR or release reports, resuming delivery, or handling safety boundaries.
 
@@ -36,8 +36,13 @@ Load references only when needed:
 
 1. Treat Mobius Harness as the primary entrypoint for end-to-end delivery work. Keep one agent accountable for the whole loop unless the user explicitly asks for delegation.
 2. Select `Lightweight`, `Standard`, or `Strict` mode at the start. Use persisted `.delivery/runs/<run-id>/` artifacts for Standard and Strict work.
+   - For Standard and Strict deliveries, initialize missing persisted artifacts with `bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]` when that script exists.
+   - Use the initialization default `[soft]` unless the user, repository policy, release risk, security risk, or merge gate requires `[hard]`.
+   - Keep gate strength separate from runtime-specific hook wording: use `--runtime auto` by default, or pin `codex`, `claude-code`, or `generic` when the executor must be explicit.
+   - Treat initialized artifacts as a starting state with blocked gate, hook, and review rows; do not treat initialization as final validation.
 3. Follow the delivery process in order. Treat each phase gate as a blocking gate, not as a reminder. Do not move to the next phase until the current gate is `pass`, `not-applicable`, or an explicitly recorded `exception`.
    - For Standard and Strict deliveries, maintain a Hook Ledger for required hook controls from `references/hook-policy.md`.
+   - Classify each Hook Ledger required action as `[hard]` or `[soft]`: hard gates block when unresolved; soft gates may use `warn` only with evidence, failure handling, and mirrored Failure List / Change List records.
    - Treat `blocked` hooks like `blocked` gates; do not advance until they pass, become not applicable, or are explicitly excepted.
    - Maintain a Review Ledger for each phase and do not publish that phase's final result or start execution until multi-role adversarial review is resolved.
 4. Analyze requirements first:
@@ -100,6 +105,8 @@ For Standard and Strict deliveries, every phase/subphase must also maintain a Ho
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
 
+Hook `Required Action` values must start with `[hard]` or `[soft]`. Hook statuses are `pass`, `warn`, `not-applicable`, `exception`, or `blocked`; `warn` is valid only for `[soft]` hooks and must be mirrored in Failure List and Change List.
+
 Every phase/subphase must maintain a Review Ledger:
 
 | Review | Role | Perspective | Challenge | Status | Resolution | Evidence |
@@ -134,7 +141,7 @@ For every phase and subphase, maintain a status record with:
 - Goal: what this phase or subphase must achieve.
 - Checklist: objective exit checks for the phase or subphase.
 - Gate Ledger: phase gate decisions with status and evidence.
-- Hook Ledger: Codex-specific controls for skill activation, tool reality, worktree hygiene, review, CI/CD, cleanup, and local runtime sync.
+- Hook Ledger: Claude Code/Codex controls for skill activation, tool reality, soft and hard gates, worktree hygiene, review, CI/CD, cleanup, and local runtime sync.
 - Review Ledger: multi-role adversarial checks of the phase result before advancing.
 - Todo List: remaining actions, each with owner or status when useful.
 - Failure List: failed commands, blocked checks, rejected assumptions, CI/CD failures, or unresolved risks.
@@ -152,7 +159,7 @@ For every phase and subphase, maintain a status record with:
 - Plan phases must record Dependency Decision, including evidence and fallback for unavailable tooling or platform skills.
 - A delivery is complete only when requirements, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, and follow-ups are all reported.
 - A delivery cannot be `complete` until gates `G1` through `G8` are `pass`, `not-applicable`, or `exception`.
-- A Standard or Strict delivery cannot be `complete` until required hooks from `hook-policy.md` are `pass`, `not-applicable`, or `exception`.
+- A Standard or Strict delivery cannot be `complete` until required hooks from `hook-policy.md` are `pass`, `not-applicable`, `exception`, or valid soft-gate `warn`.
 - A delivery cannot be `complete` until required adversarial reviews are `pass`, `not-applicable`, or `exception`.
 - For Standard and Strict mode, persisted artifacts must be enough for another agent to resume without relying on conversation memory.
 - Do not collapse requirements, planning, implementation, and verification into a single vague status update.
@@ -172,6 +179,8 @@ For long or risky work, maintain `.delivery/runs/<run-id>/` as a Delivery Episod
 - `plan.md`: Repo findings, selected specialist skills, Superpowers artifact paths or fallback, Dependency Decision, implementation steps, validation strategy, acceptance criteria, rollback notes, and checkpoints.
 - `verification.md`: Commands run, outcomes, local failures and fixes, diff review notes, sensitive information scan result, PR/MR URL, and CI/CD runs.
 - `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, release notes, and version or release report notes when applicable.
+
+When the repository provides `scripts/init-delivery-run.sh`, prefer it to hand-writing the initial files so Gate Ledger, Hook Ledger, Review Ledger, soft/hard hook mode rows, and runtime-specific hook wording are generated consistently. The initialization default is soft and runtime auto-detection; choose hard only when the gate must block progress until resolved, and pin the runtime only when Codex, Claude Code, or generic evidence semantics must be explicit.
 
 Each artifact must include status, timestamp or phase marker, evidence, and phase/subphase records using Goal, Checklist, Gate Ledger, Hook Ledger, Review Ledger, Todo List, Failure List, and Change List. Use table records for Gate Ledger, Hook Ledger, Review Ledger, Todo List, Failure List, and Change List so another agent can audit and resume the delivery.
 

@@ -30,7 +30,7 @@ Delivery is done only when:
 - Superpowers brainstorming and writing-plans decisions are recorded for requirements and plan gates,
 - Dependency Decision is recorded for the plan gate, including evidence and fallback,
 - Gate Ledger rows `G1` through `G8` are all `pass`, `not-applicable`, or `exception`,
-- Hook Ledger rows from `hook-policy.md` are all `pass`, `not-applicable`, or `exception` for Standard and Strict deliveries,
+- Hook Ledger rows from `hook-policy.md` are all `pass`, `not-applicable`, `exception`, or valid soft-gate `warn` for Standard and Strict deliveries,
 - Review Ledger rows from `delivery-process.md` are all `pass`, `not-applicable`, or `exception`,
 - no Gate Ledger row is `blocked`,
 - no Hook Ledger row is `blocked`,

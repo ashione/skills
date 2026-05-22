@@ -30,7 +30,7 @@ Show a complete report gate for an exception fixture.
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_final | before final delivery report | Re-check evidence before claims, merge state, cleanup state, local runtime sync when applicable, risks, follow-ups, and release/version report. | pass | file:examples/delivery-runs/exception/delivery-report.md | |
+| before_final | before final delivery report | [hard] Re-check evidence before claims, merge state, cleanup state, local runtime sync when applicable, risks, follow-ups, and release/version report. | pass | file:examples/delivery-runs/exception/delivery-report.md | |
 
 ### Review Ledger
 

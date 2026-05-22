@@ -111,12 +111,14 @@ When waiting is not selected, record the CI/CD state as `async-observed` or `pen
 
 ### Hook Enforcement Standard
 
-Hooks are required controls inside phase gates for Standard and Strict deliveries. Use `hook-policy.md` for the required hook list, trigger timing, Codex-specific evidence rules, and executable hook safety.
+Hooks are required controls inside phase gates for Standard and Strict deliveries. Use `hook-policy.md` for the required hook list, trigger timing, Claude Code/Codex evidence rules, soft and hard gate modes, and executable hook safety.
 
 Hook rules:
 
 - A phase or subphase cannot be marked `complete` while any related hook is `blocked`.
-- A hook row must include hook id, trigger, required action, status, evidence pointer, and failure handling when relevant.
+- A hook row must include hook id, trigger, required action with `[hard]` or `[soft]`, status, evidence pointer, and failure handling when relevant.
+- `[hard]` hooks fail closed: missing evidence, failed commands, unresolved validation, or attempted `warn` status blocks progress until the hook is `pass`, `not-applicable`, or accepted `exception`.
+- `[soft]` hooks may use `warn` for non-blocking advisory outcomes, but the warning must be mirrored in Failure List and Change List before progress continues.
 - Missing skill activation evidence, missing tool reality evidence, skipped diff review, skipped sensitive scan, unobserved CI/CD, missing cleanup evidence, or missing local runtime sync is `blocked` until converted to `not-applicable` or `exception` with evidence.
 - Executable repository hooks are optional; they require an explicit Dependency Decision and fail closed to `blocked`.
 
@@ -175,7 +177,7 @@ Every phase and subphase must record state with these sections:
 - `Goal`: the concrete outcome this phase or subphase must achieve.
 - `Checklist`: objective checks required to exit this phase or subphase.
 - `Gate Ledger`: gate id, required evidence, status, evidence pointer, and exception detail.
-- `Hook Ledger`: hook id, trigger, required action, status, evidence pointer, and failure handling.
+- `Hook Ledger`: hook id, trigger, required action prefixed with `[hard]` or `[soft]`, status, evidence pointer, and failure handling.
 - `Review Ledger`: review id, role, perspective, challenge, status, resolution, and evidence.
 - `Todo List`: unfinished actions, preferably with status such as `todo`, `doing`, `blocked`, or `done`.
 - `Failure List`: failed commands, blocked checks, rejected assumptions, CI/CD failures, defects found during review, or unresolved risks.

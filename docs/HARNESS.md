@@ -28,6 +28,14 @@ For long or risky tasks, Mobius Harness records work as a Delivery Episode Packa
 
 These files are execution artifacts and `.delivery/runs/` is ignored by git by default. A Delivery Episode Package is the durable record of the delivery: requirements, plan, state transitions, evidence, failures, changes, verification, PR/MR, CI/CD, and final report.
 
+Initialize a package with the repository script:
+
+```bash
+bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|generic]
+```
+
+The script creates the four artifacts with Gate Ledger, Hook Ledger, and Review Ledger rows already present. Generated hooks include the agent gate mode prefix from `hook-policy.md`; initialization defaults to `[soft]` and can be made blocking with `--gate-type hard`. Generated hook actions are runtime-specific; `--runtime auto` detects Codex or Claude Code from agent-runtime environment signals and falls back to `generic`, while explicit `--runtime codex`, `--runtime claude-code`, or `--runtime generic` pins the wording and evidence expectations. Initialized artifacts intentionally start as active/draft with blocked rows; use them as the starting state, then run `bash scripts/validate-delivery-run.sh .delivery/runs/<run-id>` only when the delivery is ready for final Standard or Strict validation.
+
 For short tasks, the final response may replace persisted artifacts, but it still needs to include the same facts: requirements, implementation summary, validation, review, sensitive information scan, PR or MR URL when present, CI/CD state, risks, and follow-ups.
 
 ## Reference Map
@@ -36,7 +44,7 @@ Detailed standards live with the `mobius-harness` skill so agents can load only 
 
 - [delivery-process.md](../skills/mobius-harness/references/delivery-process.md): trigger rules, modes, phase gates, status records, subphases, blockers, and change control.
 - [artifact-interface.md](../skills/mobius-harness/references/artifact-interface.md): Delivery Episode Package layout, required sections, and evidence format.
-- [hook-policy.md](../skills/mobius-harness/references/hook-policy.md): Codex-oriented hook triggers, required hook evidence, failure handling, and executable hook safety.
+- [hook-policy.md](../skills/mobius-harness/references/hook-policy.md): Claude Code/Codex hook triggers, required hook evidence, soft and hard gate modes, failure handling, and executable hook safety.
 - [artifact-templates.md](../skills/mobius-harness/references/artifact-templates.md): canonical Markdown templates for persisted delivery artifacts.
 - [governance-and-reporting.md](../skills/mobius-harness/references/governance-and-reporting.md): specialist skill matrix, definition of done, safety boundaries, PR/MR body, version report, resume protocol, and borrowed principles.
 
@@ -48,7 +56,8 @@ Mobius Harness must:
 - follow ordered blocking gates from requirements to final report,
 - split large, risky, or blocked work into subphases,
 - maintain Goal, Checklist, Gate Ledger, Review Ledger, Todo List, Failure List, and Change List for each phase or subphase,
-- maintain a Hook Ledger for Standard and Strict deliveries so Codex-specific controls are evidenced before risky transitions,
+- maintain a Hook Ledger for Standard and Strict deliveries so Claude Code/Codex controls are evidenced before risky transitions,
+- classify Hook Ledger actions as `[hard]` blocking gates or `[soft]` advisory gates; soft warnings may continue only with evidence and mirrored Failure List / Change List rows,
 - default PR/MR CI/CD follow-up to asynchronous observation during small iterative updates unless the user requests full waiting, the delivery is about to merge or release, or policy requires terminal checks,
 - record Superpowers spec/plan artifacts or fallback decisions when those skills are used or unavailable,
 - record Requirements Maturity before design and Design Readiness before implementation,
@@ -78,8 +87,8 @@ Mobius Harness can apply other skills as needed:
 
 Mobius Harness should not consider a delivery complete until it has clarified high-impact ambiguity, inspected the repository, followed the local repository workflow, run relevant validation, reviewed the diff, scanned for sensitive information, recorded PR/MR and CI/CD state when applicable, and produced a delivery report.
 
-For Standard and Strict deliveries, the Delivery Episode Package must contain terminal Gate Ledger rows for `G1` through `G8`, terminal Hook Ledger rows for the required hooks in `hook-policy.md`, and terminal Review Ledger rows for the required reviews in `delivery-process.md`: `pass`, `not-applicable`, or `exception`. Any `blocked` gate, hook, or review means the delivery is not complete.
+For Standard and Strict deliveries, the Delivery Episode Package must contain terminal Gate Ledger rows for `G1` through `G8`, terminal Hook Ledger rows for the required hooks in `hook-policy.md`, and terminal Review Ledger rows for the required reviews in `delivery-process.md`. Gate and Review Ledger terminal statuses are `pass`, `not-applicable`, or `exception`; Hook Ledger terminal statuses are `pass`, `not-applicable`, `exception`, or valid soft-gate `warn`. Any `blocked` gate, hook, or review means the delivery is not complete.
 
 Committed fixtures under `examples/delivery-runs/` demonstrate passing, accepted-exception, and blocked delivery packages. CI runs the validator regression script against those fixtures and generated negative cases so gate, hook, and adversarial review behavior remains executable.
 
-Behavior pressure scenarios live in `examples/pressure-scenarios/mobius-harness.md`. Use them to check whether an agent actually stops at missing requirements, missing plans, blocked gates, blocked hooks, blocked reviews, unsupported completion claims, synchronous CI waiting without a trigger, and unmirrored exceptions.
+Behavior pressure scenarios live in `examples/pressure-scenarios/mobius-harness.md`. Use them to check whether an agent actually stops at missing requirements, missing plans, blocked gates, blocked hooks, blocked reviews, unsupported completion claims, hard-gate warning attempts, unaudited soft-gate warnings, synchronous CI waiting without a trigger, and unmirrored exceptions.

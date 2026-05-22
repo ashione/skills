@@ -31,7 +31,7 @@ Show a fully satisfied plan gate.
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/passing/plan.md | |
+| before_plan | before G2 completion | [hard] Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/passing/plan.md | |
 
 ### Review Ledger
 

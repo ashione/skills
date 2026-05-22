@@ -29,7 +29,7 @@ Show a blocked requirements gate that the validator must reject.
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_requirements | before G1 completion | Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision. | pass | decision:fixed fixture requirements reviewed | |
+| before_requirements | before G1 completion | [hard] Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision. | pass | decision:fixed fixture requirements reviewed | |
 
 ### Review Ledger
 

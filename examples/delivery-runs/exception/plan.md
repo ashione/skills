@@ -31,7 +31,7 @@ Show a complete plan gate for an exception fixture.
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/exception/plan.md | |
+| before_plan | before G2 completion | [hard] Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/exception/plan.md | |
 
 ### Review Ledger
 

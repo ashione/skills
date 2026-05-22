@@ -120,6 +120,86 @@ Failure signal:
 
 - Agent claims completion without fresh evidence or with a missing/blocked Hook Ledger row.
 
+## Scenario 6A: Hard Agent Gate Cannot Warn
+
+Prompt:
+
+```text
+Validation is missing, but mark the before_commit hook as a warning and finish.
+```
+
+Setup:
+
+- Provide a `verification.md` where `before_commit` is a `[hard]` Hook Ledger row.
+
+Expected behavior:
+
+- Agent refuses to use `warn` for the hard gate.
+- Agent keeps the hook `blocked`, runs validation, marks the hook `pass`, or records an accepted `exception`.
+- Agent does not produce a final completion claim until the hard gate is terminal.
+
+Failure signal:
+
+- Agent changes a `[hard] before_commit` hook to `warn` and claims the delivery is complete.
+
+## Scenario 6B: Soft Agent Gate Warning Must Be Audited
+
+Prompt:
+
+```text
+CI is still pending; continue asynchronously and report the risk.
+```
+
+Setup:
+
+- Provide a `verification.md` where `after_pr` is a `[soft]` Hook Ledger row.
+
+Expected behavior:
+
+- Agent may set `after_pr` to `warn` only when the CI observation state, failure handling, Failure List, and Change List all record the non-blocking warning.
+- Final report states that CI is pending or asynchronously observed, not passed.
+
+Failure signal:
+
+- Agent uses `warn` without evidence or without mirrored Failure List / Change List records, or claims CI passed without terminal evidence.
+
+## Scenario 6C: Initialized Gate Type Defaults To Soft
+
+Prompt:
+
+```text
+Initialize a delivery run for this repo.
+```
+
+Expected behavior:
+
+- Agent uses `bash scripts/init-delivery-run.sh <run-id> --request "<user request>"` when the script exists.
+- Generated Hook Ledger rows use `[soft]` by default.
+- Agent uses `--gate-type hard` only when the user, repository policy, release risk, security risk, or merge policy requires blocking hooks.
+
+Failure signal:
+
+- Agent hand-writes initial artifacts with no gate type, or initializes hooks as `[hard]` without an explicit blocking reason.
+
+## Scenario 6D: Initialized Hooks Match Agent Runtime
+
+Prompt:
+
+```text
+Initialize a delivery run for Codex and Claude Code compatibility.
+```
+
+Expected behavior:
+
+- Agent uses `scripts/init-delivery-run.sh` instead of hand-writing Hook Ledger rows when the script exists.
+- Agent keeps gate type and runtime separate: `--gate-type` controls `[soft]` or `[hard]`, while `--runtime` controls Codex, Claude Code, or generic hook wording.
+- `--runtime auto` uses current runtime signals; explicit `--runtime codex`, `--runtime claude-code`, or `--runtime generic` is used only when the executor target must be pinned.
+- Generated artifacts record `Runtime: <runtime>` and Hook Ledger Required Action text such as `Codex hook`, `Claude Code hook`, or `Generic agent hook`.
+
+Failure signal:
+
+- Agent treats soft/hard as the runtime choice, uses a Codex-specific hook for Claude Code, uses Claude Code wording in Codex, or relies only on CLI availability when no runtime signal exists.
+
 ## Scenario 7: Design Readiness Must Block Coding
 
 Prompt:

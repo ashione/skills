@@ -10,6 +10,7 @@ Use these templates as the default shape for persisted Delivery Episode Package 
 Status: draft | active | blocked | complete | deferred
 Phase: requirements
 Updated: <timestamp or phase marker>
+Runtime: codex | claude-code | generic
 Evidence: <user request, repo files, issue links, or reason unavailable>
 
 ## Phase State
@@ -36,7 +37,7 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_requirements | before G1 completion | Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision. | blocked | <evidence pointer> | <required if exception> |
+| before_requirements | before G1 completion | [soft] <runtime> hook: Read user goal, repo instructions, relevant specs/docs, uncertainty disposition, Requirements Maturity, and brainstorming decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 
@@ -101,6 +102,7 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 Status: draft | active | blocked | complete | deferred
 Phase: plan
 Updated: <timestamp or phase marker>
+Runtime: codex | claude-code | generic
 Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 ## Phase State
@@ -129,7 +131,7 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision. | blocked | <evidence pointer> | <required if exception> |
+| before_plan | before G2 completion | [soft] <runtime> hook: Record skill activation, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Design Readiness, and writing-plans decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 
@@ -202,6 +204,7 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 Status: draft | active | blocked | complete | deferred
 Phase: verification
 Updated: <timestamp or phase marker>
+Runtime: codex | claude-code | generic
 Evidence: <commands, diff, scanner output summary, PR/MR links, CI/CD links, or reason unavailable>
 
 ## Phase State
@@ -232,11 +235,11 @@ Evidence: <commands, diff, scanner output summary, PR/MR links, CI/CD links, or 
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_edit | before editing files | Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | blocked | <evidence pointer> | <required if exception> |
-| after_edit | after editing files | Map changed files to acceptance criteria and check for unintended churn. | blocked | <evidence pointer> | <required if exception> |
-| before_commit | before commit or PR/MR preparation | Run or record local validation, diff review, and sensitive information scan. | blocked | <evidence pointer> | <required if exception> |
-| before_pr | before PR/MR creation or not-applicable decision | Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | blocked | <evidence pointer> | <required if exception> |
-| after_pr | after PR/MR creation or not-applicable decision | Record PR/MR URL or not-applicable reason, CI/CD observation plan, terminal check state, and failure follow-up. | blocked | <evidence pointer> | <required if exception> |
+| before_edit | before editing files | [soft] <runtime> hook: Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| after_edit | after editing files | [soft] <runtime> hook: Map changed files to acceptance criteria and check for unintended churn; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| before_commit | before commit or PR/MR preparation | [soft] <runtime> hook: Run or record local validation, diff review, and sensitive information scan; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| before_pr | before PR/MR creation or not-applicable decision | [soft] <runtime> hook: Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| after_pr | after PR/MR creation or not-applicable decision | [soft] <runtime> hook: Record PR/MR URL or not-applicable reason, CI/CD observation plan, terminal check state, and failure follow-up; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception or warn> |
 
 ### Review Ledger
 
@@ -295,6 +298,7 @@ Evidence: <commands, diff, scanner output summary, PR/MR links, CI/CD links, or 
 Status: draft | active | blocked | complete | deferred
 Phase: report
 Updated: <timestamp or phase marker>
+Runtime: codex | claude-code | generic
 Evidence: <artifact links, commands, PR/MR links, CI/CD links, or reason unavailable>
 
 ## Phase State
@@ -320,7 +324,7 @@ Evidence: <artifact links, commands, PR/MR links, CI/CD links, or reason unavail
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_final | before final delivery report | Re-check evidence before claims, merge state, cleanup state, local runtime sync when applicable, risks, follow-ups, and release/version report. | blocked | <evidence pointer> | <required if exception> |
+| before_final | before final delivery report | [soft] <runtime> hook: Re-check evidence before claims, merge state, cleanup state, local runtime sync when applicable, risks, follow-ups, and release/version report; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 

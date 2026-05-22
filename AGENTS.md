@@ -23,6 +23,8 @@ Before changing files, read the relevant constraints:
 - Examples must show the expected output shape, not just a one-line conclusion.
 - Add reference files only when details are too large for `SKILL.md`; keep references one level below the skill directory and link them from `SKILL.md`.
 - Mobius Harness phases must include adversarial Review Ledger checks with multiple roles or perspectives before phase results are treated as final.
+- Mobius Harness Hook Ledger rows are agent-runtime gates for Claude Code, Codex, or similar executors. Required Action values must start with `[hard]` or `[soft]`; hard gates cannot use `warn`, while soft-gate warnings must be mirrored in Failure List and Change List.
+- When initializing a Mobius Harness Delivery Episode Package, use `scripts/init-delivery-run.sh`; generated hook gates default to `[soft]` unless the user or repository policy explicitly requires `[hard]`. Keep gate strength separate from runtime-specific hook wording: use `--runtime auto` by default, or pin `--runtime codex`, `--runtime claude-code`, or `--runtime generic` when the executor must be explicit.
 
 ## Local Development Workflow
 

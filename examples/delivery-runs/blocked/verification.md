@@ -35,11 +35,11 @@ Provide remaining gates so the negative fixture fails specifically on blocked G1
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_edit | before editing files | Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | pass | reason:fixture has no live worktree state | |
-| after_edit | after editing files | Map changed files to acceptance criteria and check for unintended churn. | pass | file:examples/delivery-runs/blocked/verification.md | |
-| before_commit | before commit or PR/MR preparation | Run or record local validation, diff review, and sensitive information scan. | pass | cmd:bash scripts/validate-delivery-run.sh examples/delivery-runs/blocked | |
-| before_pr | before PR/MR creation or not-applicable decision | Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | not-applicable | reason:fixture is not a real PR delivery | |
-| after_pr | after PR/MR creation or not-applicable decision | Record PR/MR URL or not-applicable reason, CI/CD observation plan, terminal check state, and failure follow-up. | not-applicable | reason:fixture is validated by repository CI when committed | |
+| before_edit | before editing files | [hard] Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes. | pass | reason:fixture has no live worktree state | |
+| after_edit | after editing files | [hard] Map changed files to acceptance criteria and check for unintended churn. | pass | file:examples/delivery-runs/blocked/verification.md | |
+| before_commit | before commit or PR/MR preparation | [hard] Run or record local validation, diff review, and sensitive information scan. | pass | cmd:bash scripts/validate-delivery-run.sh examples/delivery-runs/blocked | |
+| before_pr | before PR/MR creation or not-applicable decision | [hard] Record commit/head state, PR/MR body readiness, review status, and reason when no PR/MR is created. | not-applicable | reason:fixture is not a real PR delivery | |
+| after_pr | after PR/MR creation or not-applicable decision | [soft] Record PR/MR URL or not-applicable reason, CI/CD observation plan, terminal check state, and failure follow-up. | not-applicable | reason:fixture is validated by repository CI when committed | |
 
 ### Review Ledger
 

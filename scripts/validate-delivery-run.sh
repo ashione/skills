@@ -613,6 +613,11 @@ for file in "${required_files[@]}"; do
           failure_has[hook] = 1
         }
       }
+      for (hook in warning_hook) {
+        if ($0 ~ hook) {
+          failure_has[hook] = 1
+        }
+      }
     }
 
     section == "change" && /^\|/ {
@@ -621,13 +626,26 @@ for file in "${required_files[@]}"; do
           change_has[hook] = 1
         }
       }
+      for (hook in warning_hook) {
+        if ($0 ~ hook) {
+          change_has[hook] = 1
+        }
+      }
     }
 
     ledger == "hook" && /^\|[ \t]*(before|after)_[a-z_]+[ \t]*\|/ {
       hook = trim($2)
+      required_action = trim($4)
       status_value = trim($5)
       evidence = trim($6)
       failure_handling = trim($7)
+      mode = ""
+
+      if (required_action ~ /^\[soft\][ \t]+/) {
+        mode = "soft"
+      } else if (required_action ~ /^\[hard\][ \t]+/) {
+        mode = "hard"
+      }
 
       if (seen_hook[hook]) {
         printf("ERROR: %s hook %s appears more than once\n", file, hook)
@@ -635,7 +653,12 @@ for file in "${required_files[@]}"; do
       }
       seen_hook[hook] = 1
 
-      if (status_value != "pass" && status_value != "not-applicable" && status_value != "exception" && status_value != "blocked") {
+      if (mode == "") {
+        printf("ERROR: %s hook %s missing gate mode prefix: [soft] or [hard]\n", file, hook)
+        invalid = 1
+      }
+
+      if (status_value != "pass" && status_value != "not-applicable" && status_value != "exception" && status_value != "blocked" && status_value != "warn") {
         printf("ERROR: %s hook %s has invalid status: %s\n", file, hook, status_value)
         invalid = 1
       }
@@ -643,6 +666,15 @@ for file in "${required_files[@]}"; do
       if (status_value == "blocked") {
         printf("ERROR: %s hook %s is blocked\n", file, hook)
         invalid = 1
+      }
+
+      if (status_value == "warn" && mode == "hard") {
+        printf("ERROR: %s hook %s is hard gate and cannot use warn\n", file, hook)
+        invalid = 1
+      }
+
+      if (status_value == "warn" && mode == "soft") {
+        warning_hook[hook] = 1
       }
 
       if (evidence == "" || evidence ~ /^<.*>$/) {
@@ -660,6 +692,11 @@ for file in "${required_files[@]}"; do
         invalid = 1
       }
 
+      if (status_value == "warn" && (failure_handling == "" || failure_handling ~ /^<.*>$/)) {
+        printf("ERROR: %s hook %s warning missing failure handling\n", file, hook)
+        invalid = 1
+      }
+
       if (status_value == "exception") {
         exception_hook[hook] = 1
       }
@@ -673,6 +710,16 @@ for file in "${required_files[@]}"; do
         }
         if (!change_has[hook]) {
           printf("ERROR: %s hook %s exception not recorded in Change List\n", file, hook)
+          invalid = 1
+        }
+      }
+      for (hook in warning_hook) {
+        if (!failure_has[hook]) {
+          printf("ERROR: %s hook %s warning not recorded in Failure List\n", file, hook)
+          invalid = 1
+        }
+        if (!change_has[hook]) {
+          printf("ERROR: %s hook %s warning not recorded in Change List\n", file, hook)
           invalid = 1
         }
       }

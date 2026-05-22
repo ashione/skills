@@ -23,6 +23,15 @@ if [[ ! -d "${run_dir}" ]]; then
   exit 1
 fi
 
+run_dir_abs="$(cd "${run_dir}" && pwd)"
+delivery_runs_dir="$(dirname "${run_dir_abs}")"
+delivery_dir="$(dirname "${delivery_runs_dir}")"
+package_root="$(dirname "${delivery_dir}")"
+
+if [[ "$(basename "${delivery_runs_dir}")" != "runs" || "$(basename "${delivery_dir}")" != ".delivery" ]]; then
+  package_root="${repo_root}"
+fi
+
 required_files=(
   "requirements.md"
   "plan.md"
@@ -734,7 +743,7 @@ for file in "${required_files[@]}"; do
 
     if [[ "${evidence}" == file:* ]]; then
       evidence_path="${evidence#file:}"
-      if [[ ! -e "${evidence_path}" && ! -e "${repo_root}/${evidence_path}" && ! -e "${run_dir}/${evidence_path}" ]]; then
+      if [[ ! -e "${evidence_path}" && ! -e "${repo_root}/${evidence_path}" && ! -e "${package_root}/${evidence_path}" && ! -e "${run_dir_abs}/${evidence_path}" ]]; then
         echo "ERROR: ${file} gate ${gate} file evidence not found: ${evidence_path}"
         status=1
       fi
@@ -776,7 +785,7 @@ for file in "${required_files[@]}"; do
 
     if [[ "${evidence}" == file:* ]]; then
       evidence_path="${evidence#file:}"
-      if [[ ! -e "${evidence_path}" && ! -e "${repo_root}/${evidence_path}" && ! -e "${run_dir}/${evidence_path}" ]]; then
+      if [[ ! -e "${evidence_path}" && ! -e "${repo_root}/${evidence_path}" && ! -e "${package_root}/${evidence_path}" && ! -e "${run_dir_abs}/${evidence_path}" ]]; then
         echo "ERROR: ${file} hook ${hook} file evidence not found: ${evidence_path}"
         status=1
       fi
@@ -821,7 +830,7 @@ for file in "${required_files[@]}"; do
 
     if [[ "${evidence}" == file:* ]]; then
       evidence_path="${evidence#file:}"
-      if [[ ! -e "${evidence_path}" && ! -e "${repo_root}/${evidence_path}" && ! -e "${run_dir}/${evidence_path}" ]]; then
+      if [[ ! -e "${evidence_path}" && ! -e "${repo_root}/${evidence_path}" && ! -e "${package_root}/${evidence_path}" && ! -e "${run_dir_abs}/${evidence_path}" ]]; then
         echo "ERROR: ${file} review ${review} file evidence not found: ${evidence_path}"
         status=1
       fi

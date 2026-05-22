@@ -46,6 +46,14 @@ copy_passing_fixture() {
 bash scripts/validate-delivery-run.sh examples/delivery-runs/passing
 bash scripts/validate-delivery-run.sh examples/delivery-runs/exception
 
+external_root="${tmp_dir}/external-root"
+external_run_id="external-root-run"
+external_run_dir="${external_root}/.delivery/runs/${external_run_id}"
+mkdir -p "$(dirname "${external_run_dir}")"
+cp -R examples/delivery-runs/passing "${external_run_dir}"
+perl -0pi -e "s#file:examples/delivery-runs/passing/#file:.delivery/runs/${external_run_id}/#g" "${external_run_dir}"/*.md
+bash scripts/validate-delivery-run.sh "${external_run_dir}"
+
 expect_failure examples/delivery-runs/blocked "requirements.md gate G1 is blocked"
 
 missing_brainstorming="$(copy_passing_fixture missing-brainstorming)"

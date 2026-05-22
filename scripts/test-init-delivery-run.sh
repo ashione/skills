@@ -25,6 +25,8 @@ generic_run_id="agent-gate-init-generic"
 generic_run_dir="${tmp_dir}/.delivery/runs/${generic_run_id}"
 auto_codex_run_id="agent-gate-init-auto-codex"
 auto_codex_run_dir="${tmp_dir}/.delivery/runs/${auto_codex_run_id}"
+auto_claude_run_id="agent-gate-init-auto-claude"
+auto_claude_run_dir="${tmp_dir}/.delivery/runs/${auto_claude_run_id}"
 
 bash scripts/init-delivery-run.sh "${run_id}" --root "${tmp_dir}" --request "Initialize hook gates for a test delivery" >/dev/null
 
@@ -116,6 +118,18 @@ env -i PATH="${PATH}" CODEX_SHELL=1 bash scripts/init-delivery-run.sh "${auto_co
 
 if ! grep -R -q "Codex hook" "${auto_codex_run_dir}"; then
   echo "ERROR: --runtime auto did not detect a Codex runtime from CODEX_SHELL"
+  exit 1
+fi
+
+env -i PATH="${PATH}" CLAUDE_CODE=1 bash scripts/init-delivery-run.sh "${auto_claude_run_id}" --root "${tmp_dir}" --request "Auto-detect Claude Code hooks" --runtime auto >/dev/null
+
+if ! grep -R -q "Claude Code hook" "${auto_claude_run_dir}"; then
+  echo "ERROR: --runtime auto did not detect a Claude Code runtime from CLAUDE_CODE"
+  exit 1
+fi
+
+if ! grep -R -q "^Runtime: claude-code$" "${auto_claude_run_dir}"; then
+  echo "ERROR: --runtime auto did not record the auto-detected Claude Code runtime"
   exit 1
 fi
 

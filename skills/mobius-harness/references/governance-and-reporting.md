@@ -25,6 +25,7 @@ Mobius Harness should actively consider specialist skills:
 Delivery is done only when:
 
 - success criteria are met or explicitly marked unmet,
+- issue context and prior attempts are recorded or marked not applicable with evidence when the task is issue, bug, PR, or external-fix driven,
 - Requirements Maturity is `ready-for-design` or explicitly excepted with accepted risk,
 - Design Readiness is `ready-for-implementation` or explicitly excepted with accepted risk,
 - Minimum Skill Dependencies are recorded in requirements and plan, including Superpowers dependency handling,
@@ -73,6 +74,7 @@ PR/MR body should include:
 - `Review Ledger`
 - `Risk`
 - `Rollback`
+- `Prior Attempts`
 - `Delivery Episode`
 - `Dependency Decision`
 - `CI/CD Follow-up`

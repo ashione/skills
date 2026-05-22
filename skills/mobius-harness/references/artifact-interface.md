@@ -111,6 +111,7 @@ Evidence format:
 - `Risks`
 - `Open Questions`
 - `User Decisions`
+- `Issue and Prior Attempts`
 - `Minimum Skill Dependencies`
 - `Uncertainty Register`
 - `Requirements Maturity`
@@ -125,6 +126,7 @@ Evidence format:
 - `Specialist Skills`
 - `Minimum Skill Dependencies`
 - `Superpowers Decisions`
+- `Prior Attempt Comparison`
 - `Design Options`
 - `Design Readiness`
 - `Dependency Decision`

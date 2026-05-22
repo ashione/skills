@@ -24,11 +24,14 @@
     "Maintain Hook Ledger rows with hook id, trigger, required action prefixed by [hard] or [soft], status, evidence pointer, and failure handling when relevant.",
     "Maintain Review Ledger rows with review id, role, perspective, challenge, status, resolution, and evidence; use distinct product, engineering, architecture, validation, security, operations, or user perspectives as appropriate.",
     "Analyze requirements before implementation by clarifying the goal, background, success criteria, scope, non-goals, risks, open questions, and the superpowers:brainstorming decision.",
+    "When a request references an issue, bug report, PR, branch, fork, commit, or previous fix, record Issue and Prior Attempts with evidence from issue comments, linked PRs, related PR search, fork commits, or an explicit not-applicable reason.",
+    "Treat prior attempts as design evidence rather than copy instructions: identify reusable tests or ideas, stale assumptions, behavioral differences, and fresh verification required before adoption.",
     "Classify requirements uncertainties as blocking, accepted, deferred, or not-applicable; do not advance to design until Requirements Maturity is ready-for-design or an accepted-risk exception is recorded.",
     "Record Minimum Skill Dependencies during requirements and carry them into planning, including mobius-harness, local-repo-development, superpowers:brainstorming, and superpowers:writing-plans with evidence and fallback handling.",
     "Use superpowers:brainstorming before creative work, feature shaping, behavior design, unclear product intent, or competing solution paths; otherwise record why it is not applicable.",
-    "Inspect the repository, identify relevant specialist skills, carry forward Minimum Skill Dependencies, and produce a delivery plan with implementation steps, validation commands, Validation Prerequisites, acceptance criteria, checkpoints, Dependency Decision, and the superpowers:writing-plans decision.",
+    "Inspect the repository, identify relevant specialist skills, carry forward Minimum Skill Dependencies, compare discovered prior attempts against the selected approach, and produce a delivery plan with implementation steps, validation commands, Validation Prerequisites, acceptance criteria, checkpoints, Dependency Decision, and the superpowers:writing-plans decision.",
     "Compare design options and rejected alternatives before implementation; do not start coding until Design Readiness is ready-for-implementation or an accepted-risk exception is recorded.",
+    "When prior attempts depend on time-sensitive APIs, package behavior, platform capabilities, or external services, record Freshness Evidence before using or rejecting their approach.",
     "Use superpowers:writing-plans for Standard or Strict deliveries, risky work, multi-step implementation, or agent handoff plans; otherwise record why it is not applicable.",
     "When Superpowers skills are used, record spec or plan artifact paths; when unavailable, record fallback handling as blocked, not-applicable, or exception.",
     "Record Dependency Decision as no-new-dependency, existing-toolchain, or new-dependency-required, with reason, evidence, and fallback before implementation.",
@@ -45,12 +48,12 @@
     "Each persisted artifact belongs to the Delivery Episode Package and must include status, phase marker or timestamp, evidence, and enough phase/subphase state for another agent to audit and resume the delivery.",
     "When blocked, record the failure, try one safe minimal recovery, and ask the user only for the specific decision needed.",
     "When resuming, read the Delivery Episode Package first, identify the earliest incomplete phase or subphase, review Todo List, Failure List, and Change List, confirm git state, and continue from the first unmet gate.",
-    "A delivery is complete only when requirements, Requirements Maturity, Design Readiness, Minimum Skill Dependencies, Validation Prerequisites, Superpowers planning decisions, Dependency Decision, required hard and soft hook decisions, required adversarial review decisions, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, release notes, and follow-ups are all reported."
+    "A delivery is complete only when requirements, Issue and Prior Attempts when applicable, Requirements Maturity, Prior Attempt Comparison when applicable, Design Readiness, Minimum Skill Dependencies, Validation Prerequisites, Superpowers planning decisions, Dependency Decision, required hard and soft hook decisions, required adversarial review decisions, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, release notes, and follow-ups are all reported."
   ],
   "examples": [
     {
       "input": "Add a new API endpoint, open a PR, and make sure CI passes.",
-      "output": "Clarify endpoint behavior and compatibility, apply API review and test generation, complete adversarial Review Ledger checks, create or reuse a safe worktree, implement the endpoint, run local validation, review the diff, scan for sensitive information, commit, open a PR, record CI/CD head SHA and check URLs asynchronously by default, and return a delivery report with the PR URL, validation status, CI/CD observation state, and any follow-up trigger for full waiting."
+      "output": "Clarify endpoint behavior and compatibility, search linked issues and prior PR attempts when available, compare reusable ideas and stale assumptions, apply API review and test generation, complete adversarial Review Ledger checks, create or reuse a safe worktree, implement the endpoint, run local validation, review the diff, scan for sensitive information, commit, open a PR, record CI/CD head SHA and check URLs asynchronously by default, and return a delivery report with the PR URL, validation status, CI/CD observation state, and any follow-up trigger for full waiting."
     }
   ]
 }

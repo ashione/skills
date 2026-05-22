@@ -47,6 +47,8 @@ Load references only when needed:
    - Maintain a Review Ledger for each phase and do not publish that phase's final result or start execution until multi-role adversarial review is resolved.
 4. Analyze requirements first:
    - Restate the goal, background, success criteria, scope, non-goals, risks, and open questions.
+   - When the request references an issue, bug report, PR, branch, fork, commit, or previous fix, search discoverable prior attempts and record their evidence. If no prior attempt applies or the source cannot be searched, record the reason explicitly.
+   - Treat prior attempts as design evidence, not copy instructions: identify reusable tests or ideas, stale assumptions, behavioral differences, and fresh verification needed before adopting them.
    - Classify uncertainties as blocking, accepted, deferred, or not applicable; do not design or implement while blocking unknowns remain.
    - Record Minimum Skill Dependencies for `mobius-harness`, `local-repo-development`, `superpowers:brainstorming`, and `superpowers:writing-plans`; mark Superpowers dependencies used, not applicable, unavailable, blocked, or excepted before implementation starts.
    - Record Requirements Maturity as `ready-for-design` only when success criteria, scope, non-goals, constraints, risks, open questions, and user decisions are specific enough to choose an implementation approach.
@@ -60,6 +62,7 @@ Load references only when needed:
    - When `superpowers:brainstorming` or `superpowers:writing-plans` is used, record the resulting spec or plan artifact path; when unavailable, record fallback handling as `blocked`, `not-applicable`, or `exception`.
    - Use `superpowers:writing-plans` when the delivery needs a multi-step executable plan, especially for Standard or Strict mode.
    - Compare credible design options before selecting an approach; record rejected alternatives and why they were rejected.
+   - Compare any discovered prior attempts against the selected approach, including API or dependency freshness checks when the earlier attempt depends on time-sensitive behavior.
    - Record Design Readiness as `ready-for-implementation` only when selected approach, affected areas, acceptance mapping, validation strategy, rollback notes, and start gate are explicit.
    - Record a Dependency Decision: `no-new-dependency`, `existing-toolchain`, or `new-dependency-required`, with reason, evidence, and fallback.
    - Define implementation steps, validation commands, validation prerequisites, acceptance criteria, and delivery checkpoints.
@@ -158,7 +161,9 @@ For every phase and subphase, maintain a status record with:
 - Requirements and plan phases must record whether `superpowers:brainstorming` and `superpowers:writing-plans` were used, skipped as not applicable, unavailable, or excepted with accepted risk.
 - Requirements and plan phases must record Minimum Skill Dependencies, including Superpowers dependency handling and fallback.
 - Requirements phases must record Requirements Maturity and cannot advance to design while blocking unknowns remain.
+- Requirements phases must record Issue and Prior Attempts when the work is driven by an issue, bug report, PR, branch, fork, commit, or previous fix; mark it not applicable only with evidence.
 - Plan phases must record Design Readiness and cannot advance to implementation while the selected approach, acceptance mapping, or validation strategy is unresolved.
+- Plan phases must record Prior Attempt Comparison when G1 found existing attempts, including reuse decisions, rejected assumptions, and fresh verification for time-sensitive behavior.
 - Plan phases must record Dependency Decision, including evidence and fallback for unavailable tooling or platform skills.
 - Plan phases must record Validation Prerequisites for setup, generated artifacts, migrations, fixtures, or environment state required before validation commands can run cleanly.
 - A delivery is complete only when requirements, implementation scope, changed files, validation, diff review, sensitive information scan, PR/MR state, CI/CD state, residual risks, and follow-ups are all reported.
@@ -179,8 +184,8 @@ Use `draft`, `active`, `blocked`, `complete`, and `deferred` for phase status. I
 
 For long or risky work, maintain `.delivery/runs/<run-id>/` as a Delivery Episode Package with:
 
-- `requirements.md`: Goal, background, success criteria, scope, non-goals, risks, open questions, and user decisions.
-- `plan.md`: Repo findings, selected specialist skills, Minimum Skill Dependencies, Superpowers artifact paths or fallback, Dependency Decision, implementation steps, validation strategy, Validation Prerequisites, acceptance criteria, rollback notes, and checkpoints.
+- `requirements.md`: Goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, and Issue and Prior Attempts.
+- `plan.md`: Repo findings, prior attempt comparison, selected specialist skills, Minimum Skill Dependencies, Superpowers artifact paths or fallback, Dependency Decision, implementation steps, validation strategy, Validation Prerequisites, acceptance criteria, rollback notes, and checkpoints.
 - `verification.md`: Commands run, outcomes, local failures and fixes, diff review notes, sensitive information scan result, PR/MR URL, and CI/CD runs.
 - `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, release notes, and version or release report notes when applicable.
 

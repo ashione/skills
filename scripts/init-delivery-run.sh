@@ -164,8 +164,8 @@ hook_action() {
   esac
 }
 
-before_requirements_action="$(hook_action "Read user goal, repo instructions, relevant specs/docs, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision.")"
-before_plan_action="$(hook_action "Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Validation Prerequisites, Design Readiness, and writing-plans decision.")"
+before_requirements_action="$(hook_action "Read user goal, repo instructions, relevant specs/docs, issue context, prior PR or attempt search, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision.")"
+before_plan_action="$(hook_action "Record skill activation, Minimum Skill Dependencies, tool reality, prior attempt comparison, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Validation Prerequisites, Design Readiness, and writing-plans decision.")"
 before_edit_action="$(hook_action "Confirm Requirements Maturity and Design Readiness, repo/worktree state, dirty-state handling, affected paths, and preservation of unrelated changes.")"
 after_edit_action="$(hook_action "Map changed files to acceptance criteria and check for unintended churn.")"
 before_commit_action="$(hook_action "Run or record local validation, diff review, and sensitive information scan.")"
@@ -194,6 +194,7 @@ Capture requirements before planning or editing.
 - [ ] Success criteria are verifiable.
 - [ ] Scope and non-goals are explicit.
 - [ ] High-impact unknowns are resolved or recorded.
+- [ ] Linked issues, existing PRs, fork commits, or previous attempts are searched or marked not applicable with evidence.
 - [ ] Blocking unknowns are resolved or explicitly accepted.
 - [ ] Minimum Skill Dependencies are checked, including required Superpowers decisions.
 - [ ] Requirements Maturity is \`ready-for-design\` or explicitly excepted.
@@ -203,7 +204,7 @@ Capture requirements before planning or editing.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | decision:${request_cell} | |
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, Issue and Prior Attempts, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | decision:${request_cell} | |
 
 ### Hook Ledger
 
@@ -268,6 +269,14 @@ TBD
 
 ${request_cell}
 
+## Issue and Prior Attempts
+
+- Prior Attempt Search: blocked until linked issues, existing PRs, fork commits, issue comments, and related branches are searched or marked not applicable.
+- Prior Attempt Evidence: decision:${request_cell}
+
+| Source | Finding | Difference or Reuse Decision | Evidence |
+|---|---|---|---|
+
 ## Minimum Skill Dependencies
 
 | Skill | Minimum Requirement | Dependency Class | Evidence | Fallback |
@@ -315,6 +324,7 @@ Define the implementation plan after G1 is resolved.
 - [ ] Specialist skills are selected or rejected with reason.
 - [ ] Minimum Skill Dependencies are checked and carried forward from requirements.
 - [ ] Implementation steps are ordered.
+- [ ] Prior attempts are compared against the selected approach or marked not applicable with evidence.
 - [ ] Design options and rejected alternatives are recorded.
 - [ ] Design Readiness is \`ready-for-implementation\` or explicitly excepted.
 - [ ] Validation strategy covers success criteria.
@@ -327,7 +337,7 @@ Define the implementation plan after G1 is resolved.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, Validation Prerequisites, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | file:.delivery/runs/${run_id}/requirements.md | |
+| G2 | plan | Repo findings, prior attempt comparison, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, Validation Prerequisites, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | file:.delivery/runs/${run_id}/requirements.md | |
 
 ### Hook Ledger
 
@@ -381,6 +391,14 @@ TBD
 
 - Brainstorming: see requirements.md
 - Writing Plans: blocked until G1 is complete.
+
+## Prior Attempt Comparison
+
+- Prior Attempt Disposition: blocked until existing attempts are compared or marked not applicable.
+- Freshness Evidence: file:.delivery/runs/${run_id}/plan.md
+
+| Attempt | Useful Elements | Differences from Selected Approach | Action |
+|---|---|---|---|
 
 ## Design Options
 

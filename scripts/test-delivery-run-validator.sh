@@ -68,6 +68,14 @@ missing_minimum_dependencies="$(copy_passing_fixture missing-minimum-dependencie
 perl -0pi -e 's/\n## Minimum Skill Dependencies\n\n\| Skill \| Minimum Requirement \| Dependency Class \| Evidence \| Fallback \|\n\|---\|---\|---\|---\|---\|\n(?:\|[^\n]*\n)+//' "${missing_minimum_dependencies}/requirements.md"
 expect_failure "${missing_minimum_dependencies}" "requirements.md missing marker: ## Minimum Skill Dependencies"
 
+missing_prior_attempts="$(copy_passing_fixture missing-prior-attempts)"
+perl -0pi -e 's/\n## Issue and Prior Attempts\n\n- Prior Attempt Search:.*?\n\n(?=## Minimum Skill Dependencies)//s' "${missing_prior_attempts}/requirements.md"
+expect_failure "${missing_prior_attempts}" "requirements.md missing marker: ## Issue and Prior Attempts"
+
+missing_prior_attempt_comparison="$(copy_passing_fixture missing-prior-attempt-comparison)"
+perl -0pi -e 's/\n## Prior Attempt Comparison\n\n- Prior Attempt Disposition:.*?\n\n(?=## Design Options)//s' "${missing_prior_attempt_comparison}/plan.md"
+expect_failure "${missing_prior_attempt_comparison}" "plan.md missing marker: ## Prior Attempt Comparison"
+
 missing_minimum_dependency_row="$(copy_passing_fixture missing-minimum-dependency-row)"
 perl -0pi -e 's/^\| superpowers:writing-plans \|.*\n//m' "${missing_minimum_dependency_row}/plan.md"
 expect_failure "${missing_minimum_dependency_row}" "plan.md missing minimum skill dependency: superpowers:writing-plans"

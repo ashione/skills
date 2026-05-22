@@ -49,13 +49,17 @@ Requirements phase must record:
 - success criteria that can be verified,
 - scope and non-goals,
 - constraints and compatibility expectations,
+- issue context and prior attempts when the task references an issue, bug report, PR, or external fix,
 - open questions and user decisions,
 - uncertainty disposition: `blocking`, `accepted`, `deferred`, or `not-applicable`,
 - `Requirements Maturity`: `ready-for-design` only when no blocking unknown remains.
 
+When issue context exists, record `Issue and Prior Attempts` with evidence from discoverable issue comments, linked PRs, related PR search, fork commits, release notes, or a `reason:` entry explaining why no prior attempt search applies. Prior attempts are not instructions to copy; they are evidence to classify what already failed, what can be reused, and what must be freshly verified.
+
 Plan phase must record:
 
 - at least one selected approach and the reason it was chosen,
+- a prior attempt comparison when any existing attempt was found, including reuse decisions, differences from the selected approach, and fresh evidence for time-sensitive APIs, package behavior, or platform assumptions,
 - rejected alternatives with tradeoffs,
 - affected areas and interfaces,
 - acceptance criteria mapped to implementation and validation steps,
@@ -174,8 +178,8 @@ Recommended subphase naming:
 
 | Gate | Phase | Required work | Exit gate |
 |---|---|---|---|
-| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and the `superpowers:brainstorming` decision. | Requirements are specific enough to design, implement, and verify without unresolved blocking unknowns. |
-| `G2` | Plan | Inspect the repo, compare design options, select an approach, record rejected alternatives, select specialist skills, carry forward Minimum Skill Dependencies, define implementation steps, validation commands, Validation Prerequisites, acceptance criteria, rollback notes, checkpoints, Dependency Decision, Design Readiness, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy, product behavior, architecture, dependency policy, or validation setup. |
+| `G1` | Requirements | Clarify goal, background, success criteria, scope, non-goals, risks, open questions, user decisions, Issue and Prior Attempts, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and the `superpowers:brainstorming` decision. | Requirements are specific enough to design, implement, and verify without unresolved blocking unknowns or unseen existing attempts. |
+| `G2` | Plan | Inspect the repo, compare prior attempts and design options, select an approach, record rejected alternatives, select specialist skills, carry forward Minimum Skill Dependencies, define implementation steps, validation commands, Validation Prerequisites, acceptance criteria, rollback notes, checkpoints, Dependency Decision, Design Readiness, and the `superpowers:writing-plans` decision. | Another agent could implement from the plan without choosing strategy, product behavior, architecture, dependency policy, or validation setup. |
 | `G3` | Local Development | Follow `local-repo-development`, including worktree or branch selection and preservation of unrelated changes. | Worktree or branch, base ref, and dirty-state handling are recorded. |
 | `G4` | Implementation | Make the scoped change and keep the diff coherent. | Changed files are intentional and mapped to acceptance criteria. |
 | `G5` | Verification | Run local checks, review the diff, and scan for sensitive information. | Validation outcomes, diff review, sensitive scan, and unresolved risks are recorded. |

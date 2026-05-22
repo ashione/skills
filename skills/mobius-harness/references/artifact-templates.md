@@ -23,6 +23,7 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 - [ ] Success criteria are verifiable.
 - [ ] Scope and non-goals are explicit.
 - [ ] High-impact unknowns are resolved or recorded.
+- [ ] Linked issues, existing PRs, fork commits, or previous attempts are searched or marked not applicable with evidence.
 - [ ] Blocking unknowns are resolved or explicitly accepted.
 - [ ] Minimum Skill Dependencies are checked, including required Superpowers decisions.
 - [ ] Requirements Maturity is `ready-for-design` or explicitly excepted.
@@ -32,13 +33,13 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
+| G1 | requirements | Goal, success criteria, scope, non-goals, risks, open questions, user decisions, Issue and Prior Attempts, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision are explicit. | blocked | <evidence pointer> | <required if exception> |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_requirements | before G1 completion | [soft] <runtime> hook: Read user goal, repo instructions, relevant specs/docs, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| before_requirements | before G1 completion | [soft] <runtime> hook: Read user goal, repo instructions, relevant specs/docs, issue context, prior PR or attempt search, Minimum Skill Dependencies, uncertainty disposition, Requirements Maturity, and brainstorming decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 
@@ -78,6 +79,14 @@ Evidence: <user request, repo files, issue links, or reason unavailable>
 ## Open Questions
 
 ## User Decisions
+
+## Issue and Prior Attempts
+
+- Prior Attempt Search:
+- Prior Attempt Evidence:
+
+| Source | Finding | Difference or Reuse Decision | Evidence |
+|---|---|---|---|
 
 ## Minimum Skill Dependencies
 
@@ -125,6 +134,7 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 - [ ] Specialist skills are selected or rejected with reason.
 - [ ] Minimum Skill Dependencies are checked and carried forward from requirements.
 - [ ] Implementation steps are ordered.
+- [ ] Prior attempts are compared against the selected approach or marked not applicable with evidence.
 - [ ] Design options and rejected alternatives are recorded.
 - [ ] Design Readiness is `ready-for-implementation` or explicitly excepted.
 - [ ] Validation strategy covers success criteria.
@@ -137,13 +147,13 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, Validation Prerequisites, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
+| G2 | plan | Repo findings, prior attempt comparison, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, Validation Prerequisites, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | blocked | <evidence pointer> | <required if exception> |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | [soft] <runtime> hook: Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Validation Prerequisites, Design Readiness, and writing-plans decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
+| before_plan | before G2 completion | [soft] <runtime> hook: Record skill activation, Minimum Skill Dependencies, tool reality, prior attempt comparison, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Validation Prerequisites, Design Readiness, and writing-plans decision; record runtime-specific evidence. | blocked | <evidence pointer> | <required if exception> |
 
 ### Review Ledger
 
@@ -185,6 +195,14 @@ Evidence: <repo inspection commands, files, issue links, or reason unavailable>
 
 - Brainstorming:
 - Writing Plans:
+
+## Prior Attempt Comparison
+
+- Prior Attempt Disposition:
+- Freshness Evidence:
+
+| Attempt | Useful Elements | Differences from Selected Approach | Action |
+|---|---|---|---|
 
 ## Design Options
 

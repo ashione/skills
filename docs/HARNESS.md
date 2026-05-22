@@ -54,6 +54,8 @@ Mobius Harness must:
 
 - select `Lightweight`, `Standard`, or `Strict` mode at the start,
 - follow ordered blocking gates from requirements to final report,
+- record issue context and prior attempts when the task references an issue, PR, fork, commit, or previous fix,
+- compare discovered prior attempts during planning before choosing or validating an approach,
 - split large, risky, or blocked work into subphases,
 - maintain Goal, Checklist, Gate Ledger, Review Ledger, Todo List, Failure List, and Change List for each phase or subphase,
 - maintain a Hook Ledger for Standard and Strict deliveries so Claude Code/Codex controls are evidenced before risky transitions,
@@ -88,6 +90,8 @@ Mobius Harness can apply other skills as needed:
 ## Completion Rule
 
 Mobius Harness should not consider a delivery complete until it has clarified high-impact ambiguity, inspected the repository, followed the local repository workflow, run relevant validation, reviewed the diff, scanned for sensitive information, recorded PR/MR and CI/CD state when applicable, and produced a delivery report.
+
+For issue-driven work, the requirements artifact should include `Issue and Prior Attempts`, and the plan should include `Prior Attempt Comparison`. If an earlier PR or forked commit exists, the plan must state what is reused, what differs, what stale assumptions were rejected, and what fresh endpoint, package, or platform evidence was gathered before implementation.
 
 For Standard and Strict deliveries, the Delivery Episode Package must contain terminal Gate Ledger rows for `G1` through `G8`, terminal Hook Ledger rows for the required hooks in `hook-policy.md`, and terminal Review Ledger rows for the required reviews in `delivery-process.md`. Gate and Review Ledger terminal statuses are `pass`, `not-applicable`, or `exception`; Hook Ledger terminal statuses are `pass`, `not-applicable`, `exception`, or valid soft-gate `warn`. Any `blocked` gate, hook, or review means the delivery is not complete.
 

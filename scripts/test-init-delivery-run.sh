@@ -69,6 +69,26 @@ for file in requirements.md plan.md; do
   fi
 done
 
+if ! grep -q -F "## Issue and Prior Attempts" "${run_dir}/requirements.md"; then
+  echo "ERROR: requirements.md missing Issue and Prior Attempts"
+  exit 1
+fi
+
+if ! grep -q -F "Prior Attempt Search:" "${run_dir}/requirements.md"; then
+  echo "ERROR: requirements.md missing prior attempt search field"
+  exit 1
+fi
+
+if ! grep -q -F "## Prior Attempt Comparison" "${run_dir}/plan.md"; then
+  echo "ERROR: plan.md missing Prior Attempt Comparison"
+  exit 1
+fi
+
+if ! grep -q -F "Freshness Evidence:" "${run_dir}/plan.md"; then
+  echo "ERROR: plan.md missing freshness evidence field"
+  exit 1
+fi
+
 for file in requirements.md plan.md; do
   for skill in mobius-harness local-repo-development superpowers:brainstorming superpowers:writing-plans; do
     if ! grep -q -F "${skill}" "${run_dir}/${file}"; then
@@ -78,13 +98,13 @@ for file in requirements.md plan.md; do
   done
 done
 
-if ! grep -q -E '^\| G1 \| requirements \| .*Minimum Skill Dependencies' "${run_dir}/requirements.md"; then
-  echo "ERROR: G1 gate did not include minimum skill dependency evidence"
+if ! grep -q -E '^\| G1 \| requirements \| .*Issue and Prior Attempts.*Minimum Skill Dependencies' "${run_dir}/requirements.md"; then
+  echo "ERROR: G1 gate did not include issue/prior attempt and minimum skill dependency evidence"
   exit 1
 fi
 
-if ! grep -q -E '^\| G2 \| plan \| .*Minimum Skill Dependencies' "${run_dir}/plan.md"; then
-  echo "ERROR: G2 gate did not include minimum skill dependency evidence"
+if ! grep -q -E '^\| G2 \| plan \| .*prior attempt comparison.*Minimum Skill Dependencies' "${run_dir}/plan.md"; then
+  echo "ERROR: G2 gate did not include prior attempt comparison and minimum skill dependency evidence"
   exit 1
 fi
 
@@ -98,13 +118,13 @@ if ! grep -q -E '^\| G2 \| plan \| .*Validation Prerequisites' "${run_dir}/plan.
   exit 1
 fi
 
-if ! grep -q -E '^\| before_requirements \|[^|]+\| \[soft\].*Minimum Skill Dependencies' "${run_dir}/requirements.md"; then
-  echo "ERROR: before_requirements hook did not include minimum skill dependency action"
+if ! grep -q -E '^\| before_requirements \|[^|]+\| \[soft\].*prior PR or attempt search.*Minimum Skill Dependencies' "${run_dir}/requirements.md"; then
+  echo "ERROR: before_requirements hook did not include prior attempt and minimum skill dependency actions"
   exit 1
 fi
 
-if ! grep -q -E '^\| before_plan \|[^|]+\| \[soft\].*Minimum Skill Dependencies.*Validation Prerequisites' "${run_dir}/plan.md"; then
-  echo "ERROR: before_plan hook did not include minimum skill dependency and validation prerequisite actions"
+if ! grep -q -E '^\| before_plan \|[^|]+\| \[soft\].*Minimum Skill Dependencies.*prior attempt comparison.*Validation Prerequisites' "${run_dir}/plan.md"; then
+  echo "ERROR: before_plan hook did not include minimum skill dependency, prior attempt comparison, and validation prerequisite actions"
   exit 1
 fi
 

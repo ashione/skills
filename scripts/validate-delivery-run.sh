@@ -160,6 +160,7 @@ require_artifact_sections() {
         "Risks"
         "Open Questions"
         "User Decisions"
+        "Issue and Prior Attempts"
         "Minimum Skill Dependencies"
         "Uncertainty Register"
         "Requirements Maturity"
@@ -172,6 +173,7 @@ require_artifact_sections() {
         "Specialist Skills"
         "Minimum Skill Dependencies"
         "Superpowers Decisions"
+        "Prior Attempt Comparison"
         "Design Options"
         "Design Readiness"
         "Dependency Decision"
@@ -273,6 +275,8 @@ require_decision_content() {
   case "${file}" in
     requirements.md)
       require_field_value "${path}" "${file}" "Brainstorming"
+      require_field_value "${path}" "${file}" "Prior Attempt Search"
+      require_field_value "${path}" "${file}" "Prior Attempt Evidence"
       require_field_value "${path}" "${file}" "Blocking Unknowns"
       require_field_value "${path}" "${file}" "Maturity Evidence"
 
@@ -289,9 +293,17 @@ require_decision_content() {
         cmd:* | file:* | url:* | decision:* | reason:*) ;;
         *) record_error "${file} Requirements Maturity evidence must start with cmd:, file:, url:, decision:, or reason:" ;;
       esac
+
+      prior_attempt_evidence="$(field_value "${path}" "Prior Attempt Evidence")"
+      case "${prior_attempt_evidence}" in
+        cmd:* | file:* | url:* | decision:* | reason:*) ;;
+        *) record_error "${file} Prior Attempt Evidence must start with cmd:, file:, url:, decision:, or reason:" ;;
+      esac
       ;;
     plan.md)
       require_field_value "${path}" "${file}" "Writing Plans"
+      require_field_value "${path}" "${file}" "Prior Attempt Disposition"
+      require_field_value "${path}" "${file}" "Freshness Evidence"
       require_field_value "${path}" "${file}" "Selected Approach"
       require_field_value "${path}" "${file}" "Rejected Alternatives"
       require_field_value "${path}" "${file}" "Acceptance Mapping"
@@ -324,6 +336,12 @@ require_decision_content() {
       case "${evidence_value}" in
         cmd:* | file:* | url:* | decision:* | reason:*) ;;
         *) record_error "${file} Dependency Decision evidence must start with cmd:, file:, url:, decision:, or reason:" ;;
+      esac
+
+      evidence_value="$(field_value "${path}" "Freshness Evidence")"
+      case "${evidence_value}" in
+        cmd:* | file:* | url:* | decision:* | reason:*) ;;
+        *) record_error "${file} Freshness Evidence must start with cmd:, file:, url:, decision:, or reason:" ;;
       esac
       ;;
   esac

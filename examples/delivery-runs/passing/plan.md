@@ -17,6 +17,7 @@ Show a fully satisfied plan gate.
 - [x] Specialist skills are selected or rejected with reason.
 - [x] Minimum Skill Dependencies are checked and carried forward from requirements.
 - [x] Implementation steps are ordered.
+- [x] Prior attempts are compared against the selected approach or marked not applicable with evidence.
 - [x] Validation strategy covers success criteria.
 - [x] Validation prerequisites are recorded before validation commands.
 - [x] Rollback or mitigation notes are recorded.
@@ -27,13 +28,13 @@ Show a fully satisfied plan gate.
 
 | Gate | Phase | Required Evidence | Status | Evidence | Exception |
 |---|---|---|---|---|---|
-| G2 | plan | Repo findings, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, Validation Prerequisites, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | pass | file:examples/delivery-runs/passing/plan.md | |
+| G2 | plan | Repo findings, prior attempt comparison, design options, selected approach, rejected alternatives, affected areas, specialist skills, Minimum Skill Dependencies, Superpowers planning decision, Dependency Decision, implementation steps, validation commands, Validation Prerequisites, acceptance criteria, Design Readiness, rollback notes, and checkpoints are recorded. | pass | file:examples/delivery-runs/passing/plan.md | |
 
 ### Hook Ledger
 
 | Hook | Trigger | Required Action | Status | Evidence | Failure Handling |
 |---|---|---|---|---|---|
-| before_plan | before G2 completion | [hard] Record skill activation, Minimum Skill Dependencies, tool reality, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Validation Prerequisites, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/passing/plan.md | |
+| before_plan | before G2 completion | [hard] Record skill activation, Minimum Skill Dependencies, tool reality, prior attempt comparison, design options, selected approach, rejected alternatives, Dependency Decision, validation strategy, Validation Prerequisites, Design Readiness, and writing-plans decision. | pass | file:examples/delivery-runs/passing/plan.md | |
 
 ### Review Ledger
 
@@ -81,6 +82,15 @@ Fixture uses committed example files.
 
 - Brainstorming: not-applicable, fixed fixture.
 - Writing Plans: not-applicable, fixed fixture.
+
+## Prior Attempt Comparison
+
+- Prior Attempt Disposition: not-applicable, because requirements found no issue-driven prior attempt.
+- Freshness Evidence: reason:fixture has no time-sensitive external API, package, or platform behavior.
+
+| Attempt | Useful Elements | Differences from Selected Approach | Action |
+|---|---|---|---|
+| Fixture scope | None | No prior attempt applies to a committed validator fixture | Continue with fixture validation |
 
 ## Design Options
 

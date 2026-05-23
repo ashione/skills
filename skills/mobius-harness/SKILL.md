@@ -36,7 +36,7 @@ Load references only when needed:
 
 1. Treat Mobius Harness as the primary entrypoint for end-to-end delivery work. Keep one agent accountable for the whole loop unless the user explicitly asks for delegation.
 2. Select `Lightweight`, `Standard`, or `Strict` mode at the start. Use persisted `.delivery/runs/<run-id>/` artifacts for Standard and Strict work.
-   - For Standard and Strict deliveries, initialize missing persisted artifacts with `bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]` when that script exists.
+   - For Standard and Strict deliveries, initialize missing persisted artifacts and harness-owned hook gates with `bash scripts/init-delivery-run.sh <run-id> --request "<user request>" [--gate-type soft|hard] [--runtime auto|codex|claude-code|claude|generic]` when that script exists.
    - Use the initialization default `[soft]` unless the user, repository policy, release risk, security risk, or merge gate requires `[hard]`.
    - Keep gate strength separate from runtime-specific hook wording: use `--runtime auto` by default, or pin `codex`, `claude-code`, `claude`, or `generic` when the executor must be explicit; `claude` normalizes to `claude-code` in generated artifacts.
    - Treat initialized artifacts as a starting state with blocked gate, hook, and review rows; do not treat initialization as final validation.
@@ -189,7 +189,7 @@ For long or risky work, maintain `.delivery/runs/<run-id>/` as a Delivery Episod
 - `verification.md`: Commands run, outcomes, local failures and fixes, diff review notes, sensitive information scan result, PR/MR URL, and CI/CD runs.
 - `delivery-report.md`: Executive summary, changed files, implementation summary, validation summary, PR/MR and CI/CD status, risks, follow-ups, release notes, and version or release report notes when applicable.
 
-When the repository provides `scripts/init-delivery-run.sh`, prefer it to hand-writing the initial files so Gate Ledger, Hook Ledger, Review Ledger, soft/hard hook mode rows, and runtime-specific hook wording are generated consistently. The initialization default is soft and runtime auto-detection; choose hard only when the gate must block progress until resolved, and pin the runtime only when Codex, Claude Code, or generic evidence semantics must be explicit.
+When the repository provides `scripts/init-delivery-run.sh`, prefer it to hand-writing the initial files so Gate Ledger, Hook Ledger, Review Ledger, soft/hard hook mode rows, runtime-specific hook wording, `.delivery/hooks/config.json`, `.delivery/hooks/agent_gate.sh`, executable `.delivery/hooks/<hook-id>.sh` gate scripts, and project-level `.claude/settings.json` / `.codex/settings.json` command-hook entries are generated consistently. The initialization default is soft and runtime auto-detection; choose hard only when the gate must block progress until resolved, and pin the runtime only when Codex, Claude Code, or generic evidence semantics must be explicit.
 
 Each artifact must include status, timestamp or phase marker, evidence, and phase/subphase records using Goal, Checklist, Gate Ledger, Hook Ledger, Review Ledger, Todo List, Failure List, and Change List. Use table records for Gate Ledger, Hook Ledger, Review Ledger, Todo List, Failure List, and Change List so another agent can audit and resume the delivery.
 

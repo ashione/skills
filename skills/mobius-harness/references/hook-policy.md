@@ -6,7 +6,7 @@ Use this reference when a delivery needs Claude Code, Codex, or similar agent-ru
 
 Hooks are auditable controls that run inside the existing Mobius phase gates. Gates decide whether a phase may advance; hooks record the required action that must happen before or after a risky agent operation.
 
-Hooks start as declarative records. Do not execute arbitrary repository hook scripts unless a repository explicitly defines them and the plan records a `new-dependency-required` or `existing-toolchain` Dependency Decision with validation and rollback notes.
+Hooks start as declarative records. When `scripts/init-delivery-run.sh` exists, it also creates harness-owned gate scripts under `.delivery/hooks/` and project-level runtime settings that enforce those records through the same command-hook shape used by existing agent gate systems. Do not execute arbitrary repository hook scripts unless a repository explicitly defines them and the plan records a `new-dependency-required` or `existing-toolchain` Dependency Decision with validation and rollback notes.
 
 Every Standard and Strict Delivery Episode Package must include a Hook Ledger table in each persisted phase artifact:
 
@@ -62,6 +62,8 @@ Pin the runtime explicitly when the artifact is being prepared for a different e
 | `--runtime generic` | `Generic agent hook` | Runtime capability statement, supported tool output, command output, and explicit unavailable reasons. |
 
 The runtime flag must not silently change the gate type. Use `--gate-type hard` only for blocking semantics and `--gate-type soft` for advisory semantics.
+
+Initialization writes `.delivery/hooks/config.json` with `run_id`, `gate_type`, `runtime`, script paths, and owning artifact paths. It also writes `.delivery/hooks/agent_gate.sh` as the runtime command-hook entrypoint and one executable `.delivery/hooks/<hook-id>.sh` script for each required hook. Claude Code integration is installed as a `.claude/settings.json` `PreToolUse` / `matcher: Bash` command hook; Codex integration uses the same project-level hook shape in `.codex/settings.json`; generic initialization writes both. In git repositories, generated scaffold paths are added to `.git/info/exclude` so they stay local and do not enter PR or MR diffs; when a runtime `settings.json` is already tracked, write the generated hook entry to `settings.local.json` instead. Each hook script reads the configured run by default, supports `MOBIUS_RUN_ID` and `MOBIUS_ARTIFACT` overrides for focused checks, and fails closed when the ledger row is missing, `blocked`, points at a missing artifact, has an invalid status, lacks a `[soft]` or `[hard]` prefix, or uses `warn` without a `[soft]` required action.
 
 ## Required Hooks
 

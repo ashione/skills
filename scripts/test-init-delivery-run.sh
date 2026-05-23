@@ -5,14 +5,22 @@ repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${repo_root}"
 
 tmp_dir="$(mktemp -d)"
+git_tmp_dir="$(mktemp -d)"
+tracked_settings_dir="$(mktemp -d)"
 
 cleanup() {
   rm -rf "${tmp_dir}"
+  rm -rf "${git_tmp_dir}"
+  rm -rf "${tracked_settings_dir}"
 }
 trap cleanup EXIT
 
 run_id="agent-gate-init"
 run_dir="${tmp_dir}/.delivery/runs/${run_id}"
+hook_dir="${tmp_dir}/.delivery/hooks"
+hook_config="${hook_dir}/config.json"
+claude_settings="${tmp_dir}/.claude/settings.json"
+codex_settings="${tmp_dir}/.codex/settings.json"
 hard_run_id="agent-gate-init-hard"
 hard_run_dir="${tmp_dir}/.delivery/runs/${hard_run_id}"
 codex_run_id="agent-gate-init-codex"
@@ -28,7 +36,26 @@ auto_codex_run_dir="${tmp_dir}/.delivery/runs/${auto_codex_run_id}"
 auto_claude_run_id="agent-gate-init-auto-claude"
 auto_claude_run_dir="${tmp_dir}/.delivery/runs/${auto_claude_run_id}"
 
-bash scripts/init-delivery-run.sh "${run_id}" --root "${tmp_dir}" --request "Initialize hook gates for a test delivery" >/dev/null
+mkdir -p "${tmp_dir}/.claude"
+cat > "${claude_settings}" <<'JSON'
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
+          }
+        ]
+      }
+    ]
+  }
+}
+JSON
+
+bash scripts/init-delivery-run.sh "${run_id}" --root "${tmp_dir}" --request "Initialize hook gates for a test delivery" --runtime generic >/dev/null
 
 for file in requirements.md plan.md verification.md delivery-report.md; do
   if [[ ! -f "${run_dir}/${file}" ]]; then
@@ -44,12 +71,144 @@ for hook in before_requirements before_plan before_edit after_edit before_commit
   fi
 done
 
+if [[ ! -f "${hook_config}" ]]; then
+  echo "ERROR: missing initialized hook config: ${hook_config}"
+  exit 1
+fi
+
+for expected in '"schema_version": 1' "\"run_id\": \"${run_id}\"" '"gate_type": "soft"' '"runtime":'; do
+  if ! grep -q -F "${expected}" "${hook_config}"; then
+    echo "ERROR: hook config missing expected field: ${expected}"
+    exit 1
+  fi
+done
+
+for settings in "${claude_settings}" "${codex_settings}"; do
+  if [[ ! -f "${settings}" ]]; then
+    echo "ERROR: missing runtime hook settings: ${settings}"
+    exit 1
+  fi
+
+  if ! python3 - "${settings}" <<'PY'
+import json
+import sys
+
+settings = json.load(open(sys.argv[1], encoding="utf-8"))
+entries = settings.get("hooks", {}).get("PreToolUse", [])
+for entry in entries:
+    if entry.get("matcher") != "Bash":
+        continue
+    for hook in entry.get("hooks", []):
+        if hook == {"type": "command", "command": ".delivery/hooks/agent_gate.sh"}:
+            raise SystemExit(0)
+raise SystemExit(1)
+PY
+  then
+    echo "ERROR: runtime hook settings missing Mobius PreToolUse Bash command: ${settings}"
+    exit 1
+  fi
+done
+
+if ! python3 - "${claude_settings}" <<'PY'
+import json
+import sys
+
+settings = json.load(open(sys.argv[1], encoding="utf-8"))
+commands = [
+    hook.get("command")
+    for entry in settings.get("hooks", {}).get("PreToolUse", [])
+    if entry.get("matcher") == "Bash"
+    for hook in entry.get("hooks", [])
+]
+raise SystemExit(0 if "rtk hook claude" in commands and ".delivery/hooks/agent_gate.sh" in commands else 1)
+PY
+then
+  echo "ERROR: runtime hook settings did not preserve existing Bash gate command"
+  exit 1
+fi
+
 for hook in before_requirements before_plan before_edit after_edit before_commit before_pr after_pr before_final; do
   if ! grep -R -q -E "^\| ${hook} \|[^|]+\| \[soft\]" "${run_dir}"; then
     echo "ERROR: ${hook} hook did not default to a soft gate"
     exit 1
   fi
+
+  hook_script="${hook_dir}/${hook}.sh"
+  if [[ ! -x "${hook_script}" ]]; then
+    echo "ERROR: missing executable hook gate script: ${hook_script}"
+    exit 1
+  fi
+
+  if ! grep -q -F "hook_id=\"${hook}\"" "${hook_script}"; then
+    echo "ERROR: hook gate script does not identify its hook: ${hook}"
+    exit 1
+  fi
+
+  set +e
+  blocked_hook_output="$("${hook_script}" 2>&1)"
+  blocked_hook_code="$?"
+  set -e
+
+  if [[ "${blocked_hook_code}" -eq 0 ]]; then
+    echo "ERROR: blocked initialized hook unexpectedly passed: ${hook}"
+    exit 1
+  fi
+
+  if [[ "${blocked_hook_output}" != *"is blocked"* ]]; then
+    echo "ERROR: blocked initialized hook used wrong diagnostic for ${hook}"
+    echo "${blocked_hook_output}"
+    exit 1
+  fi
 done
+
+if [[ ! -x "${hook_dir}/agent_gate.sh" ]]; then
+  echo "ERROR: missing executable runtime agent gate script"
+  exit 1
+fi
+
+if ! printf '{"tool_input":{"command":"ls"}}' | "${hook_dir}/agent_gate.sh" | grep -q -F "Mobius hook gate skipped"; then
+  echo "ERROR: runtime agent gate did not skip ungated Bash command"
+  exit 1
+fi
+
+set +e
+agent_gate_output="$(printf '{"tool_input":{"command":"git commit -m test"}}' | "${hook_dir}/agent_gate.sh" 2>&1)"
+agent_gate_code="$?"
+set -e
+
+if [[ "${agent_gate_code}" -eq 0 ]]; then
+  echo "ERROR: runtime agent gate unexpectedly allowed blocked commit command"
+  exit 1
+fi
+
+if [[ "${agent_gate_output}" != *"before_commit is blocked"* ]]; then
+  echo "ERROR: runtime agent gate used wrong diagnostic for blocked commit"
+  echo "${agent_gate_output}"
+  exit 1
+fi
+
+set +e
+pr_gate_output="$(printf '{"tool_input":{"command":"gh pr create --fill"}}' | "${hook_dir}/agent_gate.sh" 2>&1)"
+pr_gate_code="$?"
+set -e
+
+if [[ "${pr_gate_code}" -eq 0 ]]; then
+  echo "ERROR: runtime agent gate unexpectedly allowed blocked PR command"
+  exit 1
+fi
+
+if [[ "${pr_gate_output}" != *"before_pr is blocked"* ]]; then
+  echo "ERROR: runtime agent gate used wrong diagnostic for blocked PR command"
+  echo "${pr_gate_output}"
+  exit 1
+fi
+
+perl -0pi -e 's/(\| before_requirements \|[^\n]*\| )blocked( \| decision:Initialize hook gates for a test delivery \| \|)/${1}pass${2}/' "${run_dir}/requirements.md"
+
+if ! "${hook_dir}/before_requirements.sh" | grep -q -F "Mobius hook before_requirements satisfied: pass"; then
+  echo "ERROR: satisfied hook gate script did not pass"
+  exit 1
+fi
 
 if ! grep -q -E '^Evidence: decision:Initialize hook gates for a test delivery$' "${run_dir}/requirements.md"; then
   echo "ERROR: request evidence was not written to requirements.md"
@@ -130,6 +289,13 @@ fi
 
 bash scripts/init-delivery-run.sh "${hard_run_id}" --root "${tmp_dir}" --request "Initialize hard hook gates" --gate-type hard >/dev/null
 
+for expected in "\"run_id\": \"${hard_run_id}\"" '"gate_type": "hard"'; do
+  if ! grep -q -F "${expected}" "${hook_config}"; then
+    echo "ERROR: hard hook config missing expected field: ${expected}"
+    exit 1
+  fi
+done
+
 for hook in before_requirements before_plan before_edit after_edit before_commit before_pr after_pr before_final; do
   if ! grep -R -q -E "^\| ${hook} \|[^|]+\| \[hard\]" "${hard_run_dir}"; then
     echo "ERROR: ${hook} hook did not honor --gate-type hard"
@@ -138,6 +304,18 @@ for hook in before_requirements before_plan before_edit after_edit before_commit
 done
 
 bash scripts/init-delivery-run.sh "${codex_run_id}" --root "${tmp_dir}" --request "Initialize Codex hooks" --runtime codex >/dev/null
+
+for expected in "\"run_id\": \"${codex_run_id}\"" '"runtime": "codex"'; do
+  if ! grep -q -F "${expected}" "${hook_config}"; then
+    echo "ERROR: Codex hook config missing expected field: ${expected}"
+    exit 1
+  fi
+done
+
+if [[ ! -f "${codex_settings}" ]]; then
+  echo "ERROR: --runtime codex did not generate Codex settings"
+  exit 1
+fi
 
 if ! grep -R -q "Codex hook" "${codex_run_dir}"; then
   echo "ERROR: --runtime codex did not generate Codex-specific hook actions"
@@ -175,8 +353,81 @@ fi
 
 bash scripts/init-delivery-run.sh "${generic_run_id}" --root "${tmp_dir}" --request "Initialize generic hooks" --runtime generic >/dev/null
 
+for expected in "\"run_id\": \"${generic_run_id}\"" '"runtime": "generic"'; do
+  if ! grep -q -F "${expected}" "${hook_config}"; then
+    echo "ERROR: generic hook config missing expected field: ${expected}"
+    exit 1
+  fi
+done
+
 if ! grep -R -q "Generic agent hook" "${generic_run_dir}"; then
   echo "ERROR: --runtime generic did not generate generic hook actions"
+  exit 1
+fi
+
+git -C "${git_tmp_dir}" init -q
+bash scripts/init-delivery-run.sh git-ignored-scaffold --root "${git_tmp_dir}" --request "Initialize ignored scaffold in target repo" --runtime generic >/dev/null
+
+git_status="$(git -C "${git_tmp_dir}" status --short)"
+if [[ -n "${git_status}" ]]; then
+  echo "ERROR: initialized scaffold should be locally excluded from target repo status"
+  echo "${git_status}"
+  exit 1
+fi
+
+git_exclude="$(git -C "${git_tmp_dir}" rev-parse --path-format=absolute --git-path info/exclude)"
+for ignored_path in ".delivery/" ".claude/settings.json" ".codex/settings.json"; do
+  if ! grep -q -F "${ignored_path}" "${git_exclude}"; then
+    echo "ERROR: target repo local exclude missing generated scaffold path: ${ignored_path}"
+    exit 1
+  fi
+done
+
+for ignored_path in ".claude/settings.local.json" ".codex/settings.local.json"; do
+  if ! grep -q -F "${ignored_path}" "${git_exclude}"; then
+    echo "ERROR: target repo local exclude missing local runtime settings path: ${ignored_path}"
+    exit 1
+  fi
+done
+
+git -C "${tracked_settings_dir}" init -q
+mkdir -p "${tracked_settings_dir}/.claude"
+cat > "${tracked_settings_dir}/.claude/settings.json" <<'JSON'
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "rtk hook claude"
+          }
+        ]
+      }
+    ]
+  }
+}
+JSON
+git -C "${tracked_settings_dir}" add .claude/settings.json
+git -C "${tracked_settings_dir}" -c user.name="Mobius Test" -c user.email="mobius@example.invalid" commit -q -m "track claude settings"
+
+bash scripts/init-delivery-run.sh tracked-settings-local --root "${tracked_settings_dir}" --request "Initialize without modifying tracked settings" --runtime claude-code >/dev/null
+
+if ! git -C "${tracked_settings_dir}" diff --quiet -- .claude/settings.json; then
+  echo "ERROR: initialization modified tracked target repo Claude settings"
+  exit 1
+fi
+
+if [[ ! -f "${tracked_settings_dir}/.claude/settings.local.json" ]]; then
+  echo "ERROR: initialization did not write local Claude settings fallback"
+  exit 1
+fi
+
+tracked_settings_status="$(git -C "${tracked_settings_dir}" status --short)"
+if [[ -n "${tracked_settings_status}" ]]; then
+  echo "ERROR: initialized scaffold or local settings should not appear in target repo status"
+  echo "${tracked_settings_status}"
   exit 1
 fi
 
